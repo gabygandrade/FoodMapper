@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+	<h2>Restaurant search results: </h2>
+	<table class="table table-striped">
+	    <tr>
+	        <th>Restaurant</th>
+	        <th>Address</th>
+	        <th>City</th>
+	        <th>State</th>
+	    </tr>
+	    {% for item in fs_venues_list %}
+	    <tr>
+	        <td>{{ item['name'] }}</td>
+	        <td>{{ item['location']['address'] }}</td>
+	        <td>{{ item['location']['city'] }}</td>
+	        <td>{{ item['location']['state'] }}</td>
+	    {% endfor %}
+	    </tr>
+    </table>
+
+{% endblock %}

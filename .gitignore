@@ -1,0 +1,5 @@
+*.sh
+env
+env/
+*pyc
+*.db
