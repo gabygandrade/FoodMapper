@@ -1,5 +1,6 @@
 import requests
 import json
+import config 
 
 # This file creates the foursquare response as a python dict. Pass this function to the server to execute with the user's query
 
@@ -11,11 +12,6 @@ def create_fs_dict(CLIENT_ID, CLIENT_SECRET, user_query, location):
 	fs_dict = json.loads(response_obj)		# takes a JSON string & turns it into a Python dict
 	return fs_dict 
 
-# fs_dict = create_fs_dict(CLIENT_ID, CLIENT_SECRET, 'bite', 'san francisco')
-# fs_venues_list = fs_dict['response']['venues']
-
-# print fs_venues_list
-# print fs_dict
 
 
 

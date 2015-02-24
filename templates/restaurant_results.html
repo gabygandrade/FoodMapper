@@ -6,17 +6,19 @@
 	    <tr>
 	        <th>Restaurant</th>
 	        <th>Address</th>
-	        <th>City</th>
+	        <th>City </th>
 	        <th>State</th>
 	    </tr>
-	    {% for item in fs_venues_list %}
-	    <tr>
-	        <td>{{ item['name'] }}</td>
-	        <td>{{ item['location']['address'] }}</td>
-	        <td>{{ item['location']['city'] }}</td>
-	        <td>{{ item['location']['state'] }}</td>
-	    {% endfor %}
-	    </tr>
+		    {% for item in fs_venues_list %}
+		    	{% if item.location.address is defined %}
+				    <tr class='clickable-row' data-href=''>
+				        <td>{{ item['name'] }}</td>
+				        <td>{{ item['location']['address'] }}</td>
+				        <td>{{ item['location']['city'] }}</td>
+				        <td>{{ item['location']['state'] }}</td>
+				 {% endif %}
+				 </tr>
+			{% endfor %}
     </table>
 
 {% endblock %}
