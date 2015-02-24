@@ -1,6 +1,7 @@
 import requests
 import json
 import config 
+import os 
 
 # This file creates the foursquare response as a python dict. Pass this function to the server to execute with the user's query
 
@@ -10,10 +11,7 @@ def create_fs_dict(CLIENT_ID, CLIENT_SECRET, user_query, location):
 	response = requests.get(url, params = myparams)		# create API response  
 	response_obj = response.text			
 	fs_dict = json.loads(response_obj)		# takes a JSON string & turns it into a Python dict
+	if fs_dict['meta']['code'] != 200:
+		raise Exception('Foursquare query error')
 	return fs_dict 
-
-
-
-
-
 

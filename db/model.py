@@ -45,7 +45,7 @@ class Restaurant(Base):
 	""" Represents saved information for restaurants """
 	__tablename__ = "restaurants"
 	id = Column(Integer, primary_key = True)
-	fs_id = Column(Integer, nullable = False)		# foursquare id
+	fsq_id = Column(Integer, nullable = False)		# foursquare id
 	name = Column(String(64), nullable = False)
 	lat = Column(Float, nullable = False)
 	lng = Column(Float, nullable = False)
@@ -53,8 +53,8 @@ class Restaurant(Base):
 
 	 def __repr__(self):
         """Show info about restaurant."""
-        return "<Cat id=%d fs_id=%d name=%s lat=%d lng=%d cuisine=%s>" % 
-        (self.id, self.fs_id, self.name, self.lat, self.lng, self.cuisine)
+        return "<Cat id=%d fsq_id=%d name=%s lat=%d lng=%d cuisine=%s>" % 
+        (self.id, self.fsq_id, self.name, self.lat, self.lng, self.cuisine)
 
 	# TODO: the name, lat, long, and cuisine have to come from the fs API 
 	# def save_restaurant(name, lat, lng, cuisine):			# The parameters I put are the ones I need to get from the foursquare API
