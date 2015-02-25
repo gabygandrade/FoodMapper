@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
-{% block content %}
 
+{% block head %}
+	<style>
+	.highlight {
+	  background-color: yellow;
+	}
+	</style>
+{% endblock %}
+
+{% block content %}
 	<h2>Restaurant search results: </h2>
 	<table class="table table-striped">
 	    <tr>
@@ -11,7 +19,7 @@
 	    </tr>
 		    {% for item in fs_venues_list %}
 		    	{% if item.location.address is defined %}
-				    <tr class='clickable-row' data-href=''>
+				    <tr class='clickable-row'>
 				        <td>{{ item['name'] }}</td>
 				        <td>{{ item['location']['address'] }}</td>
 				        <td>{{ item['location']['city'] }}</td>
@@ -20,5 +28,26 @@
 				 </tr>
 			{% endfor %}
     </table>
+{% endblock %}
 
+{% block js_reference %}
+	<script>
+	$('.clickable-row').click(function(){
+		$('.clickable-row').removeClass("highlight");
+    	$(this).addClass("highlight");
+		console.log('clickable row function is working!');
+		
+		// var url = "/save_restaurant";
+		// var data = {
+		// 	fsq_id = 
+		// 	name = 
+		// 	lat = 
+		// 	lng = 
+		// 	cuisine = // Need to get these from a separate API call to the restaurant that the user selected
+		// }
+		// $.post(url, function(data){
+		// 	console.log('post method started!') //post ajax method to send data to server
+		// });
+	}); 
+	</script>
 {% endblock %}

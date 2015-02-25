@@ -35,24 +35,26 @@ def show_rest_info():
 		fs_venues_list = fs_dict['response']['venues']
 		# print "FS Venues List: ", fs_venues_list
 
-		if fs_venues_list == []:
-			flash("Your search came up empty. Please try again") 
+		# If FSQ can't geocoded but no search results match 
+		if fs_venues_list == []:								
+			flash("Your search came up empty. Please try another search") 
 		
 		return render_template("restaurant_results.html", 
 		fs_venues_list=fs_venues_list)
 
-	except:
+	# if the user enters a location query FSQ cannot geocode
+	except:				
 		fs_venues_list = []
 		flash("Please enter a city name") 
 		return redirect('/')
 
-# @app.route("/save_restaurant", methods=['POST'])		# FIXME: check to see if this this is the right route to use for the add_bookmark() controller function
-# def save_restaurant():					# Do I need to make a call to the foursquare API again here to get the restaurant info to populate my tables? 
-# 	"""Saves a restaurant to the database """
-# 	return "add restaurant function started!" 
-# 	saved_restaurant = 											# Do I need: json.dumps(session['restaurant'])??
-# 	model.save_restaurant(session['email'], saved_restaurant) 	# pass in the saved restaurant 
-# 	return "Added %s restaurant to the restaurants table" % (saved_restaurant)
+@app.route("/save_restaurant", methods=['POST'])		# FIXME: check to see if this this is the right route to use for the add_bookmark() controller function
+def save_restaurant():					# Do I need to make a call to the foursquare API again here to get the restaurant info to populate my tables? 
+	"""Saves a restaurant to the database """
+	return "add restaurant function started!" 
+	# saved_restaurant = 											# Do I need: json.dumps(session['restaurant'])??
+	# model.save_restaurant(session['email'], saved_restaurant) 	# pass in the saved restaurant 
+	# return "Added %s restaurant to the restaurants table" % (saved_restaurant)
 
 
 # @app.route("/save_bookmark", methods=['POST'])		# FIXME: check to see if this this is the right route to use for the add_bookmark() controller function
