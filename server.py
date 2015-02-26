@@ -15,52 +15,59 @@ fs_client_secret = config.FS_CLIENT_SECRET
 
 @app.route("/")
 def index():
-	"""Shows the page where user's can search for a restaurant """
+	"""Render the page where users can search for a restaurant """
 	return render_template("index.html")
 
 @app.route("/restaurant_results")
 def show_rest_info():
-	"""When the user submits their restaurant search, this gathers the user input to create the query request to 
-	the Foursquare API. It then returns the response and sends it to the template"""
+	"""When the user submits their search, gather the user input 
+	to create the query request to the Foursquare (FSQ) API. 
+	Return the response as a python dictionary and pass it to the 
+	template"""
 	
 	# pull out parameters from request
-	rest_name = request.args.get('rest-name')
+	search_restaurant = request.args.get('rest-name')
 	search_location = request.args.get('search-location')
-	print (rest_name, search_location)
+	print (search_restaurant, search_location)
 	# create a python dict from the Foursquare API JSON response 
 	
 	try:
-		fs_dict = foursquareapi.create_fs_dict(fs_client_id, fs_client_secret, rest_name, search_location) 	# Look in foursquareapi module and run the create_fs_dict function with the parameters here
-		# parse that python dict to get just the part of the request w/needed info
+		fs_dict = foursquareapi.search_FSQ_venues(fs_client_id, fs_client_secret, search_restaurant, search_location) 	# Look in foursquareapi module and run the create_fs_dict function with the parameters here
+		# parse that python dict to get just the part of the request w/needed venues info
 		fs_venues_list = fs_dict['response']['venues']
 		# print "FS Venues List: ", fs_venues_list
 
-		# If FSQ can't geocoded but no search results match 
+		# if FSQ query returned no search results  
 		if fs_venues_list == []:								
-			flash("Your search came up empty. Please try another search") 
+			flash("Your search came up empty. Please try another search.") 
 		
 		return render_template("restaurant_results.html", 
 		fs_venues_list=fs_venues_list)
 
-	# if the user enters a location query FSQ cannot geocode
-	except:				
+	except:
+		# if the user entered a location FSQ cannot geocode				
 		fs_venues_list = []
-		flash("Please enter a city name") 
+		flash("Please enter a city name.") 
 		return redirect('/')
 
-@app.route("/save_restaurant", methods=['POST'])		# FIXME: check to see if this this is the right route to use for the add_bookmark() controller function
+@app.route("/save_restaurant")		# FIXME:add 1) methods=['POST'] and 2) /<int:fsq_id> to end of URL
 def save_restaurant():					# Do I need to make a call to the foursquare API again here to get the restaurant info to populate my tables? 
-	"""Saves a restaurant to the database """
-	return "add restaurant function started!" 
-	# saved_restaurant = 											# Do I need: json.dumps(session['restaurant'])??
-	# model.save_restaurant(session['email'], saved_restaurant) 	# pass in the saved restaurant 
+	"""Saves the restaurant the user selected to the db"""
+	fsq_id = request.args.get("fsqId")
+	lat = request.args.get("lat")
+
+	# print "save restaurants function started"
+
+	# name = item['name']
+	# lat = item['location']['lat']
+	# lng = item['location']['lng']
+	# cuisine = item['categories'][0]['shortName']
+	# saved_restaurant = model.Restaurant(fsq_id=fsq_id, name = name, 
+	# 					lat=lat, lng=lng, cuisine=cuisine)
+ #    model.session.add(saved_restaurant)
+ #    model.session.commit()
+ 	return lat
 	# return "Added %s restaurant to the restaurants table" % (saved_restaurant)
-
-
-# @app.route("/save_bookmark", methods=['POST'])		# FIXME: check to see if this this is the right route to use for the add_bookmark() controller function
-# def save_bookmark():
-# 	return "add bookmark function started!"
-
 
 if __name__ == "__main__":
     app.run(debug = True)
