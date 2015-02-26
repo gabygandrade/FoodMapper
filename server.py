@@ -50,23 +50,50 @@ def show_rest_info():
 		flash("Please enter a city name.") 
 		return redirect('/')
 
-@app.route("/save_restaurant")		# FIXME:add 1) methods=['POST'] and 2) /<int:fsq_id> to end of URL
+@app.route("/save_restaurant")		# FIXME: change name of this route to save_to_db()
 def save_restaurant():					# Do I need to make a call to the foursquare API again here to get the restaurant info to populate my tables? 
-	"""Saves the restaurant the user selected to the db"""
-	fsq_id = request.args.get("fsqId")
-	lat = request.args.get("lat")
+	"""Saves the restaurant and the bookmark as new records in the db"""
+	
+	# pulls the needed fields from the request object
+	name = request.args["name"]
+	fsq_id = request.args["fsqId"]
+	lat = request.args["lat"]
+	lng = request.args["lng"]
+	cuisine = request.args["cuisine"]
+	print request.args
 
-	# print "save restaurants function started"
+	# FIXME: Needed for the new bookmark record: 
+	# this_user_id = model.session.query(model.User).get(id)
+	# this_restaurant_id = 
 
-	# name = item['name']
-	# lat = item['location']['lat']
-	# lng = item['location']['lng']
-	# cuisine = item['categories'][0]['shortName']
-	# saved_restaurant = model.Restaurant(fsq_id=fsq_id, name = name, 
+	print "Name: ", name
+	print "FSQ ID: ", fsq_id
+	print "Lat: ", lat 
+	print "Lng: ", lng 
+	print "Cuisine: ", cuisine 
+
+	# new_bookmark = model.Bookmark(user_id=this_user_id, 
+	# 	restaurant_id=this_restaurant_id)
+
+	# new_restaurant = model.Restaurant(fsq_id=fsq_id, name = name, 
 	# 					lat=lat, lng=lng, cuisine=cuisine)
- #    model.session.add(saved_restaurant)
- #    model.session.commit()
- 	return lat
+
+	# model.session.add_all(new_bookmark, new_restaurant)
+	# model.session.commit()
+
+	 # 	TO ADD: 
+	 # if bookmark is not in the db & restaurant in NOT in the db:
+	 # 	save bookmark
+	 # 	save restaurant
+	 # if bookmark is in the db & restaurant IS in the db:
+	 # 	save bookmark 
+	 # if bookmark is in the db 
+	 # 	flash "You have already added this bookmark."
+
+	return fsq_id
+ 	# return "<name=%s fsq_id=%d lat=%d lng=%d cuisine=%s>" % (name,
+ 	# fsq_id,  lat, lng, cuisine)
+
 	# return "Added %s restaurant to the restaurants table" % (saved_restaurant)
 
 if __name__ == "__main__":

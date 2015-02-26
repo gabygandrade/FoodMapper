@@ -12,7 +12,7 @@
 	    <tbody>
 		    {% for item in fs_venues_list %}
 		    	{% if item.location.address is defined %}
-				    <tr class='clickable-row' data-id= {{item.id}} data-lat={{item.location.lat}}>
+				    <tr class='clickable-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}">
 				        <td>{{ item['name'] }} </td>
 				        <td>{{ item['location']['address'] }}</td>
 				        <td>{{ item['location']['city'] }}</td>
@@ -29,9 +29,12 @@
 	<script>
 	$('.clickable-row').click(function(e){
 		var fsqId = $(this).data('id')
+		var name = $(this).data('name')
 		var lat = $(this).data('lat')
+		var lng = $(this).data('lng')
+		var cuisine = $(this).data('cuisine')
 		
-		$.get("/save_restaurant", {"fsqId":fsqId, "lat": lat}, function(data) {
+		$.get("/save_restaurant", {"name": name, "fsqId":fsqId, "lat": lat, "lng": lng, "cuisine": cuisine}, function(data) {
 			// Success callback function is returned data as a JSON object
 			console.log(data);
 			console.log("Got to save restaurant route!");
