@@ -4,86 +4,87 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, Boolean
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship, backref
 # import correlation
-													 
-engine = create_engine("sqlite:///main.db", echo=True)
+                                                     
+engine = create_engine("sqlite:///db/main.db", echo=True)       # specify file path for db
 session = scoped_session(sessionmaker(bind=engine,
                                       autocommit = False,
                                       autoflush = False))
 
 Base = declarative_base()
 Base.query = session.query_property()
-
-def create_db(): 
-	"""Create tables, as needed."""
-	Base.metadata.create_all()
+    
+def create_db():                                                 # actually create the db in the location relative to where I am
+    """Create tables as needed."""
+    # engine = create_engine("sqlite:///main.db", echo=True)
+    Base.metadata.create_all(engine)
 
 #================== users table  ==================
 
 class User(Base):
-	__tablename__ = "users"
-	id = Column(Integer, primary_key = True)
-	email = Column(String(64), nullable = False)
-	password = Column(String(64), nullable = False)
+    __tablename__ = "users"
+    id = Column(Integer, primary_key = True)
+    email = Column(String(64), nullable = False)
+    password = Column(String(64), nullable = False)
 
-def __repr__(self):
-    """Cleanly info about the user"""
-    return "<User id=%d username=%s email=%s password=%s zipcode=%s>" % (self.id, 
-    	self.username, self.email, self.password, self.zipcode)
+    def __repr__(self):
+        """Cleanly info about the user"""
+        return "<User id=%r email=%r password=%r>" % (self.id, 
+            self.email, self.password)
 
 #================== preferences table  ==================
 
 class Preference(Base):
-	"""Represents the user's cuisine preferences """
-	__tablename__ = "preferences"
-	id = Column(Integer, primary_key = True)
-	user_id = Column(Integer, ForeignKey('users.id'))
-	cuisine = Column(String(64), nullable = False)
+    """Represents the user's cuisine preferences """
+    __tablename__ = "preferences"
+    id = Column(Integer, primary_key = True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    cuisine = Column(String(64), nullable = False)
 
-def __repr__(self):
-    """Cleanly info about the preference"""
-    return "<preference id=%d user_id=%d cuisine=%s>" % (self.id, 
-    	self.user_id, self.cuisine)
+    def __repr__(self):
+        """Cleanly info about the preference"""
+        return "<preference id=%d user_id=%d cuisine=%s>" % (self.id, 
+            self.user_id, self.cuisine)
 
 #================== restaurants table  ==================
 
 class Restaurant(Base):
-	""" Represents saved information for restaurants """
-	__tablename__ = "restaurants"
-	id = Column(Integer, primary_key = True)
-	fsq_id = Column(Integer, nullable = False)		
-	name = Column(String(64), nullable = False)
-	lat = Column(Float, nullable = False)
-	lng = Column(Float, nullable = False)
-	cuisine = Column(String(60), nullable = False)
+    """ Represents saved information for restaurants """
+    __tablename__ = "restaurants"
+    id = Column(Integer, primary_key = True)
+    fsq_id = Column(String(64), nullable = False)       
+    name = Column(String(64), nullable = False)
+    lat = Column(Float, nullable = False)
+    lng = Column(Float, nullable = False)
+    cuisine = Column(String(60), nullable = False)
 
-def __repr__(self):
-    """Show info about the restaurant."""
-    return "<id=%d fsq_id=%d name=%s lat=%d lng=%d cuisine=%s>" % (self.id, 
-    	self.fsq_id, self.name, self.lat, self.lng, self.cuisine)						
+    def __repr__(self):
+        """Show info about the restaurant."""
+        return "<id=%r fsq_id=%r name=%s lat=%d lng=%d cuisine=%s>" % (self.id, 
+            self.fsq_id, self.name, self.lat, self.lng, self.cuisine)                       
 
 #================== bookmarks table  ==================
 
-class Bookmark(object):
-	""" Represents each user's saved restaurants (bookmarks)"""
-	__tablename__ = "bookmarks"
-	id = Column(Integer, primary_key = True)		
-	user_id = Column(Integer, ForeignKey('users.id'))
-	restaurant_id = Column(Integer, ForeignKey('restaurants.id'))
+class Bookmark(Base):
+    """ Represents each user's saved restaurants (bookmarks)"""
+    __tablename__ = "bookmarks"
+    id = Column(Integer, primary_key = True)        
+    user_id = Column(Integer, ForeignKey('users.id'))
+    restaurant_id = Column(Integer, ForeignKey('restaurants.id'))
 
-	user = relationship("User", backref	= backref('bookmarks'), order_by = id)
-	restaurant = relationship("Restaurant", backref('bookmarks'), order_by = id)
+    user = relationship("User", backref = backref('bookmarks', order_by = id))
+    restaurant = relationship("Restaurant", backref = backref('bookmarks', order_by = id))
 
-def __repr__(self):
-    """Show info about the bookmark."""
-    return "<id=%d user_id=%d restaurant_id=%d>" % (self.id, self.user_id, 
-    	self.restaurant_id)	
+    def __repr__(self):
+        """Show info about the bookmark."""
+        return "<id=%d user_id=%d restaurant_id=%d>" % (self.id, self.user_id, 
+            self.restaurant_id) 
 
-def main():
-	pass
+# def save_bookmark(this_user_id, this_restaurant_id):
+#   """Saves a bookmark to the bookmark table."""
+#   this_user_id = session.query(User).filter(id ==id).one()
 
-if __name__ == "__main__":
-	# make_tables()
-    main()
+#   new_bookmark = model.Bookmark(user_id=this_user_id,         
+#       restaurant_id=this_restaurant_id)
 
 
 """Schema:

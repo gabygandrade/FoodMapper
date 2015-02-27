@@ -34,10 +34,17 @@
 		var lng = $(this).data('lng')
 		var cuisine = $(this).data('cuisine')
 		
-		$.get("/save_restaurant", {"name": name, "fsqId":fsqId, "lat": lat, "lng": lng, "cuisine": cuisine}, function(data) {
-			// Success callback function is returned data as a JSON object
-			console.log(data);
-			console.log("Got to save restaurant route!");
+		var fsqData = {
+			"name": name, 
+			"fsqId":fsqId, 
+			"lat": lat, 
+			"lng": lng, 
+			"cuisine": cuisine
+		}
+
+		$.get("/save-db", fsqData, function(response) {
+			//do something with the response 
+			console.log(response);
 		});
 	}); 
 	</script>

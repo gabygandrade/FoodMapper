@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, request, g, url_for, flash, make_response 
 from flask import session as fsess
-# import model
+from db import model
 import jinja2
 import os
 import foursquareapi
@@ -18,7 +18,7 @@ def index():
 	"""Render the page where users can search for a restaurant """
 	return render_template("index.html")
 
-@app.route("/restaurant_results")
+@app.route("/restaurant-results")
 def show_rest_info():
 	"""When the user submits their search, gather the user input 
 	to create the query request to the Foursquare (FSQ) API. 
@@ -26,7 +26,7 @@ def show_rest_info():
 	template"""
 	
 	# pull out parameters from request
-	search_restaurant = request.args.get('rest-name')
+	search_restaurant = request.args.get('search-restaurant')
 	search_location = request.args.get('search-location')
 	print (search_restaurant, search_location)
 	# create a python dict from the Foursquare API JSON response 
@@ -50,54 +50,84 @@ def show_rest_info():
 		flash("Please enter a city name.") 
 		return redirect('/')
 
-@app.route("/save_restaurant")		# FIXME: change name of this route to save_to_db()
-def save_restaurant():					# Do I need to make a call to the foursquare API again here to get the restaurant info to populate my tables? 
+@app.route("/save-db")		# FIXME: change name of this route to save_to_db()
+def save_to_db():		
 	"""Saves the restaurant and the bookmark as new records in the db"""
 	
+	user_id = 1
+
 	# pulls the needed fields from the request object
 	name = request.args["name"]
 	fsq_id = request.args["fsqId"]
 	lat = request.args["lat"]
 	lng = request.args["lng"]
 	cuisine = request.args["cuisine"]
-	print request.args
 
-	# FIXME: Needed for the new bookmark record: 
-	# this_user_id = model.session.query(model.User).get(id)
-	# this_restaurant_id = 
-
+	print "Request.args object: ", request.args
 	print "Name: ", name
 	print "FSQ ID: ", fsq_id
 	print "Lat: ", lat 
 	print "Lng: ", lng 
 	print "Cuisine: ", cuisine 
 
-	# new_bookmark = model.Bookmark(user_id=this_user_id, 
-	# 	restaurant_id=this_restaurant_id)
+	#OTHER NEEDED QUERIES:
+	this_user_id = model.session.query(model.User).get(user_id)		# QUESTION: HOw to use this ???? Need to replace this later with the user in session
+	print "This user id", this_user_id
+	print "This user's bookmarks ", this_user.bookmarks
 
-	# new_restaurant = model.Restaurant(fsq_id=fsq_id, name = name, 
-	# 					lat=lat, lng=lng, cuisine=cuisine)
+	# this_restaurant_id = model.session.query(model.Restaurant).get(id).one()
+	# print "This restaurant :", this_restaurant_id 
+
+	"""WORKS 
+	new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
+					lat=lat, lng=lng, cuisine=cuisine)
+	# new_restaurant.id - TO REFERENCE THE ID OF NEW_RESTAURANT
+	model.session.add(new_restaurant)
+	model.session.commit()
+	"""
+
+	# ADD NEW BOOKMARKS:
+
+	# new_bookmark = model.Bookmark(user_id=user_id, restaurant_id=this_restaurant_id)
+	# model.session.add(new_bookmark)
+	# model.session.commit()
+
+	# ADD LATER: 
 
 	# model.session.add_all(new_bookmark, new_restaurant)
 	# model.session.commit()
 
-	 # 	TO ADD: 
-	 # if bookmark is not in the db & restaurant in NOT in the db:
-	 # 	save bookmark
-	 # 	save restaurant
-	 # if bookmark is in the db & restaurant IS in the db:
-	 # 	save bookmark 
-	 # if bookmark is in the db 
-	 # 	flash "You have already added this bookmark."
+
+		# CONDITIONAL LOGIC TO ADD: 
+	
+	# Query to see if there the user has a bookmark with the restaurant_id 
+	# session.query(Bookmark).filter(Bookmark.user_id == u.id, Bookmark.restaurant_id == )
+	
+	# SWITCH LOGIC - CHECK FOR RESTAURANTS FIRST 
+		# if restaurant not in db (query for this), then add a bookmark 
 
 	return fsq_id
+
  	# return "<name=%s fsq_id=%d lat=%d lng=%d cuisine=%s>" % (name,
  	# fsq_id,  lat, lng, cuisine)
-
 	# return "Added %s restaurant to the restaurants table" % (saved_restaurant)
 
 if __name__ == "__main__":
     app.run(debug = True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Work on login after map
 
