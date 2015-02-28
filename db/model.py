@@ -27,7 +27,7 @@ class User(Base):
     password = Column(String(64), nullable = False)
 
     def __repr__(self):
-        """Cleanly info about the user"""
+        """Cleanly info about the user."""
         return "<User id=%r email=%r password=%r>" % (self.id, 
             self.email, self.password)
 
@@ -41,14 +41,14 @@ class Preference(Base):
     cuisine = Column(String(64), nullable = False)
 
     def __repr__(self):
-        """Cleanly info about the preference"""
-        return "<preference id=%d user_id=%d cuisine=%s>" % (self.id, 
+        """Cleanly info about the preference."""
+        return "<Preference id=%d user_id=%d cuisine=%s>" % (self.id, 
             self.user_id, self.cuisine)
 
 #================== restaurants table  ==================
 
 class Restaurant(Base):
-    """ Represents saved information for restaurants """
+    """ Represents saved information for restaurants."""
     __tablename__ = "restaurants"
     id = Column(Integer, primary_key = True)
     fsq_id = Column(String(64), nullable = False)       
@@ -59,13 +59,13 @@ class Restaurant(Base):
 
     def __repr__(self):
         """Show info about the restaurant."""
-        return "<id=%r fsq_id=%r name=%s lat=%d lng=%d cuisine=%s>" % (self.id, 
+        return "<id=%r fsq_id=%r name=%r lat=%r lng=%r cuisine=%r>" % (self.id, 
             self.fsq_id, self.name, self.lat, self.lng, self.cuisine)                       
 
 #================== bookmarks table  ==================
 
 class Bookmark(Base):
-    """ Represents each user's saved restaurants (bookmarks)"""
+    """ Represents each user's saved restaurants (bookmarks)."""
     __tablename__ = "bookmarks"
     id = Column(Integer, primary_key = True)        
     user_id = Column(Integer, ForeignKey('users.id'))
@@ -76,7 +76,7 @@ class Bookmark(Base):
 
     def __repr__(self):
         """Show info about the bookmark."""
-        return "<id=%d user_id=%d restaurant_id=%d>" % (self.id, self.user_id, 
+        return "<Bookmark id=%r user_id=%r restaurant_id=%r>" % (self.id, self.user_id, 
             self.restaurant_id) 
 
 # def save_bookmark(this_user_id, this_restaurant_id):

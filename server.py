@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, g, url_for, flash, make_response 
+from flask import Flask, render_template, redirect, request, g, url_for, flash, make_response, jsonify
 from flask import session as fsess
 from db import model
 import jinja2
@@ -70,47 +70,28 @@ def save_to_db():
 	print "Lng: ", lng 
 	print "Cuisine: ", cuisine 
 
-	#OTHER NEEDED QUERIES:
-	this_user_id = model.session.query(model.User).get(user_id)		# QUESTION: HOw to use this ???? Need to replace this later with the user in session
-	print "This user id", this_user_id
-	print "This user's bookmarks ", this_user.bookmarks
+	#If the restaurant does not exist in the db (& implicitly the bookmark doesn't exist)
+	if not model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first(): 		# same as saying query.first() == None;
+		# add new restaurant 
+		new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
+						lat=lat, lng=lng, cuisine=cuisine)
+		model.session.add(new_restaurant)
+		model.session.commit()
 
-	# this_restaurant_id = model.session.query(model.Restaurant).get(id).one()
-	# print "This restaurant :", this_restaurant_id 
+		# refresh to refer to the SQLAlchemy reference for the new_restaurant
+		model.session.refresh(new_restaurant) 
 
-	"""WORKS 
-	new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
-					lat=lat, lng=lng, cuisine=cuisine)
-	# new_restaurant.id - TO REFERENCE THE ID OF NEW_RESTAURANT
-	model.session.add(new_restaurant)
-	model.session.commit()
-	"""
+		# add a new bookmark 
+		new_bookmark = model.Bookmark(user_id=user_id, restaurant_id=new_restaurant.id)		# change this hardcoding later to user who is logged in
+		model.session.add(new_bookmark)
+		model.session.commit()
 
-	# ADD NEW BOOKMARKS:
+		return jsonify({'message': 'You added %s to your bookmarks!' % new_restaurant.name}) 
 
-	# new_bookmark = model.Bookmark(user_id=user_id, restaurant_id=this_restaurant_id)
-	# model.session.add(new_bookmark)
-	# model.session.commit()
-
-	# ADD LATER: 
-
-	# model.session.add_all(new_bookmark, new_restaurant)
-	# model.session.commit()
-
-
-		# CONDITIONAL LOGIC TO ADD: 
-	
-	# Query to see if there the user has a bookmark with the restaurant_id 
-	# session.query(Bookmark).filter(Bookmark.user_id == u.id, Bookmark.restaurant_id == )
-	
-	# SWITCH LOGIC - CHECK FOR RESTAURANTS FIRST 
-		# if restaurant not in db (query for this), then add a bookmark 
-
-	return fsq_id
-
- 	# return "<name=%s fsq_id=%d lat=%d lng=%d cuisine=%s>" % (name,
- 	# fsq_id,  lat, lng, cuisine)
-	# return "Added %s restaurant to the restaurants table" % (saved_restaurant)
+	# elif the restaurant exists & the bookmark ALSO ALREADY exists - ie. the restaurant id is already associated with that user 
+	elif not model.session.query(model.Bookmark).filter_by(model.Bookmark.user_id==user_id,
+		model.Bookmark.restaurant.fsq_id == fsq_id).first():
+		return jsonify({'message': 'You already added this bookmark!'}) 
 
 if __name__ == "__main__":
     app.run(debug = True)
