@@ -70,8 +70,9 @@ def save_to_db():
 	print "Lng: ", lng 
 	print "Cuisine: ", cuisine 
 
-	#If the restaurant does not exist in the db (& implicitly the bookmark doesn't exist)
-	if not model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first(): 		# same as saying query.first() == None;
+	#If the restaurant DOESN'T exist in the db (& thus implicitly the bookmark doesn't exist)
+	if model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first() == None: 		# same as saying if not query
+		
 		# add new restaurant 
 		new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
 						lat=lat, lng=lng, cuisine=cuisine)
@@ -88,13 +89,22 @@ def save_to_db():
 
 		return jsonify({'message': 'You added %s to your bookmarks!' % new_restaurant.name}) 
 
-	# elif the restaurant exists & the bookmark ALSO ALREADY exists - ie. the restaurant id is already associated with that user 
-	elif not model.session.query(model.Bookmark).filter_by(model.Bookmark.user_id==user_id,
-		model.Bookmark.restaurant.fsq_id == fsq_id).first():
-		return jsonify({'message': 'You already added this bookmark!'}) 
+	# elif the restaurant exists & the bookmark ALSO ALREADY exists for the user - ie. the restaurant id is already associated with that user 
+	elif model.session.query(model.Bookmark).filter(model.Bookmark.user_id==1, 		# if this is true - ie. query runs and is true
+		model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first():
+		# return jsonify({'message': 'You already added this bookmark!'}) 
+		return jsonify({'message': 'You already bookmarked this restaurant.'}) 
+
+	return 'something else'		# what should go here?
 
 if __name__ == "__main__":
     app.run(debug = True)
+
+
+    # model.session.query(Bookmark).filter(Bookmark.user_id==1, model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
+
+    # for SQLAlchemy: 
+    session.query(Bookmark).filter(Bookmark.user_id==1,Bookmark.restaurant.has(Restaurant.fsq_id=='4607c995f964a520d6441fe3')).first()
 
 
 
