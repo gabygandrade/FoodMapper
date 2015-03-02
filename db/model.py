@@ -11,7 +11,7 @@ session = scoped_session(sessionmaker(bind=engine,
                                       autocommit = False,
                                       autoflush = False))
 
-Base = declarative_base()
+Base = declarative_base()                       # 'Base' is how we declare a class to be managed by SQLA
 Base.query = session.query_property()
     
 def create_db():                                                 # actually create the db in the location relative to where I am

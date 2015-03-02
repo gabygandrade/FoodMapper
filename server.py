@@ -37,7 +37,8 @@ def show_rest_info():
 		fs_venues_list = fs_dict['response']['venues']
 		# print "FS Venues List: ", fs_venues_list
 
-		# if FSQ query returned no search results  
+		# if FSQ query returned no search results
+  
 		if fs_venues_list == []:								
 			flash("Your search came up empty. Please try another search.") 
 		
@@ -54,7 +55,7 @@ def show_rest_info():
 def save_to_db():		
 	"""Saves the restaurant and the bookmark as new records in the db"""
 	
-	user_id = 1
+	USER_ID = 1	#FIXME: When add login with more users, fix this to refer to the logged in user's id
 
 	# pulls the needed fields from the request object
 	name = request.args["name"]
@@ -73,7 +74,7 @@ def save_to_db():
 	#If the restaurant DOESN'T exist in the db (& thus implicitly the bookmark doesn't exist)
 	if model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first() == None: 		# same as saying if not query
 		
-		# add new restaurant 
+		# save a new restaurant to the restaurants table
 		new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
 						lat=lat, lng=lng, cuisine=cuisine)
 		model.session.add(new_restaurant)
@@ -82,30 +83,32 @@ def save_to_db():
 		# refresh to refer to the SQLAlchemy reference for the new_restaurant
 		model.session.refresh(new_restaurant) 
 
-		# add a new bookmark 
-		new_bookmark = model.Bookmark(user_id=user_id, restaurant_id=new_restaurant.id)		# change this hardcoding later to user who is logged in
+		# save a new bookmark to the bookmarks table
+		new_bookmark = model.Bookmark(user_id=USER_ID, restaurant_id=new_restaurant.id)		# change this hardcoding later to user who is logged in
 		model.session.add(new_bookmark)
 		model.session.commit()
 
 		return jsonify({'message': 'You added %s to your bookmarks!' % new_restaurant.name}) 
 
-	# elif the restaurant exists & the bookmark ALSO ALREADY exists for the user - ie. the restaurant id is already associated with that user 
-	elif model.session.query(model.Bookmark).filter(model.Bookmark.user_id==1, 		# if this is true - ie. query runs and is true
+	# elif the restaurant DOES exist in the db & the bookmark ALSO ALREADY exists for the user - ie. the restaurant id is already associated with that user 
+	elif model.session.query(model.Bookmark).filter(model.Bookmark.user_id==USER_ID, 			# if this is true - ie. query runs and is true
 		model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first():
-		# return jsonify({'message': 'You already added this bookmark!'}) 
-		return jsonify({'message': 'You already bookmarked this restaurant.'}) 
+		return jsonify({'message': 'You already bookmarked this restaurant!'}) 
 
-	return 'something else'		# what should go here?
+	# elif the restaurant DOES exist BUT the bookmark doesn't exist for this user - ie. the restaurant id is not associated with a bookmark for this user
+	# elif not model.session.query(model.Bookmark).filter(model.Bookmark.user_id==2, 			# FIXME: Need to create this query
+	# 	model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first().
+	# 	print "User 2 added the same restaurant as user 1 to their bookmarks"
+		# return jsonify({'message': ''})
+
+	return 'something else'		# FIXME: what should go here?
+
+@app.route("/map")
+def show_map():
+	return render_template("map.html")	
 
 if __name__ == "__main__":
     app.run(debug = True)
-
-
-    # model.session.query(Bookmark).filter(Bookmark.user_id==1, model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
-
-    # for SQLAlchemy: 
-    session.query(Bookmark).filter(Bookmark.user_id==1,Bookmark.restaurant.has(Restaurant.fsq_id=='4607c995f964a520d6441fe3')).first()
-
 
 
 
