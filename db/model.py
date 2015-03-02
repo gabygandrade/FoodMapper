@@ -3,8 +3,6 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DateTime, Float, Boolean
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship, backref
-
-# import correlation
                                                      
 engine = create_engine("sqlite:///db/main.db", echo=True)       # specify file path for db
 session = scoped_session(sessionmaker(bind=engine,
@@ -16,7 +14,6 @@ Base.query = session.query_property()
     
 def create_db():                                                 # actually create the db in the location relative to where I am
     """Create tables as needed."""
-    # engine = create_engine("sqlite:///main.db", echo=True)
     Base.metadata.create_all(engine)
 
 #================== users table  ==================
