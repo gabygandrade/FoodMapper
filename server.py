@@ -106,9 +106,16 @@ def save_to_db():
 
 @app.route("/map")
 def show_map():
+	""" Show the map with the user's bookmarks"""
 	# get the user's bookmarked restaurants lat and long
-	all_bookmarks = model.session.query(Bookmark).filter()
+	
+	USER_ID = 1
+	saved_bookmarks = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==USER_ID).all()
+	print saved_bookmarks 
+	# for restaurant in saved_bookmarks:
+
 	return render_template("map.html")	
+
 
 if __name__ == "__main__":
     app.run(debug = True)
