@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block head %}
+	<style>
+		html { height:100% }
+		body { height: 100%; margin:0; padding:0 }
+		.container { height:100% }
+		#map-canvas {
+	        height: 75%;
+	        margin: 0px;
+	        padding: 0px
+      	}
+    </style>
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>		<!--FIXME: Come back and put an API key here? -->
+{% endblock %}
+
+{% block content %}
+	<div id="map-canvas"></div>
+{% endblock %}
+
+{% block js_code %}
+<script>
+		var map;
+		//create a LatLng object to hold hardcoded location for Hackbright - in case browser does not support HTML5 geolocation
+		var myLatLng=new google.maps.LatLng(37.788708799999995,-122.41170040000003);
+
+		//initialize the map
+		function initialize() {
+			
+			//var mapOptions defines the properties for the map
+			var mapOptions = {
+				zoom: 13,
+			};
+
+			//create a map object w/parameters from mapOptions
+			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+			//// Try HTML5 geolocation
+			if(navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function(position) {
+					var pos = new google.maps.LatLng(position.coords.latitude,
+					position.coords.longitude);
+
+				// info window with HTML5 location message 
+				// 	var infowindow = new google.maps.InfoWindow({
+				//         map: map,
+				//         position: pos,
+				//         content: 'Location found using HTML5.'
+				//       });
+
+				map.setCenter(pos);
+
+				//create a marker for user's current location 
+				var marker=new google.maps.Marker({
+		  			position:pos,
+		  		});
+				//add the marker to the map by using setMap() method
+				marker.setMap(map);
+
+				}, 
+
+				function() {
+					handleNoGeolocation(true);
+				});
+
+			} // end of if geolocation statement
+			else {
+			// Browser doesn't support Geolocation
+				handleNoGeolocation(false);
+				map.setCenter(myLatLng);
+			}
+		} //end initialize function
+
+		function handleNoGeolocation(errorFlag) {
+			if (errorFlag) {
+				var content = 'Error: The Geolocation service failed.';
+			} else {
+				var content = 'Error: Your browser doesn\'t support geolocation.';
+			}
+			var options = {
+				map: map,
+				position: new google.maps.LatLng(60, 105),
+				content: content
+			};
+			var infowindow = new google.maps.InfoWindow(options);
+				map.setCenter(options.position);
+		}
+
+		//event listener to load the map when page is loaded
+		google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+{% endblock %}

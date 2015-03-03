@@ -109,9 +109,14 @@ def show_map():
 	""" Show the map with the user's bookmarks"""
 	# get the user's bookmarked restaurants lat and long
 	
-	USER_ID = 1
-	saved_bookmarks = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==USER_ID).all()
-	print saved_bookmarks 
+	# USER_ID = 1
+	# saved_bookmarks = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==USER_ID).all()
+
+	# saved_bookmarks_info = session.query(Bookmark.restaurant_id, Restaurant.id, Restaurant.name, 
+	# 	Restaurant.lat, Restaurant.lng, Restaurant.cuisine).join(Restaurant).filter(Bookmark.user_id==1)
+
+	# print saved_bookmarks 
+	# print saved_bookmarks_info 
 	# for restaurant in saved_bookmarks:
 
 	return render_template("map.html")	
