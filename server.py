@@ -106,21 +106,26 @@ def save_to_db():
 
 @app.route("/map")
 def show_map():
-	""" Show the map with the user's bookmarks"""
-	# get the user's bookmarked restaurants lat and long
-	
-	# USER_ID = 1
-	# saved_bookmarks = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==USER_ID).all()
+	"""Show map with the user's bookmarks"""
 
-	# saved_bookmarks_info = session.query(Bookmark.restaurant_id, Restaurant.id, Restaurant.name, 
-	# 	Restaurant.lat, Restaurant.lng, Restaurant.cuisine).join(Restaurant).filter(Bookmark.user_id==1)
+	USER_ID = 1
 
-	# print saved_bookmarks 
-	# print saved_bookmarks_info 
-	# for restaurant in saved_bookmarks:
+	# get restaurant info for all the user's bookmarked restaurants
+	restaurant_data = model.session.query(model.Bookmark.id, model.Restaurant.fsq_id, model.Restaurant.name, 
+		model.Restaurant.lat, model.Restaurant.lng, model.Restaurant.cuisine).join(model.Restaurant).filter(model.Bookmark.user_id==USER_ID).all()
 
-	return render_template("map.html")	
+	# create a dictionary with all the info necessary to pass on to jinja in order to map markers 
+	restaurant_dict = {}
+	for item in restaurant_data:
+		restaurant_dict[item.id] = {}
+		restaurant_dict[item.id]["fsq_id"] = item.fsq_id
+		restaurant_dict[item.id]["name"] = item.name
+		restaurant_dict[item.id]["lat"] = item.lat
+		restaurant_dict[item.id]["lng"] = item.lng
+		restaurant_dict[item.id]["cuisine"] = item.cuisine
 
+	print "restaurant_dict", restaurant_dict 
+	return render_template("map.html", restaurant_dict = jsonify(restaurant_dict))	
 
 if __name__ == "__main__":
     app.run(debug = True)
