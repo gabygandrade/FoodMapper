@@ -6,7 +6,7 @@
 		body { height: 100%; margin:0; padding:0 }
 		.container { height:100% }
 		#map-canvas {
-	        height: 300px;
+	        height: 500px;
 	        margin: 0px;
 	        padding: 0px
       	}
@@ -21,11 +21,12 @@
 
 {% block js_code %}
 <script>
-		var map;
-		myLatLng = new google.maps.LatLng(37.788708799999995,-122.41170040000003)
-
 		//initialize the map
 		function initialize() {
+			var map;
+			var myLatLng = new google.maps.LatLng(37.788708799999995,-122.41170040000003)
+			var contentString = '<div id="content">'+ '<h2>Hackbright</h2>'+'</div>';
+
 			//var mapOptions defines the properties for the map
 			var mapOptions = {
 				zoom: 13,
@@ -42,6 +43,16 @@
 	  		});
 			//add the marker to the map by using setMap() method
 			marker.setMap(map);
+
+			//add info window object
+			 var infowindow = new google.maps.InfoWindow({
+      			content: contentString
+ 			 });
+
+ 			//add event listener to marker 
+ 			google.maps.event.addListener(marker, 'click', function() {
+    			infowindow.open(map,marker);
+  			});
 
 			$.getJSON("/map-bookmarks", function(response){
 				var json = response;

@@ -11,7 +11,7 @@
 	        <th>State</th>
 	    </thead>
 	    <tbody>
-		    {% for item in fs_venues_list %}
+		    {% for item in fs_venues %}
 		    	{% if item.location.address is defined %}
 				    <tr class='clickable-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}">
 				        <td>{{ item['name'] }} </td>

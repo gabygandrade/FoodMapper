@@ -75,7 +75,7 @@ def show_rest_info():
 			flash("Your search came up empty. Please try another search.") 
 		
 		return render_template("restaurant_results.html", 
-		fs_venues_list=fs_venues_list)
+		fs_venues=fs_venues_list)
 
 	except:
 		# if the user entered a location FSQ cannot geocode				
