@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, g, url_for, flash, make_response, jsonify
-from flask import session as fsess
+from flask import session
 from db import model
 import jinja2
 import os
@@ -12,6 +12,38 @@ app.jinja_env.undefined = jinja2.StrictUndefined
 
 fs_client_id = config.FS_CLIENT_ID 			
 fs_client_secret = config.FS_CLIENT_SECRET
+
+@app.route("/login")
+def display_login():
+	# Displays login page
+	return render_template("login.html")
+
+@app.route("/login", methods=['POST'])
+def login_user():
+	"""Makes POST request to get user input, and user is added to the Flask session """
+	
+	email = request.form['email']
+	password = request.form['password']
+
+	all_users = model.session.query(model.User)
+	try:
+		user = all_users.filter(model.User.email==email, model.User.password==password).one()
+		session['user_email'] = user.email
+		session['user_id'] = user.id
+		session['loggin_in'] = True
+		flash ("You are logged in")
+		return redirect("/") 
+	except InvalidRequestError:
+		flash("That email or password is incorrect.")
+		return render_template("login.html")
+
+	print user.email
+	print user.id
+
+
+@app.route("/logout")
+def logout():
+	""
 
 @app.route("/")
 def index():
@@ -91,41 +123,47 @@ def save_to_db():
 		model.session.add(new_bookmark)
 		model.session.commit()
 
-		return jsonify({'message': 'You added %s to your bookmarks!' % new_restaurant.name}) 
+		return jsonify({"message": "You added %s to your bookmarks!" % new_restaurant.name}) 
 
 	# the bookmark ALSO ALREADY exists for the user (& thus the restaurant also already exists) - ie. the restaurant id is already associated with that user 
 	elif saved_bookmark:
-		return jsonify({'message': 'You already bookmarked this restaurant!'}) 
+		return jsonify({"message": "You already bookmarked this restaurant!"}) 
 
 	# elif the restaurant DOES exist BUT the bookmark doesn't exist for this user - ie. the restaurant id is not associated with a bookmark for this user
 	elif saved_restaurant and not saved_bookmark:
 		new_bookmark = model.Bookmark(user_id=USER_ID, restaurant_id=saved_restaurant.id)		# change this hardcoding later to user who is logged in
 		model.session.add(new_bookmark)
 		model.session.commit()
-		return jsonify({'message': 'You added %s to your bookmarks!' % saved_restaurant.name})	
+		return jsonify({"message": "You added %s to your bookmarks!" % saved_restaurant.name})	
 
 @app.route("/map")
 def show_map():
-	"""Show map with the user's bookmarks"""
+	"""Render map"""
+	return render_template("map.html")	
+
+@app.route("/map-bookmarks")
+def map_bookmarks():
+	"""Map the user's bookmarks"""
 
 	USER_ID = 1
 
 	# get restaurant info for all the user's bookmarked restaurants
-	restaurant_data = model.session.query(model.Bookmark.id, model.Restaurant.fsq_id, model.Restaurant.name, 
-		model.Restaurant.lat, model.Restaurant.lng, model.Restaurant.cuisine).join(model.Restaurant).filter(model.Bookmark.user_id==USER_ID).all()
+	data = model.session.query(model.Bookmark.id, model.Restaurant.fsq_id, 
+		model.Restaurant.name, model.Restaurant.lat, model.Restaurant.lng, model.Restaurant.cuisine).join(model.Restaurant).filter(model.Bookmark.user_id==USER_ID).all()
 
 	# create a dictionary with all the info necessary to pass on to jinja in order to map markers 
-	restaurant_dict = {}
-	for item in restaurant_data:
-		restaurant_dict[item.id] = {}
-		restaurant_dict[item.id]["fsq_id"] = item.fsq_id
-		restaurant_dict[item.id]["name"] = item.name
-		restaurant_dict[item.id]["lat"] = item.lat
-		restaurant_dict[item.id]["lng"] = item.lng
-		restaurant_dict[item.id]["cuisine"] = item.cuisine
+	restaurant_info = {}
+	for item in data:
+		restaurant_info[item.id] = {}
+		restaurant_info[item.id]["fsq_id"] = item.fsq_id
+		restaurant_info[item.id]["name"] = item.name
+		restaurant_info[item.id]["lat"] = item.lat
+		restaurant_info[item.id]["lng"] = item.lng
+		restaurant_info[item.id]["cuisine"] = item.cuisine
 
-	print "restaurant_dict", restaurant_dict 
-	return render_template("map.html", restaurant_dict = jsonify(restaurant_dict))	
+	print "restaurant_info: ", restaurant_info
+
+	return jsonify(restaurant_info)
 
 if __name__ == "__main__":
     app.run(debug = True)
@@ -135,35 +173,3 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-
-
-
-# Work on login after map
-
-# @app.route("/login")
-# def display_login():
-# 	# Displays login page
-# 	return render_template("login.html")
-
-# @app.route("/login", methods=['POST'])
-# def login_user():
-# 	# Makes POST request to get user input to log into account
-# 	print "login function running"
-# 	email = request.form['email']
-# 	password = request.form['password']
-# 	print (email, password)
-# 	# login = model.login(email, password)	# need to create login function in model to tie this back to 
-# 	return redirect("/login") 
-
-# def save_object(obj_instance):
-# 	try:
-# 		session.add(obj_instance)
-# 		session.commit()
-# 		return 200
-# 	except:
-# 		return 500
