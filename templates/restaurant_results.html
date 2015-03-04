@@ -11,7 +11,7 @@
 	        <th>State</th>
 	    </thead>
 	    <tbody>
-		    {% for item in fs_venues %}
+		    {% for item in fsq_venues %}
 		    	{% if item.location.address is defined %}
 				    <tr class='clickable-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}">
 				        <td>{{ item['name'] }} </td>
@@ -43,6 +43,7 @@
 			"cuisine": cuisine
 		}
 
+		//show a message telling user they have bookmarked the restaurant - callback function for get request
 		function showMessage(response) {
 			console.log(response);
 			$(".bookmark-message").append(response.message);

@@ -3,47 +3,15 @@ from flask import session
 from db import model
 import jinja2
 import os
-import foursquareapi
+import fsqapi
 import config
 
 app = Flask(__name__)
 app.secret_key = config.APP_SECRET_KEY
 app.jinja_env.undefined = jinja2.StrictUndefined 
 
-fs_client_id = config.FS_CLIENT_ID 			
-fs_client_secret = config.FS_CLIENT_SECRET
-
-@app.route("/login")
-def display_login():
-	# Displays login page
-	return render_template("login.html")
-
-@app.route("/login", methods=['POST'])
-def login_user():
-	"""Makes POST request to get user input, and user is added to the Flask session """
-	
-	email = request.form['email']
-	password = request.form['password']
-
-	all_users = model.session.query(model.User)
-	try:
-		user = all_users.filter(model.User.email==email, model.User.password==password).one()
-		session['user_email'] = user.email
-		session['user_id'] = user.id
-		session['loggin_in'] = True
-		flash ("You are logged in")
-		return redirect("/") 
-	except InvalidRequestError:
-		flash("That email or password is incorrect.")
-		return render_template("login.html")
-
-	print user.email
-	print user.id
-
-
-@app.route("/logout")
-def logout():
-	pass
+fsq_client_id = config.FSQ_CLIENT_ID 			
+fsq_client_secret = config.FSQ_CLIENT_SECRET
 
 @app.route("/")
 def index():
@@ -64,26 +32,25 @@ def show_rest_info():
 	# create a python dict from the Foursquare API JSON response 
 	
 	try:
-		fs_dict = foursquareapi.search_FSQ_venues(fs_client_id, fs_client_secret, search_restaurant, search_location) 	# Look in foursquareapi module and run the create_fs_dict function with the parameters here
+		fsq_dict = fsqapi.search_venues(fsq_client_id, fsq_client_secret, search_restaurant, search_location) 	# Look in foursquareapi module and create fsq dict function with the parameters here
 		# parse that python dict to get just the part of the request w/needed venues info
-		fs_venues_list = fs_dict['response']['venues']
-		# print "FS Venues List: ", fs_venues_list
+		fsq_venues_list = fsq_dict['response']['venues']
+		# print "FSQ Venues List: ", fsq_venues_list
 
 		# if FSQ query returned no search results
-  
-		if fs_venues_list == []:								
+		if fsq_venues_list == []:								
 			flash("Your search came up empty. Please try another search.") 
 		
-		return render_template("restaurant_results.html", 
-		fs_venues=fs_venues_list)
+		return render_template("restaurant_results.html", fsq_venues=fsq_venues_list)
 
 	except:
 		# if the user entered a location FSQ cannot geocode				
-		fs_venues_list = []
+		fsq_venues_list = []
+
 		flash("Please enter a city name.") 
 		return redirect('/')
 
-@app.route("/save-db")		# FIXME: change name of this route to save_to_db()
+@app.route("/save-db")	
 def save_to_db():		
 	"""Saves the restaurant and the bookmark as new records in the db"""
 	
@@ -125,13 +92,13 @@ def save_to_db():
 
 		return jsonify({"message": "You added %s to your bookmarks!" % new_restaurant.name}) 
 
-	# the bookmark ALSO ALREADY exists for the user (& thus the restaurant also already exists) - ie. the restaurant id is already associated with that user 
+	# the bookmark ALREADY exists for the user (& thus the restaurant also already exists) - ie. the restaurant id is already associated with that user 
 	elif saved_bookmark:
 		return jsonify({"message": "You already bookmarked this restaurant!"}) 
 
 	# elif the restaurant DOES exist BUT the bookmark doesn't exist for this user - ie. the restaurant id is not associated with a bookmark for this user
 	elif saved_restaurant and not saved_bookmark:
-		new_bookmark = model.Bookmark(user_id=USER_ID, restaurant_id=saved_restaurant.id)		# change this hardcoding later to user who is logged in
+		new_bookmark = model.Bookmark(user_id=USER_ID, restaurant_id=saved_restaurant.id)		# FIXME: change this hardcoding later to user who is logged in
 		model.session.add(new_bookmark)
 		model.session.commit()
 		return jsonify({"message": "You added %s to your bookmarks!" % saved_restaurant.name})	
@@ -164,6 +131,38 @@ def map_bookmarks():
 	print "restaurant_info: ", restaurant_info
 
 	return jsonify(restaurant_info)
+
+# @app.route("/login")
+# def display_login():
+# 	# Displays login page
+# 	return render_template("login.html")
+
+# @app.route("/login", methods=['POST'])
+# def login_user():
+# 	"""Makes POST request to get user input, and user is added to the Flask session """
+	
+# 	email = request.form['email']
+# 	password = request.form['password']
+
+# 	all_users = model.session.query(model.User)
+# 	try:
+# 		user = all_users.filter(model.User.email==email, model.User.password==password).one()
+# 		session['user_email'] = user.email
+# 		session['user_id'] = user.id
+# 		session['loggin_in'] = True
+# 		flash ("You are logged in")
+# 		return redirect("/") 
+# 	except InvalidRequestError:
+# 		flash("That email or password is incorrect.")
+# 		return render_template("login.html")
+
+# 	print user.email
+# 	print user.id
+
+@app.route("/logout")
+def logout():
+	pass
+
 
 if __name__ == "__main__":
     app.run(debug = True)

@@ -60,11 +60,14 @@
 				$.each(json, function(key, data){
 					var lat = data.lat
 					var lng = data.lng 
-					
 					var myLatLng = new google.maps.LatLng(lat, lng);
+
 					var name = data.name
 					var cuisine = data.cuisine
-					var restcontent = '<div id="content">'+ '<h3>'+name+'</h3>'+'</div>'
+					var restcontent = '<div id="content">'
+					+'<h3>' + name + '</h3>'
+					+ '<p>'+ cuisine +'</p>'
+					+'</div>'
 					
 					var marker = new google.maps.Marker({
 						position: myLatLng,
