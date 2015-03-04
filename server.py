@@ -43,7 +43,7 @@ def login_user():
 
 @app.route("/logout")
 def logout():
-	""
+	pass
 
 @app.route("/")
 def index():

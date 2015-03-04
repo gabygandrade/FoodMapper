@@ -60,13 +60,28 @@
 				$.each(json, function(key, data){
 					var lat = data.lat
 					var lng = data.lng 
+					
 					var myLatLng = new google.maps.LatLng(lat, lng);
+					var name = data.name
+					var cuisine = data.cuisine
+					var restcontent = '<div id="content">'+ '<h3>'+name+'</h3>'+'</div>'
+					
 					var marker = new google.maps.Marker({
 						position: myLatLng,
 						map: map
 					}); //end of getJSON 
-				marker.setMap(map);
-				});
+					marker.setMap(map);
+
+					var infowindow = new google.maps.InfoWindow({
+      				content: restcontent
+ 			 		});
+ 			 		
+ 			 		//add event listener to marker 
+ 					google.maps.event.addListener(marker, 'click', function() {
+    					infowindow.open(map,marker);
+  					});
+
+				}); //end of $.each method
 			});
 		} //end initialize function
 		
