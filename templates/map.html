@@ -21,39 +21,61 @@
 
 {% block js_code %}
 <script>
+		var map;
 		//initialize the map
 		function initialize() {
-			var map;
-			var myLatLng = new google.maps.LatLng(37.788708799999995,-122.41170040000003)
+			var hbLocation = new google.maps.LatLng(37.788708799999995,-122.41170040000003)
 			var contentString = '<div id="content">'+ '<h2>Hackbright</h2>'+'</div>';
 
 			//var mapOptions defines the properties for the map
 			var mapOptions = {
 				zoom: 13,
-				center: myLatLng
 			};
 
 			//create a map object w/parameters from mapOptions
 			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-			//create a marker for user's current location 
-			var marker=new google.maps.Marker({
-	  			position:myLatLng,
-	  			title: "My title"
-	  		});
-			//add the marker to the map by using setMap() method
-			marker.setMap(map);
+ 			//----------------------
 
-			//add info window object
-			 var infowindow = new google.maps.InfoWindow({
-      			content: contentString
- 			 });
+ 			// Try HTML5 geolocation
+			if(navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function(position) {
+					var pos = new google.maps.LatLng(position.coords.latitude,
+					position.coords.longitude);
 
- 			//add event listener to marker 
- 			google.maps.event.addListener(marker, 'click', function() {
-    			infowindow.open(map,marker);
-  			});
+				var infowindow = new google.maps.InfoWindow({
+					map: map,
+					position: pos,
+					content: 'Location found using HTML5.'
+				});
 
+				map.setCenter(pos);
+				}, function() {
+					handleNoGeolocation(true);
+				});
+			} else {
+				// Browser doesn't support Geolocation
+				handleNoGeolocation(false);
+				}
+			}
+
+			function handleNoGeolocation(errorFlag) {
+				if (errorFlag) {
+					var content = 'Error: The Geolocation service failed.';
+				} else {
+					var content = 'Error: Your browser doesn\'t support geolocation.';
+				}
+
+				var options = {
+					map: map,
+					position: new google.maps.LatLng(60, 105),
+					content: content
+				};
+
+				var infowindow = new google.maps.InfoWindow(options);
+				map.setCenter(options.position);
+			}
+ 			//----------------------
 			$.getJSON("/map-bookmarks", function(response){
 				var json = response;
 				//loop through each of the json elements, get their lat + lng & create a marker for these
@@ -76,7 +98,7 @@
 					marker.setMap(map);
 
 					var infowindow = new google.maps.InfoWindow({
-      				content: restcontent
+      					content: restcontent
  			 		});
  			 		
  			 		//add event listener to marker 
@@ -86,10 +108,11 @@
 
 				}); //end of $.each method
 			});
-		} //end initialize function
-		
+	
+
 		//event listener to load the map when page is loaded
 		google.maps.event.addDomListener(window, 'load', initialize);
+
     </script>
 
 {% endblock %}

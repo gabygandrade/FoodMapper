@@ -35,7 +35,7 @@ def show_rest_info():
 		fsq_dict = fsqapi.search_venues(fsq_client_id, fsq_client_secret, search_restaurant, search_location) 	# Look in foursquareapi module and create fsq dict function with the parameters here
 		# parse that python dict to get just the part of the request w/needed venues info
 		fsq_venues_list = fsq_dict['response']['venues']
-		# print "FSQ Venues List: ", fsq_venues_list
+		print "FSQ Venues List: ", fsq_venues_list
 
 		# if FSQ query returned no search results
 		if fsq_venues_list == []:								
