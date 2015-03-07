@@ -54,6 +54,8 @@ class Restaurant(Base):
     lat = Column(Float, nullable = False)
     lng = Column(Float, nullable = False)
     cuisine = Column(String(60), nullable = False)
+    url = Column(String(120))
+    phone = Column(Integer, nullable = False)
 
     def __repr__(self):
         """Show info about the restaurant."""

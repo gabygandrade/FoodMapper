@@ -20,4 +20,5 @@ def search_venues(CLIENT_ID, CLIENT_SECRET, user_query, location):
 	return fs_dict 
 
 test = search_venues(fsq_client_id, fsq_client_secret, 'sushi', 'sf')
-
+obj = test['response']['venues'][0]
+obj2 = test['response']['venues'][1]

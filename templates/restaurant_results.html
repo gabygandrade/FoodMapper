@@ -2,7 +2,7 @@
 
 {% block content %}
 	<h2>Restaurant search results: </h2>
-	<div class = "bookmark-message"></div>
+	<div class = "flash-notice"></div>
 	<table class="table table-striped table-hover">
 	    <thead>
 	        <th>Restaurant</th>
@@ -13,12 +13,17 @@
 	    <tbody>
 		    {% for item in fsq_venues %}
 		    	{% if item.location.address is defined %}
-				    <tr class='clickable-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}">
-				        <td>{{ item['name'] }} </td>
-				        <td>{{ item['location']['address'] }}</td>
-				        <td>{{ item['location']['city'] }}</td>
-				        <td>{{ item['location']['state'] }}</td>
-				 	</tr>
+		    		{% if item.url is defined %}
+					    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-phone="{{item.contact.phone}}" data-url ="{{item.url}}">
+					{% else %}
+						 <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-phone="{{item.contact.phone}}" data-url ="unavailable">
+					{% endif %}
+					        <td>{{ item['name'] }}</td>
+					        <td>{{ item['location']['address'] }}</td>
+					        <td>{{ item['location']['city'] }}</td>
+					        <td>{{ item['location']['state'] }}</td>
+					        <td><button class="add-bookmark">Bookmark</button><button class="recommend">Recommend</td>
+					 	</tr>
 				{% endif %}
 			{% endfor %}
 		</tbody>
@@ -28,29 +33,34 @@
 
 {% block js_code %}
 	<script>
-	$('.clickable-row').click(function(e){
-		var fsqId = $(this).data('id')
-		var name = $(this).data('name')
-		var lat = $(this).data('lat')
-		var lng = $(this).data('lng')
-		var cuisine = $(this).data('cuisine')
-		
-		var fsqData = {
-			"name": name, 
-			"fsqId":fsqId, 
-			"lat": lat, 
-			"lng": lng, 
-			"cuisine": cuisine
-		}
+	$('.add-bookmark').click(function(){
+		var $row = $(this).closest("tr");
+		// alert($row.data('id'));
+		var fsqId = $row.data('id');
+		var name = $row.data('name');
+		var lat = $row.data('lat');
+		var lng = $row.data('lng');
+		var cuisine = $row.data('cuisine');
+		var phone = $row.data('phone');
+		var url = $row.data('url');
 
+		var fsqData = {
+				"name": name, 
+				"fsqId":fsqId, 
+				"lat": lat, 
+				"lng": lng, 
+				"cuisine": cuisine,
+				"phone": phone,
+				"url": url
+			}
 		//show a message telling user they have bookmarked the restaurant - callback function for get request
 		function showMessage(response) {
-			console.log(response);
-			$(".bookmark-message").append(response.message);
+			$(".flash-notice").html(response.message).show().fadeOut(4000);
 		}
 
+		//get request to URL on server that saves the bkm and restaurant to db as necessary
 		$.get("/save-db", fsqData, showMessage);
-
-	}); 
+	});
+	
 	</script>
 {% endblock %}

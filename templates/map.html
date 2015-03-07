@@ -21,98 +21,135 @@
 
 {% block js_code %}
 <script>
-		var map;
-		//initialize the map
-		function initialize() {
-			var hbLocation = new google.maps.LatLng(37.788708799999995,-122.41170040000003)
-			var contentString = '<div id="content">'+ '<h2>Hackbright</h2>'+'</div>';
+	var map;
+	var infoWindow;
+	//initialize the map
+	function initialize() {
+		var hbLocation = new google.maps.LatLng(37.788708799999995,-122.41170040000003)
+		var contentString = '<div id="content">'+ '<h2>Hackbright</h2>'+'</div>';
 
-			//var mapOptions defines the properties for the map
-			var mapOptions = {
-				zoom: 13,
+		//var mapOptions defines the properties for the map
+		var mapOptions = {
+			zoom: 13,
+		};
+
+		//create a map object w/parameters from mapOptions
+		map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+			//----------------------
+
+			// Try HTML5 geolocation
+		if(navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(function(position) {
+				var pos = new google.maps.LatLng(position.coords.latitude,
+				position.coords.longitude);
+
+			var infowindow = new google.maps.InfoWindow({
+				map: map,
+				position: pos,
+				content: 'Location found using HTML5.'
+			});
+
+			map.setCenter(pos);
+			}, function() {
+				handleNoGeolocation(true);
+			});
+		} else {
+			// Browser doesn't support Geolocation
+			handleNoGeolocation(false);
+			}
+		}
+
+		function handleNoGeolocation(errorFlag) {
+			if (errorFlag) {
+				var content = 'Error: The Geolocation service failed.';
+			} else {
+				var content = 'Error: Your browser doesn\'t support geolocation.';
+			}
+
+			var options = {
+				map: map,
+				position: new google.maps.LatLng(60, 105),
+				content: content
 			};
 
-			//create a map object w/parameters from mapOptions
-			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+			var infowindow = new google.maps.InfoWindow(options);
+			map.setCenter(options.position);
+		}
+			//----------------------
+		$.getJSON("/map-bookmarks", function(response){
+			var json = response;
+			//loop through each of the json elements, get their lat, lng, name & other info & create a marker for these
+			$.each(json, function(key, data){
+				var restaurantId = key
+				var lat = data.lat
+				var lng = data.lng 
+				var myLatLng = new google.maps.LatLng(lat, lng);
 
- 			//----------------------
+				var name = data.name
+				var cuisine = data.cuisine
+				var fsqId = data.fsq_id
 
- 			// Try HTML5 geolocation
-			if(navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(function(position) {
-					var pos = new google.maps.LatLng(position.coords.latitude,
-					position.coords.longitude);
-
-				var infowindow = new google.maps.InfoWindow({
-					map: map,
-					position: pos,
-					content: 'Location found using HTML5.'
-				});
-
-				map.setCenter(pos);
-				}, function() {
-					handleNoGeolocation(true);
-				});
-			} else {
-				// Browser doesn't support Geolocation
-				handleNoGeolocation(false);
-				}
-			}
-
-			function handleNoGeolocation(errorFlag) {
-				if (errorFlag) {
-					var content = 'Error: The Geolocation service failed.';
-				} else {
-					var content = 'Error: Your browser doesn\'t support geolocation.';
+				function removeRest(){
+					console.log("Got to removeRest function!");
+					// Get the restaurant id from the data attribute 
+					// var restaurantId = $(this).data(restId);
+					// console.log(restaurantId);
+					// // Send a request to server to delete the bookmark with the restaurantId specified
+					// $.get("/delete-bookmark", restaurantId, function(){
+					// 	console.log("Deleted the bookmark!")
+					// });
 				}
 
-				var options = {
-					map: map,
-					position: new google.maps.LatLng(60, 105),
-					content: content
-				};
+				var restcontent = ['<div id="content">',
+				'<h3>', name, '</h3>',
+				'<p>', cuisine, '</p>',
+				'</div>'].join('');
 
-				var infowindow = new google.maps.InfoWindow(options);
-				map.setCenter(options.position);
-			}
- 			//----------------------
-			$.getJSON("/map-bookmarks", function(response){
-				var json = response;
-				//loop through each of the json elements, get their lat + lng & create a marker for these
-				$.each(json, function(key, data){
-					var lat = data.lat
-					var lng = data.lng 
-					var myLatLng = new google.maps.LatLng(lat, lng);
+				//HTML for infowindow with button 
+				// var restcontent = ['<div id="content">',
+				// '<h3>', name, '</h3>',
+				// '<p>', cuisine, '</p>',
+				// '<button type="button" class="btn btn-default" data-restId="restaurantId" class="rmButton" onClick="removeRest()">Remove</button>',
+				// '</div>'].join('');
 
-					var name = data.name
-					var cuisine = data.cuisine
-					var restcontent = '<div id="content">'
-					+'<h3>' + name + '</h3>'
-					+ '<p>'+ cuisine +'</p>'
-					+'</div>'
-					
-					var marker = new google.maps.Marker({
-						position: myLatLng,
-						map: map
-					}); //end of getJSON 
-					marker.setMap(map);
+				//Create markers with the info from the getJSON request
+				var marker = new google.maps.Marker({
+					position: myLatLng,
+					map: map
+				}); 
+				//add the markers to the map 
+				marker.setMap(map);
 
-					var infowindow = new google.maps.InfoWindow({
-      					content: restcontent
- 			 		});
- 			 		
- 			 		//add event listener to marker 
- 					google.maps.event.addListener(marker, 'click', function() {
-    					infowindow.open(map,marker);
-  					});
+				//Add an info window with the information about the restaurant
+				var infoWindow = new google.maps.InfoWindow({
+  					content: restcontent
+			 		});
+			 		
+		 		//add event listener to marker to show infowindow on mouseover of marker
+				google.maps.event.addListener(marker, 'mouseover', function() {
+					infoWindow.open(map,marker);
+				});
 
-				}); //end of $.each method
-			});
+				//add event listener to marker to close infowindow on mouseout of marker
+				google.maps.event.addListener(marker, 'mouseout', function() {
+					setTimeout(function () {
+						infoWindow.close(map,marker); 
+						}, 
+					'2500');
+				});
+
+				//Javascript for remove button
+				// var rmButton = document.getElementsByClassName('rmButton')
+				// console.log(rmButton)
+				// google.maps.event.addDomListener(rmButton, 'click',function(){
+				// 	console.log("Got to event listener")
+				// })
+
+			}); //end of $.each method
+		});
 	
-
-		//event listener to load the map when page is loaded
-		google.maps.event.addDomListener(window, 'load', initialize);
-
+	//event listener to load the map when page is loaded
+	google.maps.event.addDomListener(window, 'load', initialize);
     </script>
-
 {% endblock %}

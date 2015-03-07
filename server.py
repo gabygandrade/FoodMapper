@@ -62,8 +62,10 @@ def save_to_db():
 	lat = request.args["lat"]
 	lng = request.args["lng"]
 	cuisine = request.args["cuisine"]
+	url = request.args["url"]
+	phone = request.args["phone"]
 
-	# print "Request.args object: ", request.args
+	# print "request object: ", request.args
 	# print "Name: ", name
 	# print "FSQ ID: ", fsq_id
 	# print "Lat: ", lat 
@@ -78,7 +80,7 @@ def save_to_db():
 	if not saved_restaurant: 
 		# save a new restaurant to the restaurants table
 		new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
-						lat=lat, lng=lng, cuisine=cuisine)
+						lat=lat, lng=lng, cuisine=cuisine, url=url, phone=phone)
 		model.session.add(new_restaurant)
 		model.session.commit()
 
@@ -132,6 +134,32 @@ def map_bookmarks():
 
 	return jsonify(restaurant_info)
 
+@app.route("/mylist")
+def display_bookmarks_list():
+	"""Dispaly the user's bookmarks as a list"""
+
+# @app.route("/delete-bookmark")
+# def delete_bookmark(): 
+# 	"""Delete the user's selected bookmark """
+# 	USER_ID = 1
+
+# 	# get the restaurant id for the restaurant that the user wants to delete
+# 	restaurant_id = request.args['restaurantId']
+
+# 	#---TRY THESE IN INTERACTIVE PYTHON CONSOLE FIRST ---#
+# 	# query for the bookmark with that user id & restaurant id 
+# 	bookmark_to_delete = session.query(Bookmark).filter(Bookmark.user_id==USER_ID, Bookmark.restaurant_id==restaurant_id).first()
+
+# 	# delete the restaurant from the db 
+# 	session.delete(rest_to_bookmark)
+# 	session.commit()
+
+
+
+
+
+
+
 # @app.route("/login")
 # def display_login():
 # 	# Displays login page
@@ -159,9 +187,9 @@ def map_bookmarks():
 # 	print user.email
 # 	print user.id
 
-@app.route("/logout")
-def logout():
-	pass
+# @app.route("/logout")
+# def logout():
+# 	pass
 
 
 if __name__ == "__main__":
