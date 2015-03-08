@@ -22,10 +22,13 @@ def display_login():
 def login_user():
 	"""Makes POST request to get user input, and user is added to the Flask session """
 	
+	# Pull needed info out of request object
 	email = request.form['email']
 	password = request.form['password']
 
 	all_users = model.session.query(model.User)
+	
+	# Add the info from the request object as keys to the sessio dict
 	try:
 		user = all_users.filter(model.User.email==email, model.User.password==password).one()
 		session['user_email'] = user.email
@@ -65,13 +68,14 @@ def show_rest_info():
 	search_restaurant = request.args.get('search-restaurant')
 	search_location = request.args.get('search-location')
 	print (search_restaurant, search_location)
-	# create a python dict from the Foursquare API JSON response 
 	
+	# create a python dict from the Foursquare API JSON response
 	try:
 		fsq_dict = fsqapi.search_venues(fsq_client_id, fsq_client_secret, search_restaurant, search_location) 	# Look in foursquareapi module and create fsq dict function with the parameters here
 		# parse that python dict to get just the part of the request w/needed venues info
 		fsq_venues_list = fsq_dict['response']['venues']
 		print "FSQ Venues List: ", fsq_venues_list
+		print ("got into try conditional first")
 
 		# if FSQ query returned no search results
 		if fsq_venues_list == []:								
@@ -82,6 +86,7 @@ def show_rest_info():
 	except:
 		# if the user entered a location FSQ cannot geocode				
 		fsq_venues_list = []
+		print ("got into except conditional now!!!")
 
 		flash("Please enter a city name.") 
 		return redirect('/')
@@ -90,7 +95,7 @@ def show_rest_info():
 def save_to_db():		
 	"""Saves the restaurant and the bookmark as new records in the db"""
 	
-	USER_ID = 1
+	logged_in_user_id = session['user_id']
 
 	# pulls the needed fields from the request object
 	name = request.args["name"]
@@ -109,7 +114,7 @@ def save_to_db():
 	# print "Cuisine: ", cuisine 
 
 	saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
-	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==USER_ID, 			
+	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
 		model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
 
 	#If the restaurant DOESN'T exist in the db (& thus implicitly the bookmark doesn't exist)
@@ -124,7 +129,7 @@ def save_to_db():
 		model.session.refresh(new_restaurant) 
 
 		# save a new bookmark to the bookmarks table
-		new_bookmark = model.Bookmark(user_id=USER_ID, restaurant_id=new_restaurant.id)		# change this hardcoding later to user who is logged in
+		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=new_restaurant.id)		# change this hardcoding later to user who is logged in
 		model.session.add(new_bookmark)
 		model.session.commit()
 
@@ -136,7 +141,7 @@ def save_to_db():
 
 	# elif the restaurant DOES exist BUT the bookmark doesn't exist for this user - ie. the restaurant id is not associated with a bookmark for this user
 	elif saved_restaurant and not saved_bookmark:
-		new_bookmark = model.Bookmark(user_id=USER_ID, restaurant_id=saved_restaurant.id)		# FIXME: change this hardcoding later to user who is logged in
+		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=saved_restaurant.id)		# FIXME: change this hardcoding later to user who is logged in
 		model.session.add(new_bookmark)
 		model.session.commit()
 		return jsonify({"message": "You added %s to your bookmarks!" % saved_restaurant.name})	
@@ -146,34 +151,41 @@ def show_map():
 	"""Render map"""
 	return render_template("map.html")	
 
-@app.route("/map-bookmarks")
-def map_bookmarks():
-	"""Map the user's bookmarks"""
+@app.route("/bookmark-info")
+def return_bookmark_info():
+	"""Return information about the user's bookmarks """
 
-	USER_ID = 1
+	logged_in_user_id = session['user_id']
 
 	# get restaurant info for all the user's bookmarked restaurants
 	data = model.session.query(model.Bookmark.id, model.Restaurant.fsq_id, 
-		model.Restaurant.name, model.Restaurant.lat, model.Restaurant.lng, model.Restaurant.cuisine).join(model.Restaurant).filter(model.Bookmark.user_id==USER_ID).all()
+		model.Restaurant.name, model.Restaurant.lat, model.Restaurant.lng, 
+		model.Restaurant.cuisine).join(model.Restaurant).filter(model.Bookmark.user_id==
+		logged_in_user_id).all()
 
 	# create a dictionary with all the info necessary to pass on to jinja in order to map markers 
 	restaurant_info = {}
 	for item in data:
-		restaurant_info[item.id] = {}
+		restaurant_info[item.id] = {}						# item.id == bookmark id 
 		restaurant_info[item.id]["fsq_id"] = item.fsq_id
 		restaurant_info[item.id]["name"] = item.name
 		restaurant_info[item.id]["lat"] = item.lat
 		restaurant_info[item.id]["lng"] = item.lng
 		restaurant_info[item.id]["cuisine"] = item.cuisine
 
-	# print "restaurant_info: ", restaurant_info
+	print "restaurant_info: ", restaurant_info
 
 	return jsonify(restaurant_info)
 
 @app.route("/mylist")
 def display_bookmarks_list():
-	"""Dispaly the user's bookmarks as a list"""
+	"""Render the user's bookmarks as a list"""
+	detailed_data = session.query(Bookmark.id, Restaurant.id, Restaurant.fsq_id, 
+		Restaurant.name, Restaurant.cuisine)
+	return render_template("list.html")
+	# query for the user's bookmarks and all related information 
 
+	# send it over to front end 
 
 # @app.route("/delete-bookmark")
 # def delete_bookmark(): 

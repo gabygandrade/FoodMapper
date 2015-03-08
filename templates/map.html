@@ -77,7 +77,7 @@
 			map.setCenter(options.position);
 		}
 			//----------------------
-		$.getJSON("/map-bookmarks", function(response){
+		$.getJSON("/bookmark-info", function(response){
 			var json = response;
 			//loop through each of the json elements, get their lat, lng, name & other info & create a marker for these
 			$.each(json, function(key, data){
@@ -90,16 +90,16 @@
 				var cuisine = data.cuisine
 				var fsqId = data.fsq_id
 
-				function removeRest(){
-					console.log("Got to removeRest function!");
-					// Get the restaurant id from the data attribute 
-					// var restaurantId = $(this).data(restId);
-					// console.log(restaurantId);
-					// // Send a request to server to delete the bookmark with the restaurantId specified
-					// $.get("/delete-bookmark", restaurantId, function(){
-					// 	console.log("Deleted the bookmark!")
-					// });
-				}
+				// function removeRest(){
+				// 	console.log("Got to removeRest function!");
+				// 	// Get the restaurant id from the data attribute 
+				// 	// var restaurantId = $(this).data(restId);
+				// 	// console.log(restaurantId);
+				// 	// // Send a request to server to delete the bookmark with the restaurantId specified
+				// 	// $.get("/delete-bookmark", restaurantId, function(){
+				// 	// 	console.log("Deleted the bookmark!")
+				// 	// });
+				// }
 
 				var restcontent = ['<div id="content">',
 				'<h3>', name, '</h3>',
