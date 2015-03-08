@@ -13,6 +13,42 @@ app.jinja_env.undefined = jinja2.StrictUndefined
 fsq_client_id = config.FSQ_CLIENT_ID 			
 fsq_client_secret = config.FSQ_CLIENT_SECRET
 
+@app.route("/login")
+def display_login():
+	"""Render the login page"""
+	return render_template("login.html")
+
+@app.route("/login", methods=['POST'])
+def login_user():
+	"""Makes POST request to get user input, and user is added to the Flask session """
+	
+	email = request.form['email']
+	password = request.form['password']
+
+	all_users = model.session.query(model.User)
+	try:
+		user = all_users.filter(model.User.email==email, model.User.password==password).one()
+		session['user_email'] = user.email
+		session['user_id'] = user.id
+		session['logged_in'] = True
+		flash ("You are logged in")
+		# print session
+		# print user.email
+		# print user.id
+		return redirect("/") 
+	except:
+		flash("That email or password is incorrect. Please try again")
+		print session
+		return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+	"""Logs user out and clears session"""
+	session.clear()
+	print session 
+	flash ("You have been logged out")
+	return redirect("/login") 
+
 @app.route("/")
 def index():
 	"""Render the page where users can search for a restaurant """
@@ -130,13 +166,14 @@ def map_bookmarks():
 		restaurant_info[item.id]["lng"] = item.lng
 		restaurant_info[item.id]["cuisine"] = item.cuisine
 
-	print "restaurant_info: ", restaurant_info
+	# print "restaurant_info: ", restaurant_info
 
 	return jsonify(restaurant_info)
 
 @app.route("/mylist")
 def display_bookmarks_list():
 	"""Dispaly the user's bookmarks as a list"""
+
 
 # @app.route("/delete-bookmark")
 # def delete_bookmark(): 
@@ -154,42 +191,6 @@ def display_bookmarks_list():
 # 	session.delete(rest_to_bookmark)
 # 	session.commit()
 
-
-
-
-
-
-
-# @app.route("/login")
-# def display_login():
-# 	# Displays login page
-# 	return render_template("login.html")
-
-# @app.route("/login", methods=['POST'])
-# def login_user():
-# 	"""Makes POST request to get user input, and user is added to the Flask session """
-	
-# 	email = request.form['email']
-# 	password = request.form['password']
-
-# 	all_users = model.session.query(model.User)
-# 	try:
-# 		user = all_users.filter(model.User.email==email, model.User.password==password).one()
-# 		session['user_email'] = user.email
-# 		session['user_id'] = user.id
-# 		session['loggin_in'] = True
-# 		flash ("You are logged in")
-# 		return redirect("/") 
-# 	except InvalidRequestError:
-# 		flash("That email or password is incorrect.")
-# 		return render_template("login.html")
-
-# 	print user.email
-# 	print user.id
-
-# @app.route("/logout")
-# def logout():
-# 	pass
 
 
 if __name__ == "__main__":
