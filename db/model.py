@@ -21,6 +21,7 @@ def create_db():                                                 # actually crea
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key = True)
+    username = Column(String(15), nullable = False)
     email = Column(String(64), nullable = False)
     password = Column(String(64), nullable = False)
 
@@ -28,20 +29,6 @@ class User(Base):
         """Cleanly info about the user."""
         return "<User id=%r email=%r password=%r>" % (self.id, 
             self.email, self.password)
-
-#================== preferences table  ==================
-
-class Preference(Base):
-    """Represents the user's cuisine preferences """
-    __tablename__ = "preferences"
-    id = Column(Integer, primary_key = True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    cuisine = Column(String(64), nullable = False)
-
-    def __repr__(self):
-        """Cleanly info about the preference."""
-        return "<Preference id=%d user_id=%d cuisine=%s>" % (self.id, 
-            self.user_id, self.cuisine)
 
 #================== restaurants table  ==================
 
@@ -53,9 +40,12 @@ class Restaurant(Base):
     name = Column(String(64), nullable = False)
     lat = Column(Float, nullable = False)
     lng = Column(Float, nullable = False)
-    cuisine = Column(String(60), nullable = False)
-    url = Column(String(120))
+    cuisine = Column(String(64), nullable = False)
+    address = Column(String(64), nullable = False)
+    city = Column(String(64), nullable = False)
+    state = Column(String(20), nullable = False)
     phone = Column(Integer, nullable = False)
+    url = Column(String(120))
 
     def __repr__(self):
         """Show info about the restaurant."""

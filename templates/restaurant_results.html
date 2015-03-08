@@ -9,20 +9,23 @@
 	        <th>Address</th>
 	        <th>City </th>
 	        <th>State</th>
+	        <th>Add to my Bookmarks</th>
+	        <th>Recommend To a Friend</th>
 	    </thead>
 	    <tbody>
 		    {% for item in fsq_venues %}
 		    	{% if item.location.address is defined %}
 		    		{% if item.url is defined %}
-					    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-phone="{{item.contact.phone}}" data-url ="{{item.url}}">
+					    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" data-phone="{{item.contact.phone}}" data-url ="{{item.url}}">
 					{% else %}
-						 <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-phone="{{item.contact.phone}}" data-url ="unavailable">
+						 <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" data-phone="{{item.contact.phone}}" data-url ="unavailable">
 					{% endif %}
 					        <td>{{ item['name'] }}</td>
 					        <td>{{ item['location']['address'] }}</td>
 					        <td>{{ item['location']['city'] }}</td>
 					        <td>{{ item['location']['state'] }}</td>
-					        <td><button class="add-bookmark">Bookmark</button><button class="recommend">Recommend</td>
+					        <td><button class="add-bookmark">Bookmark</button></td>
+					        <td><button class="recommend">Recommend</button></td>
 					 	</tr>
 				{% endif %}
 			{% endfor %}
@@ -41,6 +44,9 @@
 		var lat = $row.data('lat');
 		var lng = $row.data('lng');
 		var cuisine = $row.data('cuisine');
+		var address = $row.data('address');
+		var state = $row.data('state');
+		var city = $row.data('city');
 		var phone = $row.data('phone');
 		var url = $row.data('url');
 
@@ -50,6 +56,9 @@
 				"lat": lat, 
 				"lng": lng, 
 				"cuisine": cuisine,
+				"address": address,
+				"city": city,
+				"state": state, 
 				"phone": phone,
 				"url": url
 			}

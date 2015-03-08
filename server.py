@@ -23,15 +23,17 @@ def login_user():
 	"""Makes POST request to get user input, and user is added to the Flask session """
 	
 	# Pull needed info out of request object
-	email = request.form['email']
+	username = request.form['username']
+	# email = request.form['email']
 	password = request.form['password']
 
 	all_users = model.session.query(model.User)
 	
 	# Add the info from the request object as keys to the sessio dict
 	try:
-		user = all_users.filter(model.User.email==email, model.User.password==password).one()
-		session['user_email'] = user.email
+		user = all_users.filter(model.User.username==username, model.User.password==password).one()
+		session['username'] = user.username
+		# session['user_email'] = user.email
 		session['user_id'] = user.id
 		session['logged_in'] = True
 		flash ("You are logged in")
@@ -75,7 +77,7 @@ def show_rest_info():
 		# parse that python dict to get just the part of the request w/needed venues info
 		fsq_venues_list = fsq_dict['response']['venues']
 		print "FSQ Venues List: ", fsq_venues_list
-		print ("got into try conditional first")
+		print ("got into 'try' conditional")
 
 		# if FSQ query returned no search results
 		if fsq_venues_list == []:								
@@ -86,7 +88,7 @@ def show_rest_info():
 	except:
 		# if the user entered a location FSQ cannot geocode				
 		fsq_venues_list = []
-		print ("got into except conditional now!!!")
+		print ("got into 'except' conditional now!!!")
 
 		flash("Please enter a city name.") 
 		return redirect('/')
@@ -103,6 +105,9 @@ def save_to_db():
 	lat = request.args["lat"]
 	lng = request.args["lng"]
 	cuisine = request.args["cuisine"]
+	address = request.args["address"]
+	city = request.args["city"]
+	state = request.args["state"]
 	url = request.args["url"]
 	phone = request.args["phone"]
 
@@ -111,7 +116,7 @@ def save_to_db():
 	# print "FSQ ID: ", fsq_id
 	# print "Lat: ", lat 
 	# print "Lng: ", lng 
-	# print "Cuisine: ", cuisine 
+	# print "Cuisine: ", cuisine
 
 	saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
 	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
@@ -121,7 +126,7 @@ def save_to_db():
 	if not saved_restaurant: 
 		# save a new restaurant to the restaurants table
 		new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
-						lat=lat, lng=lng, cuisine=cuisine, url=url, phone=phone)
+						lat=lat, lng=lng, cuisine=cuisine, address=address, city=city, state=state, url=url, phone=phone)
 		model.session.add(new_restaurant)
 		model.session.commit()
 
@@ -177,16 +182,21 @@ def return_bookmark_info():
 
 	return jsonify(restaurant_info)
 
-@app.route("/mylist")
+@app.route("/list")
 def display_bookmarks_list():
 	"""Render the user's bookmarks as a list"""
-	detailed_data = session.query(Bookmark.id, Restaurant.id, Restaurant.fsq_id, 
-		Restaurant.name, Restaurant.cuisine)
-	return render_template("list.html")
+
+	logged_in_user_id = session['user_id']
+
 	# query for the user's bookmarks and all related information 
+	detailed_data = model.session.query(model.Bookmark.id, model.Restaurant.id, 
+		model.Restaurant.fsq_id, model.Restaurant.name, model.Restaurant.cuisine, 
+		model.Restaurant.address, model.Restaurant.city, model.Restaurant.state, 
+		model.Restaurant.phone, model.Restaurant.url).join(model.Restaurant).filter(model.Bookmark.user_id==logged_in_user_id).all()
+	print detailed_data 
 
-	# send it over to front end 
-
+	return render_template("list.html", restaurant_data = detailed_data)
+	
 # @app.route("/delete-bookmark")
 # def delete_bookmark(): 
 # 	"""Delete the user's selected bookmark """
