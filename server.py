@@ -196,24 +196,29 @@ def display_bookmarks_list():
 	print detailed_data 
 
 	return render_template("list.html", restaurant_data = detailed_data)
+
+@app.route("/delete-bookmark")
+def delete_bookmark(): 
+	"""Delete the user's selected bookmark """
+	logged_in_user_id = session['user_id']
+
+	# get the bookmark id for the bookmark the user wants to delete 
+	bkm_id_to_delete = request.args['bookmarkId']
+	# print bkm_id_to_delete
 	
-# @app.route("/delete-bookmark")
-# def delete_bookmark(): 
-# 	"""Delete the user's selected bookmark """
-# 	USER_ID = 1
+	# query for the bookmark with that id 
+	bkm_to_delete = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 
+		model.Bookmark.id==bkm_id_to_delete).first()
+	# print bkm_to_delete
+	restaurant_to_delete = bkm_to_delete.restaurant.name
+	print restaurant_to_delete
+	
+	# delete the restaurant from the db 
+	model.session.delete(bkm_to_delete)
+	model.session.commit()
 
-# 	# get the restaurant id for the restaurant that the user wants to delete
-# 	restaurant_id = request.args['restaurantId']
-
-# 	#---TRY THESE IN INTERACTIVE PYTHON CONSOLE FIRST ---#
-# 	# query for the bookmark with that user id & restaurant id 
-# 	bookmark_to_delete = session.query(Bookmark).filter(Bookmark.user_id==USER_ID, Bookmark.restaurant_id==restaurant_id).first()
-
-# 	# delete the restaurant from the db 
-# 	session.delete(rest_to_bookmark)
-# 	session.commit()
-
-
+	# return "This string!"
+	return jsonify({"message": "You deleted %s from your bookmarks." % restaurant_to_delete}) 
 
 if __name__ == "__main__":
     app.run(debug = True)
