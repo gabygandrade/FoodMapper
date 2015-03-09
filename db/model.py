@@ -61,8 +61,8 @@ class Bookmark(Base):
     id = Column(Integer, primary_key = True)        
     user_id = Column(Integer, ForeignKey('users.id'))
     restaurant_id = Column(Integer, ForeignKey('restaurants.id'))
-    recipient_username = Column(String(15), nullable = True)
-    pending = Column(Boolean, nullable = True)
+    pending = Column(Boolean, nullable = False)
+    recipient_username = Column(String(15))
 
     user = relationship("User", backref = backref('bookmarks', order_by = id))
     restaurant = relationship("Restaurant", backref = backref('bookmarks', order_by = id))

@@ -43,6 +43,7 @@
 			    		<td>{{item[8]}}</td>
 			    		<td><a href="{{item[9]}}">Website</a></td>
 			    		<td><button class="btn delete-bookmark">Delete Bookmark</button></td>
+			    		<!-- <td><button class="btn delete-bookmark"><span class="glyphicon glyphicon-trash"></button></td> -->
 			    	</tr>
 			    	{% endfor %}
 			    </tbody>
@@ -115,9 +116,9 @@
 			var json = response;
 			//loop through each of the json elements, get their lat, lng, name & other info & create a marker for these
 			$.each(json, function(key, data){
-				var restaurantId = key
-				var lat = data.lat
-				var lng = data.lng 
+				var restaurantId = key;
+				var lat = data.lat;
+				var lng = data.lng; 
 				var myLatLng = new google.maps.LatLng(lat, lng);
 
 				var name = data.name

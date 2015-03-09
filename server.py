@@ -133,7 +133,7 @@ def save_to_db():
 		model.session.refresh(new_restaurant) 
 
 		# save a new bookmark to the bookmarks table
-		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=new_restaurant.id)		
+		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=new_restaurant.id, pending=False)		
 		model.session.add(new_bookmark)
 		model.session.commit()
 
@@ -145,7 +145,7 @@ def save_to_db():
 
 	# elif the restaurant DOES exist BUT the bookmark doesn't exist for this user - ie. the restaurant id is not associated with a bookmark for this user
 	elif saved_restaurant and not saved_bookmark:
-		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=saved_restaurant.id)		
+		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=saved_restaurant.id, pending=False)		
 		model.session.add(new_bookmark)
 		model.session.commit()
 		return jsonify({"message": "You added %s to your bookmarks!" % saved_restaurant.name})	
@@ -232,20 +232,36 @@ def delete_bookmark():
 def recommend_restaurant():
 	"""Send information to server for one user to recommend a restaurant to another"""
 	pass
-	# get the user id of the recommender(logged in user)
-	# logged_in_user_id = session['user_id']
+	#get the user id of the recommender(logged in user)
+	logged_in_user_id = session['user_id']
 
-	# # get the restaurant id of the restaurant to be recommended from the request obj
-	# recommended_restaurant_id = request.args['']
+	# get the restaurant FSQid of the restaurant to be recommended from the request obj
+	recommend_restaurant_fsqid = request.args['fsqId']
+
+	# check if that restaurant is already in db
+	saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
+	# saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
+		# model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
+
+	# if the restaurant is already in db 
+		# add the bookmark with(pending=True and recipient_username)
+	# if the restaurant is NOT already in db:
+		# add it to the db 
+		# add the bookmark with(pending=True and recipient_username)
+	# if the bookmark arleady exists int he recipients database
+		# return a messsage telling recommender that this uer already has this restaurant in their bookmarks
+
+
+
 	
-	# # get username of the recommendation recipient (selected by user from list) from request object
-	# recipient_username = request.args['']
+	# get username of the recommendation recipient (selected by user from list) from request object
+	recipient_username = request.args['']
 	
-	# # add a bookmark with that information:
-	# recommend_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=recommended_restaurant.id, 
-	# 	recommender_username = recommender_username, pending = True)		
-	# model.session.add(recommended_bookmark)
-	# model.session.commit()
+	# add a bookmark with that information:
+	recommend_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=recommended_restaurant.id, 
+		recommender_username = recommender_username, pending = True)		
+	model.session.add(recommended_bookmark)
+	model.session.commit()
 
 if __name__ == "__main__":
     app.run(debug = True)
