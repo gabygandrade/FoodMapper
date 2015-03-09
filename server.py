@@ -153,12 +153,21 @@ def save_to_db():
 
 @app.route("/map")
 def show_map():
-	"""Render map"""
-	return render_template("map.html")	
+	"""Render map and return info about user's bookmarks to populate list"""
+	logged_in_user_id = session['user_id']
+
+	# query for the user's bookmarks and all related information 
+	detailed_data = model.session.query(model.Bookmark.id, model.Restaurant.id, 
+		model.Restaurant.fsq_id, model.Restaurant.name, model.Restaurant.cuisine, 
+		model.Restaurant.address, model.Restaurant.city, model.Restaurant.state, 
+		model.Restaurant.phone, model.Restaurant.url).join(model.Restaurant).filter(model.Bookmark.user_id==logged_in_user_id).all()
+	print detailed_data 
+
+	return render_template("map.html", restaurant_data = detailed_data)	
 
 @app.route("/bookmark-info")
 def return_bookmark_info():
-	"""Return information about the user's bookmarks """
+	"""Return information about the user's bookmarks to populate map"""
 
 	logged_in_user_id = session['user_id']
 
@@ -182,20 +191,20 @@ def return_bookmark_info():
 
 	return jsonify(restaurant_info)
 
-@app.route("/list")
-def display_bookmarks_list():
-	"""Render the user's bookmarks as a list"""
+# @app.route("/list")
+# def display_bookmarks_list():
+# 	"""Render the user's bookmarks as a list"""
 
-	logged_in_user_id = session['user_id']
+# 	logged_in_user_id = session['user_id']
 
-	# query for the user's bookmarks and all related information 
-	detailed_data = model.session.query(model.Bookmark.id, model.Restaurant.id, 
-		model.Restaurant.fsq_id, model.Restaurant.name, model.Restaurant.cuisine, 
-		model.Restaurant.address, model.Restaurant.city, model.Restaurant.state, 
-		model.Restaurant.phone, model.Restaurant.url).join(model.Restaurant).filter(model.Bookmark.user_id==logged_in_user_id).all()
-	print detailed_data 
+# 	# query for the user's bookmarks and all related information 
+# 	detailed_data = model.session.query(model.Bookmark.id, model.Restaurant.id, 
+# 		model.Restaurant.fsq_id, model.Restaurant.name, model.Restaurant.cuisine, 
+# 		model.Restaurant.address, model.Restaurant.city, model.Restaurant.state, 
+# 		model.Restaurant.phone, model.Restaurant.url).join(model.Restaurant).filter(model.Bookmark.user_id==logged_in_user_id).all()
+# 	print detailed_data 
 
-	return render_template("list.html", restaurant_data = detailed_data)
+# 	return return(restaurant_data = detailed_data)
 
 @app.route("/delete-bookmark")
 def delete_bookmark(): 

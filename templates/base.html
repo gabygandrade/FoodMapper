@@ -15,7 +15,14 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/">Search Restaurants</a></li>
+                        <li><form class="navbar-form navbar-left" role="search" form action="/restaurant-results" method="GET" id="add-rest">
+                            <div class="form-group">
+                                  <label>Search: <input type="text" name="search-restaurant" placeholder="Ex. Limon Rotisserie, Seafood"></label>
+                                  <label>Near: <input type="text" name="search-location" placeholder="San Francisco, CA"></label>
+                            </div>
+                            <button type="submit" class="btn btn-default" id="submit-query">Submit</button>
+                            </form>
+                        </li>
                         <li><a href="/map">My Map</a></li>
                         <li><a href="/list">My List</a></li>
                         <li><a href="/logout">Log Out</a></li>
@@ -23,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container-fluid">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
