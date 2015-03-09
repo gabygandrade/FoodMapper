@@ -67,5 +67,41 @@
 		//get request to URL on server that saves the bkm and restaurant to db as necessary
 		$.get("/save-db", fsqData, showMessage);
 	});
+
+	$('.recommend').click(function(){
+		var $row = $(this).closest("tr");
+		alert($row.data('id'));
+		// var fsqId = $row.data('id');
+		// var name = $row.data('name');
+		// var lat = $row.data('lat');
+		// var lng = $row.data('lng');
+		// var cuisine = $row.data('cuisine');
+		// var address = $row.data('address');
+		// var state = $row.data('state');
+		// var city = $row.data('city');
+		// var phone = $row.data('phone');
+		// var url = $row.data('url');
+
+		// var fsqData = {
+		// 		"name": name, 
+		// 		"fsqId":fsqId, 
+		// 		"lat": lat, 
+		// 		"lng": lng, 
+		// 		"cuisine": cuisine,
+		// 		"address": address,
+		// 		"city": city,
+		// 		"state": state, 
+		// 		"phone": phone,
+		// 		"url": url
+		// 	}
+		// //show a message telling user they have bookmarked the restaurant - callback function for get request
+		// function showMessage(response) {
+		// 	$(".flash-notice").html(response.message).show().fadeToggle(3000);
+		// }
+
+		// //get request to URL on server that saves the bkm and restaurant to db as necessary
+		// $.get("/save-db", fsqData, showMessage);
+	});
+
 	</script>
 {% endblock %}

@@ -56,7 +56,7 @@ def logout():
 
 @app.route("/")
 def index():
-	"""Render the page where users can search for a restaurant """
+	"""Render the welcome/notifications page"""
 	return render_template("index.html")
 
 @app.route("/restaurant-results")
@@ -232,8 +232,9 @@ def delete_bookmark():
 def recommend_restaurant():
 	"""Send information to server for one user to recommend a restaurant to another"""
 	pass
-	# # get the user id of the recommender(logged in user)
+	# get the user id of the recommender(logged in user)
 	# logged_in_user_id = session['user_id']
+
 	# # get the restaurant id of the restaurant to be recommended from the request obj
 	# recommended_restaurant_id = request.args['']
 	
