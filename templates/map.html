@@ -124,28 +124,10 @@
 				var cuisine = data.cuisine
 				var fsqId = data.fsq_id
 
-				// function removeRest(){
-				// 	console.log("Got to removeRest function!");
-				// 	// Get the restaurant id from the data attribute 
-				// 	// var restaurantId = $(this).data(restId);
-				// 	// console.log(restaurantId);
-				// 	// // Send a request to server to delete the bookmark with the restaurantId specified
-				// 	// $.get("/delete-bookmark", restaurantId, function(){
-				// 	// 	console.log("Deleted the bookmark!")
-				// 	// });
-				// }
-
 				var restcontent = ['<div id="content">',
 				'<h3>', name, '</h3>',
 				'<p>', cuisine, '</p>',
 				'</div>'].join('');
-
-				//HTML for infowindow with button 
-				// var restcontent = ['<div id="content">',
-				// '<h3>', name, '</h3>',
-				// '<p>', cuisine, '</p>',
-				// '<button type="button" class="btn btn-default" data-restId="restaurantId" class="rmButton" onClick="removeRest()">Remove</button>',
-				// '</div>'].join('');
 
 				//Create markers with the info from the getJSON request
 				var marker = new google.maps.Marker({
@@ -172,14 +154,7 @@
 						}, 
 					'2500');
 				});
-
-				//Javascript for remove button
-				// var rmButton = document.getElementsByClassName('rmButton')
-				// console.log(rmButton)
-				// google.maps.event.addDomListener(rmButton, 'click',function(){
-				// 	console.log("Got to event listener")
-				// })
-
+				
 			}); //end of $.each method
 		});
 	

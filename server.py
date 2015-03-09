@@ -77,7 +77,6 @@ def show_restaurant_info():
 		# parse that python dict to get just the part of the request w/needed venues info
 		fsq_venues_list = fsq_dict['response']['venues']
 		print "FSQ Venues List: ", fsq_venues_list
-		print ("got into 'try' conditional")
 
 		# if FSQ query returned no search results
 		if fsq_venues_list == []:								
@@ -134,7 +133,7 @@ def save_to_db():
 		model.session.refresh(new_restaurant) 
 
 		# save a new bookmark to the bookmarks table
-		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=new_restaurant.id)		# change this hardcoding later to user who is logged in
+		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=new_restaurant.id)		
 		model.session.add(new_bookmark)
 		model.session.commit()
 
@@ -146,7 +145,7 @@ def save_to_db():
 
 	# elif the restaurant DOES exist BUT the bookmark doesn't exist for this user - ie. the restaurant id is not associated with a bookmark for this user
 	elif saved_restaurant and not saved_bookmark:
-		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=saved_restaurant.id)		# FIXME: change this hardcoding later to user who is logged in
+		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=saved_restaurant.id)		
 		model.session.add(new_bookmark)
 		model.session.commit()
 		return jsonify({"message": "You added %s to your bookmarks!" % saved_restaurant.name})	
@@ -228,6 +227,24 @@ def delete_bookmark():
 
 	# return "This string!"
 	return jsonify({"message": "You deleted %s from your bookmarks." % restaurant_to_delete}) 
+
+@app.route("/recommend")
+def recommend_restaurant():
+	"""Send information to server for one user to recommend a restaurant to another"""
+	pass
+	# # get the user id of the recommender(logged in user)
+	# logged_in_user_id = session['user_id']
+	# # get the restaurant id of the restaurant to be recommended from the request obj
+	# recommended_restaurant_id = request.args['']
+	
+	# # get username of the recommendation recipient (selected by user from list) from request object
+	# recipient_username = request.args['']
+	
+	# # add a bookmark with that information:
+	# recommend_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=recommended_restaurant.id, 
+	# 	recommender_username = recommender_username, pending = True)		
+	# model.session.add(recommended_bookmark)
+	# model.session.commit()
 
 if __name__ == "__main__":
     app.run(debug = True)
