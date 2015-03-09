@@ -19,6 +19,7 @@ def create_db():                                                 # actually crea
 #================== users table  ==================
 
 class User(Base):
+    """Represents each user."""
     __tablename__ = "users"
     id = Column(Integer, primary_key = True)
     username = Column(String(15), nullable = False)
@@ -33,7 +34,7 @@ class User(Base):
 #================== restaurants table  ==================
 
 class Restaurant(Base):
-    """ Represents saved information for restaurants."""
+    """Represents saved information for restaurants."""
     __tablename__ = "restaurants"
     id = Column(Integer, primary_key = True)
     fsq_id = Column(String(64), nullable = False)       
@@ -55,11 +56,13 @@ class Restaurant(Base):
 #================== bookmarks table  ==================
 
 class Bookmark(Base):
-    """ Represents each user's saved restaurants (bookmarks)."""
+    """Represents each user's saved restaurants (bookmarks)."""
     __tablename__ = "bookmarks"
     id = Column(Integer, primary_key = True)        
     user_id = Column(Integer, ForeignKey('users.id'))
     restaurant_id = Column(Integer, ForeignKey('restaurants.id'))
+    recommender_username = Column(String(15), nullable = True)
+    pending = Column(Boolean, nullable = True)
 
     user = relationship("User", backref = backref('bookmarks', order_by = id))
     restaurant = relationship("Restaurant", backref = backref('bookmarks', order_by = id))
@@ -75,7 +78,6 @@ class Bookmark(Base):
 
 #   new_bookmark = model.Bookmark(user_id=this_user_id,         
 #       restaurant_id=this_restaurant_id)
-
 
 """Schema:
 

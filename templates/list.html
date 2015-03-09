@@ -1,36 +1,34 @@
 {% extends 'base.html' %}
 
 	{% block content %}
-	<div class="flash-notice"></div>
-	<h2>Your Bookmarked Restaurants</h2>
-	<table class="table table-striped table-hover">
-		<thead>
-	        <th>Restaurant</th>
-	        <th>Cuisine</th>
-	        <th>Address</th>
-	        <th>City </th>
-	        <th>State</th>
-	        <th>Phone</th>
-	        <th>Website</th>
-	        <th>Options</th>
-	    </thead>
-	    <tbody>
-	    	{% for item in restaurant_data %}
-	    	<tr data-bookmarkid="{{item[0]}}">
-	    		<td>{{item[3]}}</td>
-	    		<td>{{item[4]}}</td>
-	    		<td>{{item[5]}}</td>
-	    		<td>{{item[6]}}</td>
-	    		<td>{{item[7]}}</td>
-	    		<td>{{item[8]}}</td>
-	    		<td><a href="{{item[9]}}">Website</a></td>
-	    		<td><button class="delete-bookmark">Delete Bookmark</button></td>
-	    	</tr>
-	    	{% endfor %}
-	    </tbody>
-	</table>
-	<div>
-	</div> 
+		<h2>Your Bookmarked Restaurants</h2>
+		<table class="table table-striped table-hover">
+			<thead>
+		        <th>Restaurant</th>
+		        <th>Cuisine</th>
+		        <th>Address</th>
+		        <th>City </th>
+		        <th>State</th>
+		        <th>Phone</th>
+		        <th>Website</th>
+		        <th>Options</th>
+		    </thead>
+		    <tbody>
+		    	{% for item in restaurant_data %}
+		    	<tr data-bookmarkid="{{item[0]}}">
+		    		<td>{{item[3]}}</td>
+		    		<td>{{item[4]}}</td>
+		    		<td>{{item[5]}}</td>
+		    		<td>{{item[6]}}</td>
+		    		<td>{{item[7]}}</td>
+		    		<td>{{item[8]}}</td>
+		    		<td><a href="{{item[9]}}">Website</a></td>
+		    		<td><button class="delete-bookmark">Delete Bookmark</button></td>
+		    	</tr>
+		    	{% endfor %}
+		    </tbody>
+		</table>
+		<div class="flash-notice"></div> 
 	{% endblock %}
 
 	{% block js_code %}
@@ -47,7 +45,8 @@
 			
 			//callback function to be run after get response back from GET request
 			function showDeleteMessage(response) {
-				$(".flash-notice").html(response.message).show().fadeToggle(2500);
+				window.location.reload(true)
+				// $(".flash-notice").html(response.message).show().fadeToggle(6000);
 			}
 
 			$.get("/delete-bookmark", bookmarkData, showDeleteMessage);

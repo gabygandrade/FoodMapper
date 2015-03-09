@@ -15,18 +15,15 @@
 	    <tbody>
 		    {% for item in fsq_venues %}
 		    	{% if item.location.address is defined %}
-		    		{% if item.url is defined %}
-					    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" data-phone="{{item.contact.phone}}" data-url ="{{item.url}}">
-					{% else %}
-						 <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" data-phone="{{item.contact.phone}}" data-url ="unavailable">
-					{% endif %}
-					        <td>{{ item['name'] }}</td>
-					        <td>{{ item['location']['address'] }}</td>
-					        <td>{{ item['location']['city'] }}</td>
-					        <td>{{ item['location']['state'] }}</td>
-					        <td><button class="add-bookmark">Bookmark</button></td>
-					        <td><button class="recommend">Recommend</button></td>
-					 	</tr>
+				    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" 
+				    data-phone="{{item.contact.phone if item.contact.phone is defined else ''}}" data-url="{{item.url if item.url is defined else ''}}">
+				        <td>{{ item['name'] }}</td>
+				        <td>{{ item['location']['address'] }}</td>
+				        <td>{{ item['location']['city'] }}</td>
+				        <td>{{ item['location']['state'] }}</td>
+				        <td><button class="btn add-bookmark">Bookmark</button></td>
+				        <td><button class="btn recommend">Recommend</button></td>
+				 	</tr>
 				{% endif %}
 			{% endfor %}
 		</tbody>

@@ -60,7 +60,7 @@ def index():
 	return render_template("index.html")
 
 @app.route("/restaurant-results")
-def show_rest_info():
+def show_restaurant_info():
 	"""When the user submits their search, gather the user input 
 	to create the query request to the Foursquare (FSQ) API. 
 	Return the response as a python dictionary and pass it to the 
@@ -85,10 +85,10 @@ def show_rest_info():
 		
 		return render_template("restaurant_results.html", fsq_venues=fsq_venues_list)
 
-	except:
+	except Exception as e:
+		# print e.message
 		# if the user entered a location FSQ cannot geocode				
 		fsq_venues_list = []
-		print ("got into 'except' conditional now!!!")
 
 		flash("Please enter a city name.") 
 		return redirect('/')
