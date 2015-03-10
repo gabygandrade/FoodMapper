@@ -24,7 +24,9 @@
 				        	<span class="glyphicon glyphicon-star-empty "></button></td>
 				        <td><button type="button" class="btn recommend" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></button></td>
 				        <td><h5>{{ item['name'] }}</h5>
-				        	<p>{{item.url if item.url is defined else ''}}</p>
+				        	{% if item.url is defined %}
+				        	<p><a href="{{item['url']}}">{{item.url}}</a></p>
+				        	{% endif %}
 				        </td>
 				        <td>{{ item['location']['address'] }} 
 				        	<p>{{ item['location']['city'] }}, {{ item['location']['state'] }}</p>
@@ -60,6 +62,7 @@
 
 {% block js_code %}
 	<script>
+
 	$('.add-bookmark').click(function(){
 		var $row = $(this).closest("tr");
 		// alert($row.data('id'));
@@ -95,22 +98,33 @@
 		$.get("/save-db", fsqData, showMessage);
 	});
 
-	$('.recommend').click(function(){
-		// var $row = $(this).closest("tr");
-		// alert($row.data('id'));
-
-		//send a GET request to the server to get all usernames and render them on the page when its done 
+	$(document).ready(function() {
+    	//send a GET request to the server to get all usernames and render them on the page when its done 
 		$.getJSON("/user_info", function(json, error){
 			if (error){
 				console.log(error);
 			}
+
 			var userlist = json['username']
 			// console.log(userlist)
+
 			$.each(userlist, function(index, value){
 				console.log(value);
-				$( ".user-list" ).append( "<p>" +"<a href=#>"+ value + "</a>"+ "</p>");
+				// href = "/recommend" + "?username=" + value
+				// $( ".user-list" ).append( "<p>" +"<a href="+ href + ">" + value + "</a>"+ "</p>");
+				username = value
+				$( ".user-list" ).append( "<p>" +"<a data-username="+ username + ">" + value + "</a>"+ "</p>");
+			});
+
+			$("a").click(function(event){
+				// console.log(event.target);
+				usernameRecipient = event.target.getAttribute('data-username');
+				console.log(usernameRecipient);
+				//send the username data to the server in a GET request to the /recommend route as well as all the other needed information to save this restaurant to the db 
 			})
+			
 		}); //end of GET request
 	});
+
 	</script>
 {% endblock %}
