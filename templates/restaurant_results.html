@@ -25,9 +25,9 @@
 				        <td><button type="button" class="btn recommend" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></button></td>
 				        <td><h5>{{ item['name'] }}</h5>
 				        	{% if item.url is defined %}
-				        	<p><a href="{{item['url']}}">{{item.url}}</a></p>
+				        		<p><a href="{{item['url']}}">{{item.url}}</a></p>
 				        	{% endif %}
-				        </td>
+						</td>
 				        <td>{{ item['location']['address'] }} 
 				        	<p>{{ item['location']['city'] }}, {{ item['location']['state'] }}</p>
 				        </td>
@@ -66,28 +66,28 @@
 	$('.add-bookmark').click(function(){
 		var $row = $(this).closest("tr");
 		// alert($row.data('id'));
-		var fsqId = $row.data('id');
-		var name = $row.data('name');
-		var lat = $row.data('lat');
-		var lng = $row.data('lng');
-		var cuisine = $row.data('cuisine');
-		var address = $row.data('address');
-		var state = $row.data('state');
-		var city = $row.data('city');
-		var phone = $row.data('phone');
-		var url = $row.data('url');
+		// var fsqId = ;
+		// var name = $row.data('name');
+		// var lat = $row.data('lat');
+		// var lng = $row.data('lng');
+		// var cuisine = $row.data('cuisine');
+		// var address = $row.data('address');
+		// var state = $row.data('state');
+		// var city = $row.data('city');
+		// var phone = $row.data('phone');
+		// var url = $row.data('url');
 
 		var fsqData = {
-				"name": name, 
-				"fsqId":fsqId, 
-				"lat": lat, 
-				"lng": lng, 
-				"cuisine": cuisine,
-				"address": address,
-				"city": city,
-				"state": state, 
-				"phone": phone,
-				"url": url
+				"name": $row.data('name'), 
+				"fsqId": $row.data('id'), 
+				"lat": $row.data('lat'), 
+				"lng": $row.data('lng'),
+				"cuisine": $row.data('cuisine'),
+				"address": $row.data('address'),
+				"city": $row.data('city'),
+				"state": $row.data('state'), 
+				"phone": $row.data('phone'),
+				"url": $row.data('url')
 			}
 		//show a message telling user they have bookmarked the restaurant - callback function for get request
 		function showMessage(response) {
@@ -108,21 +108,32 @@
 			var userlist = json['username']
 			// console.log(userlist)
 
-			$.each(userlist, function(index, value){
-				console.log(value);
-				// href = "/recommend" + "?username=" + value
-				// $( ".user-list" ).append( "<p>" +"<a href="+ href + ">" + value + "</a>"+ "</p>");
-				username = value
-				$( ".user-list" ).append( "<p>" +"<a data-username="+ username + ">" + value + "</a>"+ "</p>");
+			$.each(userlist, function(index, username){
+				console.log(username);
+				$( ".user-list" ).append( "<p>" +"<a data-username="+ username + ">" + username + "</a>"+ "</p>");
+			});
+
+			// WHEN CLICK ON RECOMMEND BUTTON, PASS INFO HERE?
+			// THEN WHEN CLICK ON A, PASS THE usernameRecipient to GET request as well?
+
+			var $restaurant
+
+			$(".recommend").click(function(e){
+				$restaurant = $(this).closest("tr");
+				console.log($restaurant);
 			});
 
 			$("a").click(function(event){
 				// console.log(event.target);
-				usernameRecipient = event.target.getAttribute('data-username');
+				var usernameRecipient = event.target.getAttribute('data-username');
 				console.log(usernameRecipient);
+				var name = $restaurant.data('name');
+				console.log(name);
 				//send the username data to the server in a GET request to the /recommend route as well as all the other needed information to save this restaurant to the db 
-			})
-			
+			});
+
+
+
 		}); //end of GET request
 	});
 
