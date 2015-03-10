@@ -28,8 +28,8 @@ class User(Base):
 
     def __repr__(self):
         """Cleanly info about the user."""
-        return "<User id=%r email=%r password=%r>" % (self.id, 
-            self.email, self.password)
+        return "<User id=%r username=%r email=%r password=%r>" % (self.id, 
+            self.username, self.email, self.password)
 
 #================== restaurants table  ==================
 

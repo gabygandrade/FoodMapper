@@ -5,6 +5,7 @@ import jinja2
 import os
 import fsqapi
 import config
+import json
 
 app = Flask(__name__)
 app.secret_key = config.APP_SECRET_KEY
@@ -150,6 +151,24 @@ def save_to_db():
 		model.session.commit()
 		return jsonify({"message": "You added %s to your bookmarks!" % saved_restaurant.name})	
 
+@app.route("/user_info")
+def get_user_info():
+	"""Send user info to the modal so it can populate the modal that the user sees
+	when they click recommend"""
+	# query for all the usernames in the database
+	all_usernames = model.session.query(model.User.username)
+	print "all usernames: ", all_usernames
+
+	logged_in_username = session['username']
+	print "Logged in username: ", logged_in_username
+
+	# create a list with all usernames except for the user who is currently logged in
+	usernames = [user.username for user in all_usernames if user.username!=logged_in_username]
+	print "usernames list", usernames
+
+	# # send this list as JSON
+	return jsonify({"username": usernames})
+
 @app.route("/map")
 def show_map():
 	"""Render map and return info about user's bookmarks to populate list"""
@@ -233,14 +252,14 @@ def recommend_restaurant():
 	"""Send information to server for one user to recommend a restaurant to another"""
 	pass
 	#get the user id of the recommender(logged in user)
-	logged_in_user_id = session['user_id']
+	# logged_in_user_id = session['user_id']
 
-	# get the restaurant FSQid of the restaurant to be recommended from the request obj
-	recommend_restaurant_fsqid = request.args['fsqId']
+	# # get the restaurant FSQid of the restaurant to be recommended from the request obj
+	# recommend_restaurant_fsqid = request.args['fsqId']
 
-	# check if that restaurant is already in db
-	saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
-	# saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
+	# # check if that restaurant is already in db
+	# saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
+	# # saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
 		# model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
 
 	# if the restaurant is already in db 
@@ -251,21 +270,21 @@ def recommend_restaurant():
 	# if the bookmark arleady exists int he recipients database
 		# return a messsage telling recommender that this uer already has this restaurant in their bookmarks
 
-
-
 	
 	# get username of the recommendation recipient (selected by user from list) from request object
-	recipient_username = request.args['']
+	# recipient_username = request.args['']
 	
-	# add a bookmark with that information:
-	recommend_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=recommended_restaurant.id, 
-		recommender_username = recommender_username, pending = True)		
-	model.session.add(recommended_bookmark)
-	model.session.commit()
+	# # add a bookmark with that information:
+	# recommend_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=recommended_restaurant.id, 
+	# 	recommender_username = recommender_username, pending = True)		
+	# model.session.add(recommended_bookmark)
+	# model.session.commit()
 
 if __name__ == "__main__":
     app.run(debug = True)
 
+# if __name__ == "__main__":
+#     app.run(host="0.0.0.0", debug=False)
 
 
 

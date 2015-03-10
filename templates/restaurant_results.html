@@ -21,7 +21,7 @@
 		    	{% if item.location.address is defined %}
 				    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" 
 				    data-phone="{{item.contact.phone if item.contact.phone is defined else ''}}" data-url="{{item.url if item.url is defined else ''}}">
-				        <td>{{ item['name'] }}</td>
+				        <td>{{ item['name'] }} {{ item['location']['address'] }} </td>
 				        <td>{{ item['location']['address'] }}</td>
 				        <td>{{ item['location']['city'] }}</td>
 				        <td>{{ item['location']['state'] }}</td>
@@ -40,10 +40,12 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title" id="myModalLabel">Select User to Recommend this Restaurant To</h4>
+	        <h4 class="modal-title" id="myModalLabel">Almost done!</h4>
 	      </div>
 	      <div class="modal-body">
-	        USER LIST HERE 
+	      	<p>Select the user to recommend this restaurant to.</p>
+	        <div class="user-list">
+	        </div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -95,46 +97,18 @@
 	$('.recommend').click(function(){
 		// var $row = $(this).closest("tr");
 		// alert($row.data('id'));
-		// $("#myModal").modal("show");
 
-
-
-		// var fsqId = $row.data('id');
-		// var name = $row.data('name');
-		// var lat = $row.data('lat');
-
-
-
-
-
-		// var lng = $row.data('lng');
-		// var cuisine = $row.data('cuisine');
-		// var address = $row.data('address');
-		// var state = $row.data('state');
-		// var city = $row.data('city');
-		// var phone = $row.data('phone');
-		// var url = $row.data('url');
-
-		// var fsqData = {
-		// 		"name": name, 
-		// 		"fsqId":fsqId, 
-		// 		"lat": lat, 
-		// 		"lng": lng, 
-		// 		"cuisine": cuisine,
-		// 		"address": address,
-		// 		"city": city,
-		// 		"state": state, 
-		// 		"phone": phone,
-		// 		"url": url
-		// 	}
-		// //show a message telling user they have bookmarked the restaurant - callback function for get request
-		// function showMessage(response) {
-		// 	$(".flash-notice").html(response.message).show().fadeToggle(3000);
-		// }
-
-		// //get request to URL on server that saves the bkm and restaurant to db as necessary
-		// $.get("/save-db", fsqData, showMessage);
+		//send a GET request to the server to get all usernames and render them on the page when its done 
+		$.get("/user_info", function(response, error){
+			console.log(response);
+			if (error){
+				console.log(error);
+			}
+			// var json = response;
+		// 	$.each(json, function(){ 
+		// 		console.log(json);
+		// 	});
+		});
 	});
-
 	</script>
 {% endblock %}
