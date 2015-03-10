@@ -5,29 +5,30 @@
 {% endblock %}
 
 {% block content %}
-	<h2>Restaurant search results: </h2>
+	<h3>Restaurant search results</h3>
+	<p>Select the <span class="glyphicon glyphicon-star-empty"></span> to save a restaurant to your bookmarks, or <span class="glyphicon glyphicon-user"></span> to recommend it to a friend!</p>
 	<div class="alert alert-success" role="alert" hidden="true"></div>
 	<table class="table table-striped table-hover">
 	    <thead>
-	        <th>Restaurant</th>
-	        <th>Address</th>
-	        <th>City </th>
-	        <th>State</th>
 	        <th>Bookmark</th>
 	        <th>Recommend</th>
+	        <th>Restaurant</th>
+	        <th>Address</th>
 	    </thead>
 	    <tbody>
 		    {% for item in fsq_venues %}
 		    	{% if item.location.address is defined %}
 				    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" 
 				    data-phone="{{item.contact.phone if item.contact.phone is defined else ''}}" data-url="{{item.url if item.url is defined else ''}}">
-				        <td>{{ item['name'] }} {{ item['location']['address'] }} </td>
-				        <td>{{ item['location']['address'] }}</td>
-				        <td>{{ item['location']['city'] }}</td>
-				        <td>{{ item['location']['state'] }}</td>
-				        <td><button type="button" class="btn add-bookmark">
-				        	<span class="glyphicon glyphicon-bookmark "></button></td>
+				    	<td><button type="button" class="btn add-bookmark">
+				        	<span class="glyphicon glyphicon-star-empty "></button></td>
 				        <td><button type="button" class="btn recommend" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></button></td>
+				        <td><h5>{{ item['name'] }}</h5>
+				        	<p>{{item.url if item.url is defined else ''}}</p>
+				        </td>
+				        <td>{{ item['location']['address'] }} 
+				        	<p>{{ item['location']['city'] }}, {{ item['location']['state'] }}</p>
+				        </td>
 				 	</tr>
 				{% endif %}
 			{% endfor %}
@@ -43,7 +44,7 @@
 	        <h4 class="modal-title" id="myModalLabel">Almost done!</h4>
 	      </div>
 	      <div class="modal-body">
-	      	<p>Select the user to recommend this restaurant to.</p>
+	      	<p>Select the user to recommend this restaurant to:</p>
 	        <div class="user-list">
 	        </div>
 	      </div>
@@ -99,16 +100,17 @@
 		// alert($row.data('id'));
 
 		//send a GET request to the server to get all usernames and render them on the page when its done 
-		$.get("/user_info", function(response, error){
-			console.log(response);
+		$.getJSON("/user_info", function(json, error){
 			if (error){
 				console.log(error);
 			}
-			// var json = response;
-		// 	$.each(json, function(){ 
-		// 		console.log(json);
-		// 	});
-		});
+			var userlist = json['username']
+			// console.log(userlist)
+			$.each(userlist, function(index, value){
+				console.log(value);
+				$( ".user-list" ).append( "<p>" +"<a href=#>"+ value + "</a>"+ "</p>");
+			})
+		}); //end of GET request
 	});
 	</script>
 {% endblock %}

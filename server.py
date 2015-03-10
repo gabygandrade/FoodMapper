@@ -134,7 +134,7 @@ def save_to_db():
 		model.session.refresh(new_restaurant) 
 
 		# save a new bookmark to the bookmarks table
-		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=new_restaurant.id, pending=False)		
+		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=new_restaurant.id)		
 		model.session.add(new_bookmark)
 		model.session.commit()
 
@@ -146,7 +146,7 @@ def save_to_db():
 
 	# elif the restaurant DOES exist BUT the bookmark doesn't exist for this user - ie. the restaurant id is not associated with a bookmark for this user
 	elif saved_restaurant and not saved_bookmark:
-		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=saved_restaurant.id, pending=False)		
+		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=saved_restaurant.id)		
 		model.session.add(new_bookmark)
 		model.session.commit()
 		return jsonify({"message": "You added %s to your bookmarks!" % saved_restaurant.name})	
@@ -157,16 +157,16 @@ def get_user_info():
 	when they click recommend"""
 	# query for all the usernames in the database
 	all_usernames = model.session.query(model.User.username)
-	print "all usernames: ", all_usernames
+	# print "all usernames: ", all_usernames
 
 	logged_in_username = session['username']
-	print "Logged in username: ", logged_in_username
+	# print "Logged in username: ", logged_in_username
 
 	# create a list with all usernames except for the user who is currently logged in
 	usernames = [user.username for user in all_usernames if user.username!=logged_in_username]
-	print "usernames list", usernames
+	# print "usernames list", usernames
 
-	# # send this list as JSON
+	# send this list as JSON
 	return jsonify({"username": usernames})
 
 @app.route("/map")

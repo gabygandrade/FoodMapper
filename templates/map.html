@@ -21,33 +21,31 @@
 
 {% block content %}
 	<div class="row">
+		<div class="col-md-3">
 			<table class="table table-striped table-hover">
 				<thead>
-			        <th>Restaurant</th>
-			        <th>Cuisine</th>
-			        <th>Address</th>
-			        <th>City </th>
-			        <th>State</th>
-			        <th>Phone</th>
-			        <th>Website</th>
-			        <th>Options</th>
+			        <th>Your Saved Restaurants</th>
 			    </thead>
 			    <tbody>
 			    	{% for item in restaurant_data %}
 			    	<tr data-bookmarkid="{{item[0]}}">
-			    		<td>{{item[3]}} {{item[4]}}</td>
-			    		<td>{{item[4]}}</td>
-			    		<td>{{item[6]}}</td>
-			    		<td>{{item[7]}}</td>
-			    		<td>{{item[8]}}</td>
-			    		<td><a href="{{item[9]}}">Website</a></td>
-			    		<td><button class="btn delete-bookmark">Delete Bookmark</button></td>
-			    		<!-- <td><button class="btn delete-bookmark"><span class="glyphicon glyphicon-trash"></button></td> -->
+			    		<td>
+				    		<h4>{{item[3]}}</h4>
+				    		<p>{{item[4]}}</p>
+				    		<p>{{item[5]}}</p>
+				    		<p>{{item[6]}}, {{item[7]}}</p>
+				    		<p><span class="glyphicon glyphicon-earphone"></span> {{item[8]}}</p>
+				    		<p><a href="{{item[9]}}">{{item[9]}}</a></p>
+			    			<button class="btn delete-bookmark"><span class="glyphicon glyphicon-trash"></span></button>
+			    		</td>
 			    	</tr>
 			    	{% endfor %}
 			    </tbody>
 			</table>
+		</div>
+		<div class="col-md-9">
 			<div id="map-canvas"></div>
+		</div>
 		<!-- <div class="flash-notice"></div>  -->
 	</div>
 

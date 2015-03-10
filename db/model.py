@@ -61,8 +61,7 @@ class Bookmark(Base):
     id = Column(Integer, primary_key = True)        
     user_id = Column(Integer, ForeignKey('users.id'))
     restaurant_id = Column(Integer, ForeignKey('restaurants.id'))
-    pending = Column(Boolean, nullable = False)
-    recipient_username = Column(String(15))
+    recommendation_id = Column(Integer, ForeignKey('recommendations.id'), nullable=True)
 
     user = relationship("User", backref = backref('bookmarks', order_by = id))
     restaurant = relationship("Restaurant", backref = backref('bookmarks', order_by = id))
@@ -78,6 +77,26 @@ class Bookmark(Base):
 
 #   new_bookmark = model.Bookmark(user_id=this_user_id,         
 #       restaurant_id=this_restaurant_id)
+
+#================== recommendations table  ==================
+class Recommendation(Base):
+    """Represents each user's recommendations."""
+    __tablename__ = "recommendations"
+    id = Column(Integer, primary_key = True)
+    restaurant_id = Column(Integer, ForeignKey('restaurants.id'))  
+    recommender_id = Column(Integer, ForeignKey('users.id'))
+    recipient_id = Column(Integer, ForeignKey('users.id'))
+    pending = Column(Boolean, nullable = False)
+
+    recommender = relationship("User", foreign_keys=[recommender_id])
+    recipient = relationship("User", foreign_keys=[recipient_id])
+
+    restaurant = relationship("Restaurant", backref = backref('recommendations', order_by = id))
+
+    def __repr__(self):
+        """Show info about the recommendation."""
+        return "<Recommendation id=%r recommender_id=%r recipient_id=%r pending=%r>" % (self.id, self.user_id, 
+            self.restaurant_id) 
 
 """Schema:
 
