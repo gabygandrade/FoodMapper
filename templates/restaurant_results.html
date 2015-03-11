@@ -20,9 +20,9 @@
 		    	{% if item.location.address is defined %}
 				    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" 
 				    data-phone="{{item.contact.phone if item.contact.phone is defined else ''}}" data-url="{{item.url if item.url is defined else ''}}">
-				    	<td><button type="button" class="btn add-bookmark">
+				    	<td><button type="button" class="btn btn-primary add-bookmark">
 				        	<span class="glyphicon glyphicon-star-empty "></button></td>
-				        <td><button type="button" class="btn recommend" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></button></td>
+				        <td><button type="button" class="btn btn-success recommend" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></button></td>
 				        <td><h5>{{ item['name'] }}</h5>
 				        	{% if item.url is defined %}
 				        		<p><a href="{{item['url']}}">{{item.url}}</a></p>
@@ -52,7 +52,6 @@
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary">Save changes</button>
 	      </div>
 	    </div>
 	  </div>
@@ -65,17 +64,6 @@
 
 	$('.add-bookmark').click(function(){
 		var $row = $(this).closest("tr");
-		// alert($row.data('id'));
-		// var fsqId = ;
-		// var name = $row.data('name');
-		// var lat = $row.data('lat');
-		// var lng = $row.data('lng');
-		// var cuisine = $row.data('cuisine');
-		// var address = $row.data('address');
-		// var state = $row.data('state');
-		// var city = $row.data('city');
-		// var phone = $row.data('phone');
-		// var url = $row.data('url');
 
 		var fsqData = {
 				"name": $row.data('name'), 
@@ -105,6 +93,7 @@
 				console.log(error);
 			}
 
+			//get the userlist from the json object sent from server
 			var userlist = json['username']
 			// console.log(userlist)
 
@@ -113,28 +102,42 @@
 				$( ".user-list" ).append( "<p>" +"<a data-username="+ username + ">" + username + "</a>"+ "</p>");
 			});
 
-			// WHEN CLICK ON RECOMMEND BUTTON, PASS INFO HERE?
-			// THEN WHEN CLICK ON A, PASS THE usernameRecipient to GET request as well?
-
-			var $restaurant
+			//initialize $row in global scope so can access it within all functions
+			var $row
 
 			$(".recommend").click(function(e){
-				$restaurant = $(this).closest("tr");
-				console.log($restaurant);
+				$row = $(this).closest("tr");
+				// console.log($row);
 			});
 
 			$("a").click(function(event){
-				// console.log(event.target);
+				//get the data attribute 'data-username' of the event that was triggered when user clicked on the 'a' tag
 				var usernameRecipient = event.target.getAttribute('data-username');
-				console.log(usernameRecipient);
-				var name = $restaurant.data('name');
-				console.log(name);
+				// console.log(usernameRecipient);
+
+				var fsqData = {
+					"name": $row.data('name'), 
+					"fsqId": $row.data('id'), 
+					"lat": $row.data('lat'), 
+					"lng": $row.data('lng'),
+					"cuisine": $row.data('cuisine'),
+					"address": $row.data('address'),
+					"city": $row.data('city'),
+					"state": $row.data('state'), 
+					"phone": $row.data('phone'),
+					"url": $row.data('url'),
+					"usernameRecipient": usernameRecipient
+				}
+
+				console.log(fsqData);
 				//send the username data to the server in a GET request to the /recommend route as well as all the other needed information to save this restaurant to the db 
+
+				$.get("/recommend", fsqData, function(response){
+					console.log(response)
+				});	//end of get request to recommend route
+
 			});
-
-
-
-		}); //end of GET request
+		}); //end of GETJSON request to get user info list
 	});
 
 	</script>

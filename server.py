@@ -207,7 +207,7 @@ def return_bookmark_info():
 
 	print session
 	print logged_in_user_id
-	print "\n \n \n \n restaurant_info: ", restaurant_info
+	print "\n \n restaurant_info: ", restaurant_info
 
 	return jsonify(restaurant_info)
 
@@ -251,57 +251,74 @@ def delete_bookmark():
 @app.route("/recommend")
 def recommend_restaurant():
 	"""Send information to server for one user to recommend a restaurant to another"""
-	pass
-	return "got to recommend restaurant route!"
-	# #get the user id of the recommender(logged in user)
-	# recommender_id = session['user_id']
 
-	# #get the user id of the recipient (from request obj)
-	# recipient_id = request.args['']
+	#get the user id of the recommender(logged in user)
+	recommender_id = session['user_id']
+	# print "recommender id: ", recommender_id
 
-	# recipient = model.session.query(User).filter(model.User.id==recipient_id)
+	#get the user id of the recipient (from request obj), as well as rest of info needed to save to db 
+	recipient_username = request.args['usernameRecipient']
+	name = request.args["name"]
+	fsq_id = request.args["fsqId"]
+	lat = request.args["lat"]
+	lng = request.args["lng"]
+	cuisine = request.args["cuisine"]
+	address = request.args["address"]
+	city = request.args["city"]
+	state = request.args["state"]
+	url = request.args["url"]
+	phone = request.args["phone"]
 
-	# # get the restaurant FSQid of the restaurant to be recommended from the request obj
-	# recommend_restaurant_fsqid = request.args['fsqId']
+	# print "Request object: ", request.args
 
-	# # query to check if that restaurant is already in db
-	# saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
-	
-	# # query to see if the recipient already has that restaurant bookmarked 
-	# saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==recipient_user_id, 			
-	# 	model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
+	# query for the recipient 
+	recipient = model.session.query(model.User).filter(model.User.username==recipient_username).first()
+	print "recipient id: ", recipient.id
 
-	# # query to see if the recipient already has that recommendation	pending
-	# pending_recommendation = session.query(Recommendation).filter(Recommendation.recipient_id==recipient_user_id,
-	# 	Recommendation.restaurant_id==saved_restaurant.id, pending=True)
+	# query to check if that restaurant is already in restaurants table
+	saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
 
-	# if not saved_restaurant:
-	# 	# save the restaurant to db
-	# 	new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
-	# 					lat=lat, lng=lng, cuisine=cuisine, address=address, city=city, 
-	# 					state=state, url=url, phone=phone)
-	# 	model.session.add(new_restaurant)
-	# 	model.session.commit()
+	# # query to check if the recipient already has that restaurant bookmarked 
+	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==recipient.id, 			
+		model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
 
-	# 	# refresh to refer to the SQLAlchemy reference for the new_restaurant
-	# 	model.session.refresh(new_restaurant) 
+	# query to see if the recipient already has that recommendation	pending - CHECK THIS AFTER MAKE MY FIRST RECOMMENDATION
+	# pending_recommendation = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==recipient.id,
+	# 	model.Recommendation.restaurant_id==saved_restaurant.id, model.Recommendation.pending==True).first()
+	# FIXME: WITH THIS QUERY THE IF NOT SAVED RESTAURANT CONDITIONAL DOESN'T WORK
 
-	# 	# save a new recommendation - TRY THESE IN SQLALCHEMY FIRST
-	# 	new_recommendation = model.Recommendation(restaurant_id=new_restaurant.id, 
-	# 		recommender_id=recommender_id, recipient_id=recipient_id, pending=True)		
-	# 	model.session.add(new_recommendation)
-	# 	model.session.commit()
+	if not saved_restaurant:
+		# save the restaurant to db
+		new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
+						lat=lat, lng=lng, cuisine=cuisine, address=address, city=city, 
+						state=state, url=url, phone=phone)
+		model.session.add(new_restaurant)
+		model.session.commit()
+
+		# refresh to refer to the SQLAlchemy reference for the new_restaurant
+		model.session.refresh(new_restaurant) 
+
+		# save a new recommendation 
+		new_recommendation = model.Recommendation(restaurant_id=new_restaurant.id, 
+			recommender_id=recommender_id, recipient_id=recipient.id, pending=True)		
+		model.session.add(new_recommendation)
+		model.session.commit()
+
+		return jsonify({"message": "You recommended %s to %s!" % (new_restaurant.name, recipient_username)}) 
+
 	# elif saved_restaurant and not (pending_recommendation and saved_bookmark):	#FIXME: Not sure if AND or OR Is appropriate here - want to make sure its neither 
-	# 	# add a recommendation to that user
+	# 	# add a new recommendation to that user
 	# 	new_recommendation = model.Recommendation(restaurant_id=saved_restaurant.id, 
 	# 		recommender_id=recommender_id, recipient_id=recipient_id, pending=True)		
 	# 	model.session.add(new_recommendation)
 	# 	model.session.commit()
-	# elif pending_recommendation:
-	# 	return jsonify({"message": "%s already has this recommendation pending!" % recipient.id}) 
-	# elif saved_bookmark:
-	# 	return jsonify({"message": "%s already has this recommendation bookmarked." % recipient.id}) 
 
+	elif pending_recommendation:
+		return jsonify({"message": "%s already has this recommendation pending!" % recipient_username}) 
+	elif saved_bookmark:
+		return jsonify({"message": "%s already has this restaurant bookmarked." % recipient_username}) 
+
+	return "got to recommend restaurant route!"
 if __name__ == "__main__":
     app.run(debug = True)
 

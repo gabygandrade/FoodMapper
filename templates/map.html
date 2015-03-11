@@ -73,10 +73,18 @@
 			var pos = new google.maps.LatLng(position.coords.latitude,
 		                           position.coords.longitude);
 
-			var infowindow = new google.maps.InfoWindow({
-			map: map,
-			position: pos,
-			content: 'Location found using HTML5.'
+			var geolocationInfoWindow = new google.maps.InfoWindow({
+				map: map,
+				position: pos,
+				content: 'Location found using HTML5.'
+			});
+
+			//add event listener to marker to close infowindow on mouseout of marker
+			google.maps.event.addListener(geolocationInfoWindow, function() {
+				setTimeout(function () {
+					infoWindow.close(map,marker); 
+					}, 
+				'2500');
 			});
 
 			map.setCenter(pos);
@@ -123,17 +131,10 @@
 			 		});
 			 		
 		 		//add event listener to marker to show infowindow on mouseover of marker
-				google.maps.event.addListener(marker, 'mouseover', function() {
+				google.maps.event.addListener(marker, 'click', function() {
 					infoWindow.open(map,marker);
 				});
 
-				//add event listener to marker to close infowindow on mouseout of marker
-				google.maps.event.addListener(marker, 'mouseout', function() {
-					setTimeout(function () {
-						infoWindow.close(map,marker); 
-						}, 
-					'2500');
-				});
 			}); //end of $.each method
 		}); //end of GET request ---------------------------- 
 

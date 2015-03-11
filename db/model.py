@@ -95,8 +95,8 @@ class Recommendation(Base):
 
     def __repr__(self):
         """Show info about the recommendation."""
-        return "<Recommendation id=%r recommender_id=%r recipient_id=%r pending=%r>" % (self.id, self.user_id, 
-            self.restaurant_id) 
+        return "<Recommendation id=%r restaurant_id=%r recommender_id=%r recipient_id=%r pending=%r>" % (self.id,
+            self.restaurant_id, self.recommender_id, self.recipient_id, self.pending)
 
 """Schema:
 
