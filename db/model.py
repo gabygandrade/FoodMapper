@@ -88,8 +88,8 @@ class Recommendation(Base):
     recipient_id = Column(Integer, ForeignKey('users.id'))
     pending = Column(Boolean, nullable = False)
 
-    recommender = relationship("User", foreign_keys=[recommender_id])
-    recipient = relationship("User", foreign_keys=[recipient_id])
+    recommender = relationship("User", foreign_keys=[recommender_id], backref=backref("recommendations_made"))
+    recipient = relationship("User", foreign_keys=[recipient_id], backref=backref("recommendations_received"))
 
     restaurant = relationship("Restaurant", backref = backref('recommendations', order_by = id))
 

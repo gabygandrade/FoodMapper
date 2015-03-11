@@ -63,9 +63,6 @@
 
 		// Create a new StyledMapType object, passing it the array of styles,
 		// as well as the name to be displayed on the map type control.
-
-
-		
 		var styledMap = new google.maps.StyledMapType(styles,
 		{name: "Styled Map"});
 
@@ -140,12 +137,20 @@
 				'<p>','<a href=', url, '>', url, '</a>','</p>',
 				'</div>'].join('');
 
+				var iconBase = 'https://foursquare.com/img/categories_v2/food/';
+				var category = cuisine.toLowerCase()
+
+				var customIconUrl = iconBase + category + '_bg_32.png'
+
 				//Create markers with the info from the getJSON request
 				var marker = new google.maps.Marker({
 					position: myLatLng,
-					map: map
+					map: map,
+					icon: customIconUrl
+					//if this fails, replace category with 'default'
 				}); 
 				//add the markers to the map 
+
 				marker.setMap(map);
 
 				//Add an info window with the information about the restaurant

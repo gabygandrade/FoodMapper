@@ -327,14 +327,50 @@ def recommend_restaurant():
 
 @app.route("/recommendation-info")
 def show_recommendations():
-	"""Send JSON to front-end to show recommendation notifications"""
+	"""Send to front-end to show recommendation notifications"""
+	pass
+	
 	logged_in_user_id = session['user_id']
 
-	recommendation_object = model.session.query(model.Recommendation.restaurant_id, model.Recommendation.recommender_id).filter(model.Recommendation.recipient_id==logged_in_user_id).all()
-	
-	# loop over recommendation object and create a dict with all the information about the restaurant that I want to render
+	recommendations = model.session.query(model.Recommendation).filter(
+		model.Recommendation.recipient_id == logged_in_user_id).all()
 
-	return jsonify({"message": "this message"})
+	# rec = recommendations.all()[0]
+	# for rec in recommendations:
+	# 	print rec.restaurant.cuisine
+
+	# rec_data = {}
+	# for rec in recommendations:
+	# 	print rec.recommender.username
+	# 	print rec.recipient.username
+	# 	print rec.id
+	# 	print rec.restaurant.name
+	# 	print rec.restaurant.cuisine
+	# 	print rec.restaurant.address
+	# 	print rec.restaurant.city
+	# 	print rec.restaurant.state
+	# 	print rec.restaurant.url
+
+	rec_data = {}
+	for rec in recommendations:
+		rec_data[rec.id] = {}						# item.id == bookmark id 
+		rec_data[rec.id]["bkm_id"] = rec.id
+		rec_data[rec.id]["recommender_username"] = rec.recommender.username
+		rec_data[rec.id]["recipient_username"] = rec.recipient.username
+		rec_data[rec.id]["rest_name"] = rec.restaurant.name
+		rec_data[rec.id]["rest_cuisine"] = rec.restaurant.cuisine
+		rec_data[rec.id]["rest_address"] = rec.restaurant.address
+		rec_data[rec.id]["rest_city"] = rec.restaurant.city
+		rec_data[rec.id]["rest_state"] = rec.restaurant.state
+		rec_data[rec.id]["rest_url"] = rec.restaurant.url
+
+	print rec_data
+
+	# return jsonify({"message": "this message"})
+	return render_template("index.html", recs = rec_data)
+
+# @app.route("/change-recommendation")
+# def change_recommendation():
 
 if __name__ == "__main__":
     app.run(debug = True)
