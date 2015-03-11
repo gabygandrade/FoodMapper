@@ -111,10 +111,14 @@
 				var name = data.name
 				var cuisine = data.cuisine
 				var fsqId = data.fsq_id
+				var address = data.address
+				var url = data.url
 
 				var restcontent = ['<div id="content">',
 				'<h3>', name, '</h3>',
 				'<p>', cuisine, '</p>',
+				'<p>', address, '</p>',
+				'<p>','<a href=', url, '>', url, '</a>','</p>',
 				'</div>'].join('');
 
 				//Create markers with the info from the getJSON request

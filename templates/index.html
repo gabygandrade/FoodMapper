@@ -6,3 +6,19 @@
 {% endblock %}
 
 
+
+
+{% block js_code %}
+<script>
+	$(document).ready(function() {
+    	//send a GET request to the server to get all usernames and render them on the page when its done 
+		$.getJSON("/recommendation-info", function(json, error){
+			// if (error){
+			// 	console.log(error);
+			// }
+			console.log(json);
+		});
+	});
+</script>
+{% endblock %}
+

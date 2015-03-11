@@ -58,6 +58,10 @@ def logout():
 @app.route("/")
 def index():
 	"""Render the welcome/notifications page"""
+
+	# query for a user's pending recommendations
+
+
 	return render_template("index.html")
 
 @app.route("/restaurant-results")
@@ -192,7 +196,7 @@ def return_bookmark_info():
 	# get restaurant info for all the user's bookmarked restaurants
 	data = model.session.query(model.Bookmark.id, model.Restaurant.fsq_id, 
 		model.Restaurant.name, model.Restaurant.lat, model.Restaurant.lng, 
-		model.Restaurant.cuisine).join(model.Restaurant).filter(model.Bookmark.user_id==
+		model.Restaurant.cuisine, model.Restaurant.address, model.Restaurant.url).join(model.Restaurant).filter(model.Bookmark.user_id==
 		logged_in_user_id).all()
 
 	# create a dictionary with all the info necessary to pass on to jinja in order to map markers 
@@ -204,27 +208,14 @@ def return_bookmark_info():
 		restaurant_info[item.id]["lat"] = item.lat
 		restaurant_info[item.id]["lng"] = item.lng
 		restaurant_info[item.id]["cuisine"] = item.cuisine
+		restaurant_info[item.id]["address"] = item.address
+		restaurant_info[item.id]["url"] = item.url
 
 	print session
 	print logged_in_user_id
 	print "\n \n restaurant_info: ", restaurant_info
 
 	return jsonify(restaurant_info)
-
-# @app.route("/list")
-# def display_bookmarks_list():
-# 	"""Render the user's bookmarks as a list"""
-
-# 	logged_in_user_id = session['user_id']
-
-# 	# query for the user's bookmarks and all related information 
-# 	detailed_data = model.session.query(model.Bookmark.id, model.Restaurant.id, 
-# 		model.Restaurant.fsq_id, model.Restaurant.name, model.Restaurant.cuisine, 
-# 		model.Restaurant.address, model.Restaurant.city, model.Restaurant.state, 
-# 		model.Restaurant.phone, model.Restaurant.url).join(model.Restaurant).filter(model.Bookmark.user_id==logged_in_user_id).all()
-# 	print detailed_data 
-
-# 	return return(restaurant_data = detailed_data)
 
 @app.route("/delete-bookmark")
 def delete_bookmark(): 
@@ -313,12 +304,24 @@ def recommend_restaurant():
 	# 	model.session.add(new_recommendation)
 	# 	model.session.commit()
 
-	elif pending_recommendation:
-		return jsonify({"message": "%s already has this recommendation pending!" % recipient_username}) 
+	# elif pending_recommendation:
+	# 	return jsonify({"message": "%s already has this recommendation pending!" % recipient_username}) 
 	elif saved_bookmark:
 		return jsonify({"message": "%s already has this restaurant bookmarked." % recipient_username}) 
 
 	return "got to recommend restaurant route!"
+
+@app.route("/recommendation-info")
+def show_recommendations():
+	"""Send JSON to front-end to show recommendation notifications"""
+	logged_in_user_id = session['user_id']
+
+	recommendation_object = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==logged_in_user_id).all()
+	
+	# loop over recommendation object and create a dict with all the information about the restaurant that I want to render
+
+	return jsonify({"message": "this message"})
+
 if __name__ == "__main__":
     app.run(debug = True)
 
