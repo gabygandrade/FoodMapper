@@ -47,8 +47,8 @@
 	      </div>
 	      <div class="modal-body">
 	      	<p>Select the user to recommend this restaurant to:</p>
-	        <div class="user-list">
-	        </div>
+	        <div class="user-list"></div>
+	        <div class="rec-alert alert-success"></div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -128,13 +128,13 @@
 					"url": $row.data('url'),
 					"usernameRecipient": usernameRecipient
 				}
-
 				console.log(fsqData);
-				//send the username data to the server in a GET request to the /recommend route as well as all the other needed information to save this restaurant to the db 
 
-				$.get("/recommend", fsqData, function(response){
-					console.log(response)
-				});	//end of get request to recommend route
+				function showMessage(response) {
+					$(".rec-alert").html(response.message).show().fadeToggle(3200);
+				}
+
+				$.get("/recommend", fsqData, showMessage);
 
 			});
 		}); //end of GETJSON request to get user info list

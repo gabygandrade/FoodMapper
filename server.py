@@ -269,7 +269,7 @@ def recommend_restaurant():
 	# query to check if that restaurant is already in restaurants table
 	saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
 
-	# # query to check if the recipient already has that restaurant bookmarked 
+	# query to check if the recipient already has that restaurant bookmarked 
 	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==recipient.id, 			
 		model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
 
@@ -277,6 +277,10 @@ def recommend_restaurant():
 	# pending_recommendation = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==recipient.id,
 	# 	model.Recommendation.restaurant_id==saved_restaurant.id, model.Recommendation.pending==True).first()
 	# FIXME: WITH THIS QUERY THE IF NOT SAVED RESTAURANT CONDITIONAL DOESN'T WORK
+
+	saved_recommendation = model.session.query(model.Recommendation).filter(model.Recommendation.recommender_id==recommender_id, 
+		model.Recommendation.recipient_id==recipient.id, model.Recommendation.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
+	# print "*********Saved recommendation: ", saved_recommendation
 
 	if not saved_restaurant:
 		# save the restaurant to db
@@ -300,14 +304,24 @@ def recommend_restaurant():
 	# elif saved_restaurant and not (pending_recommendation and saved_bookmark):	#FIXME: Not sure if AND or OR Is appropriate here - want to make sure its neither 
 	# 	# add a new recommendation to that user
 	# 	new_recommendation = model.Recommendation(restaurant_id=saved_restaurant.id, 
-	# 		recommender_id=recommender_id, recipient_id=recipient_id, pending=True)		
+	# 		recommender_id=recommender_id, recipient_id=recipient.id, pending=True)		
 	# 	model.session.add(new_recommendation)
 	# 	model.session.commit()
+
+	elif saved_recommendation:
+		return jsonify({"message": "You already recommended %s to %s!" % (saved_restaurant.name, recipient_username)}) 
 
 	# elif pending_recommendation:
 	# 	return jsonify({"message": "%s already has this recommendation pending!" % recipient_username}) 
 	elif saved_bookmark:
 		return jsonify({"message": "%s already has this restaurant bookmarked." % recipient_username}) 
+
+	else:
+		new_recommendation = model.Recommendation(restaurant_id=saved_restaurant.id, 
+		recommender_id=recommender_id, recipient_id=recipient.id, pending=True)		
+		model.session.add(new_recommendation)
+		model.session.commit()
+		return jsonify({"message": "You recommended %s to %s!" % (saved_restaurant.name, recipient_username)}) 
 
 	return "got to recommend restaurant route!"
 
@@ -316,7 +330,7 @@ def show_recommendations():
 	"""Send JSON to front-end to show recommendation notifications"""
 	logged_in_user_id = session['user_id']
 
-	recommendation_object = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==logged_in_user_id).all()
+	recommendation_object = model.session.query(model.Recommendation.restaurant_id, model.Recommendation.recommender_id).filter(model.Recommendation.recipient_id==logged_in_user_id).all()
 	
 	# loop over recommendation object and create a dict with all the information about the restaurant that I want to render
 
