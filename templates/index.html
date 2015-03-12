@@ -1,24 +1,44 @@
 {% extends 'base.html' %}
+
 {% block content %}
 
-<h2>Notifications</h2>
+<h3> Welcome {{username}}!</h3>
+<p>You have pending recommendations. Please approve/deny them.</p>
+
+<table class="table table-striped table-hover">
+	<thead>
+		<th>Restaurant</th>
+		<th>Address</th>
+		<th>Approve</th>
+		<th>Deny</th>
+	</thead>
+	<tbody>
+		{% for id, rec in recommendations.iteritems() %}
+			<tr>
+				<td>{{rec.rest_name}}
+					<p>{{rec.rest_cuisine}}</p>
+					<p><a href="{{rec.rest_url}}">{{rec.rest_url}}</a></p>
+				</td>
+				<td>{{rec.rest_address}}
+					<p>{{rec.rest_city}}, {{rec.rest_state}}</p>
+				</td>
+				<td><button type="button" class="btn btn-success add-recommendation">
+					<span class="glyphicon glyphicon-star-empty "></button>
+				</td>
+				<td><button type="button" class="btn btn-danger deny-recommendation">
+					<span class="glyphicon glyphicon-user"></button>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{{recommendations}}
 
 {% endblock %}
 
 
-
-
 {% block js_code %}
-<script>
-	$(document).ready(function() {
-    	//send a GET request to the server to get all usernames and render them on the page when its done 
-		$.getJSON("/recommendation-info", function(json, error){
-			// if (error){
-			// 	console.log(error);
-			// }
-			console.log(json);
-		});
-	});
-</script>
+
 {% endblock %}
 

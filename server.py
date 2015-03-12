@@ -55,14 +55,14 @@ def logout():
 	flash ("You have been logged out")
 	return redirect("/login") 
 
-@app.route("/")
-def index():
-	"""Render the welcome/notifications page"""
+# @app.route("/")
+# def index():
+# 	"""Render the welcome/notifications page"""
 
-	# query for a user's pending recommendations
+# 	# query for a user's pending recommendations
 
 
-	return render_template("index.html")
+# 	return render_template("index.html")
 
 @app.route("/restaurant-results")
 def show_restaurant_info():
@@ -325,15 +325,15 @@ def recommend_restaurant():
 
 	return "got to recommend restaurant route!"
 
-@app.route("/recommendation-info")
+@app.route("/")
 def show_recommendations():
 	"""Send to front-end to show recommendation notifications"""
-	pass
 	
 	logged_in_user_id = session['user_id']
+	logged_in_username = session['username']
 
 	recommendations = model.session.query(model.Recommendation).filter(
-		model.Recommendation.recipient_id == logged_in_user_id).all()
+		model.Recommendation.recipient_id == logged_in_user_id, model.Recommendation.pending==True).all()
 
 	# rec = recommendations.all()[0]
 	# for rec in recommendations:
@@ -363,11 +363,12 @@ def show_recommendations():
 		rec_data[rec.id]["rest_city"] = rec.restaurant.city
 		rec_data[rec.id]["rest_state"] = rec.restaurant.state
 		rec_data[rec.id]["rest_url"] = rec.restaurant.url
+		rec_data[rec.id]["rec_pending"] = rec.pending
 
 	print rec_data
 
 	# return jsonify({"message": "this message"})
-	return render_template("index.html", recs = rec_data)
+	return render_template("index.html", recommendations = rec_data, username = logged_in_username)
 
 # @app.route("/change-recommendation")
 # def change_recommendation():
