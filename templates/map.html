@@ -137,17 +137,17 @@
 				'<p>','<a href=', url, '>', url, '</a>','</p>',
 				'</div>'].join('');
 
-				var iconBase = 'https://foursquare.com/img/categories_v2/food/';
-				var category = cuisine.toLowerCase()
+				// var iconBase = 'https://foursquare.com/img/categories_v2/food/';
+				// var category = cuisine.toLowerCase()
 
-				var customIconUrl = iconBase + category + '_bg_32.png'
+				// var customIconUrl = iconBase + category + '_bg_32.png'
 
 				//Create markers with the info from the getJSON request
 				var marker = new google.maps.Marker({
 					position: myLatLng,
 					map: map,
-					icon: customIconUrl
-					//if this fails, replace category with 'default'
+					// icon: customIconUrl
+					// if this fails, replace category with 'default'
 				}); 
 				//add the markers to the map 
 

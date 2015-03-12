@@ -55,15 +55,6 @@ def logout():
 	flash ("You have been logged out")
 	return redirect("/login") 
 
-# @app.route("/")
-# def index():
-# 	"""Render the welcome/notifications page"""
-
-# 	# query for a user's pending recommendations
-
-
-# 	return render_template("index.html")
-
 @app.route("/restaurant-results")
 def show_restaurant_info():
 	"""When the user submits their search, gather the user input 
@@ -341,6 +332,7 @@ def show_recommendations():
 
 	# rec_data = {}
 	# for rec in recommendations:
+	# 	print rec.restaurant.id
 	# 	print rec.recommender.username
 	# 	print rec.recipient.username
 	# 	print rec.id
@@ -351,10 +343,12 @@ def show_recommendations():
 	# 	print rec.restaurant.state
 	# 	print rec.restaurant.url
 
+	# creat a dict with all needed info to render restaurant info & edit recommendation
 	rec_data = {}
 	for rec in recommendations:
 		rec_data[rec.id] = {}						# item.id == bookmark id 
 		rec_data[rec.id]["bkm_id"] = rec.id
+		rec_data[rec.id]["rest_id"] = rec.restaurant.id
 		rec_data[rec.id]["recommender_username"] = rec.recommender.username
 		rec_data[rec.id]["recipient_username"] = rec.recipient.username
 		rec_data[rec.id]["rest_name"] = rec.restaurant.name
@@ -370,14 +364,49 @@ def show_recommendations():
 	# return jsonify({"message": "this message"})
 	return render_template("index.html", recommendations = rec_data, username = logged_in_username)
 
-# @app.route("/change-recommendation")
-# def change_recommendation():
+@app.route("/accept-recommendation")
+def accept_recommendation():
+	logged_in_user_id = session['user_id']
+
+	# get the restaurant id associated with the recommendation
+	rest_id = request.args['restId']
+	
+	# query for the recommendation(s) to change
+	rec_to_change = model.session.query(model.Recommendation).filter(model.Recommendation.restaurant_id==rest_id).all()
+	print "\n \n \n Recommendation(s) to change ", rec_to_change
+
+	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
+		model.Bookmark.restaurant_id==rest_id).first()
+
+	print "***** SAVED BOOKMARK ?? ", saved_bookmark
+	
+	# go through each recommendation and change the pending status from True to False 
+	# recommendation_ids = []
+	for rec in rec_to_change:
+		# print "************Recommendation(s) to change: ", rec.pending
+		rec.pending = False
+		# rec.update({"pending"}:False)
+		model.session.commit()
+		# recommendation_ids.append(rec.id)
+
+	# print "RECOMMENDATION ID LIST ", recommendation_ids
+
+	#if the bookmark does not already exist for this restaurant, add it to bookmarks
+	if not saved_bookmark:
+		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=rest_id)		
+		# new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=rest_id, recommendation_id=recommendation_ids)	
+		model.session.add(new_bookmark)
+		model.session.commit()
+	else:
+		return jsonify({"message": "You already bookmarked this restaurant!"}) 
+
+	return "got to accept rec route"
+
+# @app.route("/deny-recommendation")
+# def deny_recommendation():
 
 if __name__ == "__main__":
     app.run(debug = True)
-
-# if __name__ == "__main__":
-#     app.run(host="0.0.0.0", debug=False)
 
 
 

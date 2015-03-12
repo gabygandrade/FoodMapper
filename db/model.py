@@ -71,13 +71,6 @@ class Bookmark(Base):
         return "<Bookmark id=%r user_id=%r restaurant_id=%r>" % (self.id, self.user_id, 
             self.restaurant_id) 
 
-# def save_bookmark(this_user_id, this_restaurant_id):
-#   """Saves a bookmark to the bookmark table."""
-#   this_user_id = session.query(User).filter(id ==id).one()
-
-#   new_bookmark = model.Bookmark(user_id=this_user_id,         
-#       restaurant_id=this_restaurant_id)
-
 #================== recommendations table  ==================
 class Recommendation(Base):
     """Represents each user's recommendations."""
@@ -100,14 +93,10 @@ class Recommendation(Base):
 
 """Schema:
 
-A user has many bookmarks through restaurants
-A user has many preferences
+A user has many bookmarks
+A user has many recommendations
 
-A bookmark has many users through restaurants 
-
-A restaurant has many users through bookmarks
-A restaurant has many bookmarks through users 
-
-A bookmark belongs to a user
+A restaurant can be bookmarked by a user
+A restaurant can be recommended by a user
 
 """

@@ -2,43 +2,54 @@
 
 {% block content %}
 
-<h3> Welcome {{username}}!</h3>
-<p>You have pending recommendations. Please approve/deny them.</p>
+<h3> Welcome {{username}}! </h3>
 
-<table class="table table-striped table-hover">
-	<thead>
-		<th>Restaurant</th>
-		<th>Address</th>
-		<th>Approve</th>
-		<th>Deny</th>
-	</thead>
-	<tbody>
-		{% for id, rec in recommendations.iteritems() %}
-			<tr>
-				<td>{{rec.rest_name}}
-					<p>{{rec.rest_cuisine}}</p>
-					<p><a href="{{rec.rest_url}}">{{rec.rest_url}}</a></p>
-				</td>
-				<td>{{rec.rest_address}}
-					<p>{{rec.rest_city}}, {{rec.rest_state}}</p>
-				</td>
-				<td><button type="button" class="btn btn-success add-recommendation">
-					<span class="glyphicon glyphicon-star-empty "></button>
-				</td>
-				<td><button type="button" class="btn btn-danger deny-recommendation">
-					<span class="glyphicon glyphicon-user"></button>
-				</td>
-			</tr>
-		{% endfor %}
-	</tbody>
-</table>
+	{% if recommendations %}
+		<p>You have pending recommendations. Please approve/deny them.</p>
 
-{{recommendations}}
+		<table class="table table-striped table-hover">
+			<thead>
+				<th>Restaurant</th>
+				<th>Approve</th>
+				<th>Deny</th>
+			</thead>
+			<tbody>
+				{% for id, rec in recommendations.iteritems() %}
+					<tr data-restid="{{rec.rest_id}}">
+						<td><b>{{rec.recommender_username}}</b> recommended <b>{{rec.rest_name}}</b>, a {{rec.rest_cuisine |lower}} restaurant located at {{rec.rest_address}} in {{rec.rest_city}}.</b>
+							<p><a href="{{rec.rest_url}}">{{rec.rest_url}}</a></p>
+						</td>
+						<td><button type="button" class="btn btn-success add-recommendation">
+							<span class="glyphicon glyphicon-star-empty "></button>
+						</td>
+						<td><button type="button" class="btn btn-danger deny-recommendation">
+							<span class="glyphicon glyphicon-user"></button>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	{% else %}
+	<p>You have no pending recommendations. Recommend a restaurant to a friend!</p>
+	{% endif %}
 
 {% endblock %}
 
-
 {% block js_code %}
+<script>
+	$('.add-recommendation').click(function(){
+		var $row = $(this).closest("tr");
 
+		var restData = {
+			"restId": $row.data('restid')
+		}
+
+		$.get("/accept-recommendation", restData, function(response){
+			console.log(response);
+		});
+	});
+
+</script>
 {% endblock %}
 
