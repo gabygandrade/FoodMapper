@@ -3,35 +3,36 @@
 {% block content %}
 
 	{% if recommendations %}
-		<h3> Welcome {{username}}! </h3>
-		<p>You have pending recommendations. Please approve/deny them.</p>
+		<div>
+			<h3> Welcome {{username}}! </h3>
+			<p>You have pending recommendations. Please approve/deny them.</p>
 
-		<div class="alert alert-success" role="alert" hidden="true"></div>
-		<table class="table table-striped table-hover">
-			<thead>
-				<th>Restaurant</th>
-				<th>Approve</th>
-				<th>Deny</th>
-			</thead>
-			<tbody>
-				{% for id, rec in recommendations.iteritems() %}
-					<tr data-restid="{{rec.rest_id}}">
-						<td><b>{{rec.recommender_username}}</b> recommended <b>{{rec.rest_name}}</b>, a {{rec.rest_cuisine |lower}} restaurant located at {{rec.rest_address}} in {{rec.rest_city}}.</b>
-							<p><a href="{{rec.rest_url}}">{{rec.rest_url}}</a></p>
-						</td>
-						<td><button type="button" class="btn btn-success add-recommendation">
-							<span class="glyphicon glyphicon-ok"></button>
-						</td>
-						<td><button type="button" class="btn btn-danger deny-recommendation">
-							<span class="glyphicon glyphicon-remove"></button>
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-
+			<div class="alert" role="alert" hidden="true"></div>
+			<table class="table table-striped table-hover">
+				<thead>
+					<th>Restaurant</th>
+					<th>Approve</th>
+					<th>Deny</th>
+				</thead>
+				<tbody>
+					{% for id, rec in recommendations.iteritems() %}
+						<tr data-restid="{{rec.rest_id}}">
+							<td><b>{{rec.recommender_username}}</b> recommended <b>{{rec.rest_name}}</b>, a {{rec.rest_cuisine |lower}} restaurant located at {{rec.rest_address}} in {{rec.rest_city}}.</b>
+								<p><a href="{{rec.rest_url}}">{{rec.rest_url}}</a></p>
+							</td>
+							<td><button type="button" class="btn btn-success add-recommendation">
+								<span class="glyphicon glyphicon-ok"></button>
+							</td>
+							<td><button type="button" class="btn btn-danger deny-recommendation">
+								<span class="glyphicon glyphicon-remove"></button>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
 	{% else %}
-	<p>You have no pending recommendations. Recommend a restaurant to a friend!</p>
+	<p>Hi {{username}}! You have no pending recommendations. Recommend a restaurant to a friend!</p>
 	{% endif %}
 
 {% endblock %}
@@ -39,34 +40,44 @@
 {% block js_code %}
 <script>
 	$('.add-recommendation').click(function(){
-		var $row = $(this).closest("tr");
+		var rowOfButton = $(this).closest("tr");
 
 		var restData = {
-			"restId": $row.data('restid')
+			"restId": rowOfButton.data('restid')
 		}
 
-		function showMessage(response) {
-			$(".alert").html(response.message).show().fadeToggle(3200);
-			//change class of button to show it has been accepted 
+		function deleteRow(response) {
+			//$(".alert").addClass("alert-success");
+			//$(".alert").html(response.message).show().fadeToggle(3200);
+			//change class of button that was clicked on to show it has been accepted 
+			// $(rowOfButton).css("display","none");
+			$(rowOfButton).remove();
 		}
 
-		$.get("/accept-recommendation", restData, showMessage);
+		$.get("/accept-recommendation", restData, deleteRow);
 	});
 
+
 	$('.deny-recommendation').click(function(){
-		var $row = $(this).closest("tr");
-
+		var rowOfButton = $(this).closest("tr");
+		
 		var restData = {
-			"restId": $row.data('restid')
+			"restId": rowOfButton.data('restid')
 		}
 
-		function showMessage(response) {
-			$(".alert").html(response.message).show().fadeToggle(3200);
-			//change class of button to show it has been denied 
+		function deleteRow(response) {;
+			$(rowOfButton).remove();
+			//call checkRemovedRows() here;
 		}
 
-		$.get("/deny-recommendation", restData, showMessage);
-	})
+		// function checkRemovedRows(){
+		// //check if all rows are removed
+		// //if so, replace the html of that div
+		// if $("tr").length == [0]:
+		// }
+
+		$.get("/deny-recommendation", restData, deleteRow);
+	});
 
 </script>
 {% endblock %}

@@ -51,7 +51,7 @@ def login_user():
 def logout():
 	"""Logs user out and clears session"""
 	session.clear()
-	print session 
+	# print session 
 	flash ("You have been logged out")
 	return redirect("/login") 
 
@@ -81,7 +81,7 @@ def show_restaurant_info():
 		return render_template("restaurant_results.html", fsq_venues=fsq_venues_list)
 
 	except Exception as e:
-		# print e.message
+		print "FSQ QUERY ERROR IS: ", e.message
 		# if the user entered a location FSQ cannot geocode				
 		fsq_venues_list = []
 
@@ -174,7 +174,7 @@ def show_map():
 		model.Restaurant.fsq_id, model.Restaurant.name, model.Restaurant.cuisine, 
 		model.Restaurant.address, model.Restaurant.city, model.Restaurant.state, 
 		model.Restaurant.phone, model.Restaurant.url).join(model.Restaurant).filter(model.Bookmark.user_id==logged_in_user_id).all()
-	print detailed_data 
+	# print detailed_data 
 
 	return render_template("map.html", restaurant_data = detailed_data)	
 
@@ -202,8 +202,8 @@ def return_bookmark_info():
 		restaurant_info[item.id]["address"] = item.address
 		restaurant_info[item.id]["url"] = item.url
 
-	print session
-	print logged_in_user_id
+	# print session
+	# print logged_in_user_id
 	print "\n \n restaurant_info: ", restaurant_info
 
 	return jsonify(restaurant_info)
@@ -219,9 +219,9 @@ def delete_bookmark():
 	# query for the bookmark with that id 
 	bkm_to_delete = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 
 		model.Bookmark.id==bkm_id_to_delete).first()
-	print "Bookmark to delete ", bkm_to_delete
+	# print "Bookmark to delete ", bkm_to_delete
 	restaurant_to_delete = bkm_to_delete.restaurant.name
-	print "Restaurant name to delete ", restaurant_to_delete
+	# print "Restaurant name to delete ", restaurant_to_delete
 	
 	# delete the restaurant from the db 
 	model.session.delete(bkm_to_delete)
@@ -264,11 +264,6 @@ def recommend_restaurant():
 	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==recipient.id, 			
 		model.Bookmark.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
 
-	# query to see if the recipient already has that recommendation	pending - CHECK THIS AFTER MAKE MY FIRST RECOMMENDATION
-	# pending_recommendation = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==recipient.id,
-	# 	model.Recommendation.restaurant_id==saved_restaurant.id, model.Recommendation.pending==True).first()
-	# FIXME: WITH THIS QUERY THE IF NOT SAVED RESTAURANT CONDITIONAL DOESN'T WORK
-
 	saved_recommendation = model.session.query(model.Recommendation).filter(model.Recommendation.recommender_id==recommender_id, 
 		model.Recommendation.recipient_id==recipient.id, model.Recommendation.restaurant.has(model.Restaurant.fsq_id==fsq_id)).first()
 	# print "*********Saved recommendation: ", saved_recommendation
@@ -292,18 +287,9 @@ def recommend_restaurant():
 
 		return jsonify({"message": "You recommended %s to %s!" % (new_restaurant.name, recipient_username)}) 
 
-	# elif saved_restaurant and not (pending_recommendation and saved_bookmark):	#FIXME: Not sure if AND or OR Is appropriate here - want to make sure its neither 
-	# 	# add a new recommendation to that user
-	# 	new_recommendation = model.Recommendation(restaurant_id=saved_restaurant.id, 
-	# 		recommender_id=recommender_id, recipient_id=recipient.id, pending=True)		
-	# 	model.session.add(new_recommendation)
-	# 	model.session.commit()
-
 	elif saved_recommendation:
 		return jsonify({"message": "You already recommended %s to %s!" % (saved_restaurant.name, recipient_username)}) 
 
-	# elif pending_recommendation:
-	# 	return jsonify({"message": "%s already has this recommendation pending!" % recipient_username}) 
 	elif saved_bookmark:
 		return jsonify({"message": "%s already has this restaurant bookmarked." % recipient_username}) 
 
@@ -371,33 +357,39 @@ def accept_recommendation():
 	# get the restaurant id associated with the recommendation
 	rest_id = request.args['restId']
 	
-	# query for the recommendation(s) to change
-	rec_to_change = model.session.query(model.Recommendation).filter(model.Recommendation.restaurant_id==rest_id).all()
-	print "\n \n \n Recommendation(s) to change ", rec_to_change
+	# query for the specific user's recommendation(s)
+	recommendations = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==logged_in_user_id, 
+		model.Recommendation.restaurant_id==rest_id).all()
+	print "\n \n \n RECOMMENDATION(s) to change ", recommendations
 
 	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
 		model.Bookmark.restaurant_id==rest_id).first()
 
-	print "***** SAVED BOOKMARK ?? ", saved_bookmark
+	# print "***** SAVED BOOKMARK ?? ", saved_bookmark
 	
 	# go through each recommendation and change the pending status from True to False 
-	# recommendation_ids = []
-	for rec in rec_to_change:
-		# print "************Recommendation(s) to change: ", rec.pending
+	for rec in recommendations:
 		rec.pending = False
-	
 	model.session.commit()
-		# recommendation_ids.append(rec.id)
 
-	# print "RECOMMENDATION ID LIST ", recommendation_ids
-
-	#if the bookmark does not already exist for this restaurant, add it to bookmarks
+	#if the bookmark does not already exist for this restaurant, add it to bookmarks and bookmarkrecommendation table
 	if not saved_bookmark:
+		# save a new bookmark
 		new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=rest_id)		
-		# new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=rest_id, recommendation_id=recommendation_ids)	
 		model.session.add(new_bookmark)
 		model.session.commit()
+
+		# refresh to refer to the SQLAlchemy reference for the new_bookmark
+		model.session.refresh(new_bookmark) 
+		
+		# for each recommendation associated with that restaurant, save a new bookmarkrecommendation
+		for rec in recommendations:
+			new_bookmarkrecommendation = model.BookmarkRecommendation(bookmark_id=new_bookmark.id, recommendation_id=rec.id)
+			model.session.add(new_bookmarkrecommendation)
+		model.session.commit()
+
 		return jsonify({"message": "You successfully added %s to your bookmarks!" % new_bookmark.restaurant.name}) 
+
 	else:
 		return jsonify({"message": "You already bookmarked this restaurant!"}) 
 
@@ -406,10 +398,21 @@ def accept_recommendation():
 @app.route("/deny-recommendation")
 def deny_recommendation():
 	"""Route to deny the recommendation"""
-	pass
-	# change pending status of recommendation from True to False
-	# send a message through JSON
-	# return jsonify({"message": "You denied this restaurant recommendation."}) 
+	logged_in_user_id = session['user_id']
+
+	# get the restaurant id associated with the recommendation
+	rest_id = request.args['restId']
+	
+	# query for the recommendation(s) to change
+	recommendations = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==logged_in_user_id, 
+		model.Recommendation.restaurant_id==rest_id).all()
+	print "\n \n \n RECOMMENDATION(s) to change ", recommendations
+	
+	for rec in recommendations:
+		rec.pending = False
+	model.session.commit()
+
+	return jsonify({"message": "You denied this restaurant recommendation."}) 
 
 if __name__ == "__main__":
     app.run(debug = True)

@@ -17,7 +17,7 @@
 	    </thead>
 	    <tbody>
 		    {% for item in fsq_venues %}
-		    	{% if item.location.address is defined %}
+		    	{% if item.location.address is defined and item.location.city is defined %}
 				    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" 
 				    data-phone="{{item.contact.phone if item.contact.phone is defined else ''}}" data-url="{{item.url if item.url is defined else ''}}">
 				    	<td><button type="button" class="btn btn-primary add-bookmark">
