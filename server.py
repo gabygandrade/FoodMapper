@@ -30,7 +30,7 @@ def login_user():
 
 	all_users = model.session.query(model.User)
 	
-	# Add the info from the request object as keys to the sessio dict
+	# Add the info from the request object as keys to the session dict
 	try:
 		user = all_users.filter(model.User.username==username, model.User.password==password).one()
 		session['username'] = user.username
@@ -318,7 +318,7 @@ def recommend_restaurant():
 
 @app.route("/")
 def show_recommendations():
-	"""Send to front-end to show recommendation notifications"""
+	"""Send recmmmendation info as JSON to show notifications"""
 	
 	logged_in_user_id = session['user_id']
 	logged_in_username = session['username']
@@ -361,11 +361,11 @@ def show_recommendations():
 
 	print rec_data
 
-	# return jsonify({"message": "this message"})
 	return render_template("index.html", recommendations = rec_data, username = logged_in_username)
 
 @app.route("/accept-recommendation")
 def accept_recommendation():
+	"""Route to accept the recommendation and add to the db as appropriate"""
 	logged_in_user_id = session['user_id']
 
 	# get the restaurant id associated with the recommendation
@@ -385,8 +385,8 @@ def accept_recommendation():
 	for rec in rec_to_change:
 		# print "************Recommendation(s) to change: ", rec.pending
 		rec.pending = False
-		# rec.update({"pending"}:False)
-		model.session.commit()
+	
+	model.session.commit()
 		# recommendation_ids.append(rec.id)
 
 	# print "RECOMMENDATION ID LIST ", recommendation_ids
@@ -397,13 +397,19 @@ def accept_recommendation():
 		# new_bookmark = model.Bookmark(user_id=logged_in_user_id, restaurant_id=rest_id, recommendation_id=recommendation_ids)	
 		model.session.add(new_bookmark)
 		model.session.commit()
+		return jsonify({"message": "You successfully added %s to your bookmarks!" % new_bookmark.restaurant.name}) 
 	else:
 		return jsonify({"message": "You already bookmarked this restaurant!"}) 
 
 	return "got to accept rec route"
 
-# @app.route("/deny-recommendation")
-# def deny_recommendation():
+@app.route("/deny-recommendation")
+def deny_recommendation():
+	"""Route to deny the recommendation"""
+	pass
+	# change pending status of recommendation from True to False
+	# send a message through JSON
+	# return jsonify({"message": "You denied this restaurant recommendation."}) 
 
 if __name__ == "__main__":
     app.run(debug = True)

@@ -61,7 +61,6 @@ class Bookmark(Base):
     id = Column(Integer, primary_key = True)        
     user_id = Column(Integer, ForeignKey('users.id'))
     restaurant_id = Column(Integer, ForeignKey('restaurants.id'))
-    recommendation_id = Column(Integer, ForeignKey('recommendations.id'), nullable=True)
 
     user = relationship("User", backref = backref('bookmarks', order_by = id))
     restaurant = relationship("Restaurant", backref = backref('bookmarks', order_by = id))
@@ -70,6 +69,18 @@ class Bookmark(Base):
         """Show info about the bookmark."""
         return "<Bookmark id=%r user_id=%r restaurant_id=%r>" % (self.id, self.user_id, 
             self.restaurant_id) 
+
+#================== bookmark recommendations table  ==================
+
+class BookmarkRecommendation(Base):
+    """Represents the recommendations associated with a bookmark."""
+    __tablename__ = "bookmarkrecs"
+    id = Column(Integer, primary_key = True)   
+    bookmark_id = Column(Integer, ForeignKey('bookmarks.id'))
+    recommendation_id = Column(Integer, ForeignKey('recommendations.id'))
+
+    bookmark = relationship("Bookmark", backref = backref('bookmarks', order_by = id))
+    recommendation = relationship("Recommendation", backref = backref('recommendation', order_by = id))
 
 #================== recommendations table  ==================
 class Recommendation(Base):

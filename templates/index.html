@@ -2,11 +2,11 @@
 
 {% block content %}
 
-<h3> Welcome {{username}}! </h3>
-
 	{% if recommendations %}
+		<h3> Welcome {{username}}! </h3>
 		<p>You have pending recommendations. Please approve/deny them.</p>
 
+		<div class="alert alert-success" role="alert" hidden="true"></div>
 		<table class="table table-striped table-hover">
 			<thead>
 				<th>Restaurant</th>
@@ -20,10 +20,10 @@
 							<p><a href="{{rec.rest_url}}">{{rec.rest_url}}</a></p>
 						</td>
 						<td><button type="button" class="btn btn-success add-recommendation">
-							<span class="glyphicon glyphicon-star-empty "></button>
+							<span class="glyphicon glyphicon-ok"></button>
 						</td>
 						<td><button type="button" class="btn btn-danger deny-recommendation">
-							<span class="glyphicon glyphicon-user"></button>
+							<span class="glyphicon glyphicon-remove"></button>
 						</td>
 					</tr>
 				{% endfor %}
@@ -45,10 +45,28 @@
 			"restId": $row.data('restid')
 		}
 
-		$.get("/accept-recommendation", restData, function(response){
-			console.log(response);
-		});
+		function showMessage(response) {
+			$(".alert").html(response.message).show().fadeToggle(3200);
+			//change class of button to show it has been accepted 
+		}
+
+		$.get("/accept-recommendation", restData, showMessage);
 	});
+
+	$('.deny-recommendation').click(function(){
+		var $row = $(this).closest("tr");
+
+		var restData = {
+			"restId": $row.data('restid')
+		}
+
+		function showMessage(response) {
+			$(".alert").html(response.message).show().fadeToggle(3200);
+			//change class of button to show it has been denied 
+		}
+
+		$.get("/deny-recommendation", restData, showMessage);
+	})
 
 </script>
 {% endblock %}
