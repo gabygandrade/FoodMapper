@@ -31,7 +31,6 @@
 		<div class="col-md-3">
 			<ul id="list"></ul>
 		</div>
-		<!-- <div class="flash-notice"></div>  -->
 	</div>
 
 {% endblock %}
@@ -43,7 +42,6 @@
 	var map;
 
 	$('body').delegate('.delete-bookmark', 'click', function (event) {
-		// console.log("got to delete bookmark route!");
 		var bookmarkId = $(this).data('bookmarkid')
 		console.log(bookmarkId);
 
@@ -64,9 +62,16 @@
 
 	function initialize() {
 
-		//create array to hold style for map
-		var styles=[{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"administrative.locality","elementType":"labels.text.fill","stylers":[{"visibility":"simplified"},{"color":"#a17d43"}]},{"featureType":"administrative.locality","elementType":"labels.text.stroke","stylers":[{"visibility":"simplified"},{"saturation":"13"},{"lightness":"50"},{"gamma":"1.95"},{"weight":"0.01"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"saturation":"-44"},{"color":"#0b6a9b"},{"lightness":"2"}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"visibility":"off"},{"hue":"#ff0000"}]}]
+		//create array to hold style for map styles
 
+		var styles=[{"featureType":"administrative","elementType":"geometry","stylers":[{"saturation":"1"}]},{"featureType":"administrative.country","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"administrative.country","elementType":"labels","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.province","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"administrative.province","elementType":"labels","stylers":[{"lightness":"1"},{"saturation":"-100"}]},{"featureType":"administrative.locality","elementType":"geometry","stylers":[{"saturation":"-100"},{"visibility":"off"},{"hue":"#ff0000"}]},{"featureType":"administrative.locality","elementType":"geometry.fill","stylers":[{"saturation":"4"}]},{"featureType":"administrative.locality","elementType":"labels","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.neighborhood","elementType":"geometry","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.neighborhood","elementType":"labels","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.land_parcel","elementType":"geometry","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.land_parcel","elementType":"labels","stylers":[{"saturation":"-100"}]},{"featureType":"landscape","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"visibility":"off"},{"saturation":"-100"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#ffffff"}]},{"featureType":"landscape","elementType":"geometry.stroke","stylers":[{"visibility":"on"}]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"saturation":"4"}]},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"saturation":"-100"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.attraction","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"lightness":"16"},{"saturation":"-7"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"saturation":"0"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"saturation":"-100"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#002855"}]},{"featureType":"water","elementType":"geometry","stylers":[{"weight":"1.12"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"lightness":"9"},{"saturation":"-14"},{"color":"#3c98a8"}]},{"featureType":"water","elementType":"geometry.stroke","stylers":[{"weight":"0.50"},{"lightness":"0"}]},{"featureType":"water","elementType":"labels","stylers":[{"weight":"0.50"},{"color":"#ffffff"}]}]
+
+		// var styles=[{"featureType":"landscape","elementType":"geometry","stylers":[{"saturation":"-100"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels.text","stylers":[{"color":"#545454"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"saturation":"-87"},{"lightness":"-40"},{"color":"#ffffff"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.highway.controlled_access","elementType":"geometry.fill","stylers":[{"color":"#f0f0f0"},{"saturation":"-22"},{"lightness":"-16"}]},{"featureType":"road.highway.controlled_access","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.highway.controlled_access","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"road.arterial","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.local","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"saturation":"-52"},{"hue":"#00e4ff"},{"lightness":"-16"}]}]
+
+		// blue and
+		// var styles=[{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"administrative.locality","elementType":"labels.text.fill","stylers":[{"visibility":"simplified"},{"color":"#a17d43"}]},{"featureType":"administrative.locality","elementType":"labels.text.stroke","stylers":[{"visibility":"simplified"},{"saturation":"13"},{"lightness":"50"},{"gamma":"1.95"},{"weight":"0.01"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"saturation":"-44"},{"color":"#0b6a9b"},{"lightness":"2"}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"visibility":"off"},{"hue":"#ff0000"}]}]
+
+	
 		// Create a new StyledMapType object, passing it the array of styles,
 		// as well as the name to be displayed on the map type control.
 		var styledMap = new google.maps.StyledMapType(styles,
@@ -135,8 +140,9 @@
 				var fsqId = data.fsq_id
 				var address = data.address
 				var url = data.url
+				var icon_url = data.icon_url
 
-				var restcontent = ['<div id="content">',
+				var restContent = ['<div id="content">',
 				'<h3>', name, '</h3>',
 				'<p>', cuisine, '</p>',
 				'<p>', address, '</p>',
@@ -153,16 +159,15 @@
 				'">','<span class="glyphicon glyphicon-trash"></span></button>',
 				'</div>'].join('');
 
-				// var iconBase = 'https://foursquare.com/img/categories_v2/food/';
-				// var category = cuisine.toLowerCase()
+				var iconBase = icon_url
 
-				// var customIconUrl = iconBase + category + '_bg_32.png'
+				var customIconUrl = iconBase + 'bg_32.png'
 
 				//Create markers with the info from the getJSON request
 				var marker = new google.maps.Marker({
 					position: myLatLng,
 					map: map,
-					// icon: customIconUrl
+					icon: customIconUrl
 					// if this fails, replace category with 'default'
 				}); 
 				//add the markers to the map 
@@ -172,13 +177,12 @@
 				$("<li/>").attr('data-bookmarkid',bookmarkId).html(listContent).click(function(){ 
 						map.panTo(myLatLng); 
 						infoWindow.open(map,marker);
-						// $("li").addListener("click", removeButton);
 					}) 
 				.appendTo("#list");
 
 				//Add an info window with the information about the restaurant
 				var infoWindow = new google.maps.InfoWindow({
-  					content: restcontent
+  					content: restContent
 			 		});
 			 		
 		 		//add event listener to marker to show infowindow on mouseover of marker

@@ -90,7 +90,7 @@
 			// console.log(userlist)
 
 			$.each(userlist, function(index, username){
-				console.log(username);
+				// console.log(username);
 				$( ".user-list" ).append( "<p>" +"<a data-username="+ username + ">" + username + "</a>"+ "</p>");
 			});
 
@@ -105,7 +105,6 @@
 			$("a").click(function(event){
 				//get the data attribute 'data-username' of the event that was triggered when user clicked on the 'a' tag
 				var usernameRecipient = event.target.getAttribute('data-username');
-				// console.log(usernameRecipient);
 
 				var fsqData = {
 					"name": $row.data('name'), 
@@ -118,15 +117,21 @@
 					"state": $row.data('state'), 
 					"phone": $row.data('phone'),
 					"url": $row.data('url'),
-					"usernameRecipient": usernameRecipient
+					"usernameRecipient": usernameRecipient,
+					"icon_url": $row.data('iconurl')
 				}
-				console.log(fsqData);
+				// console.log(fsqData);
 
 				function showMessage(response) {
 					$(".rec-alert").html(response.message).show().fadeToggle(3200);
 				}
 
-				$.get("/recommend", fsqData, showMessage);
+				$.ajax({
+					method: 'POST',
+					url: '/recommend',
+					dataType: 'json',
+					data: fsqData,
+				}).done(showMessage);
 
 			});
 		}); //end of GETJSON request to get user info list

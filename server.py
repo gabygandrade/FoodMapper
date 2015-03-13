@@ -122,7 +122,7 @@ def save_to_db():
 	if not saved_restaurant: 
 		# save a new restaurant to the restaurants table
 		new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
-						lat=lat, lng=lng, cuisine=cuisine, address=address, city=city, state=state, url=url, phone=phone)
+						lat=lat, lng=lng, cuisine=cuisine, address=address, city=city, state=state, url=url, phone=phone, icon_url = icon_url)
 		model.session.add(new_restaurant)
 		model.session.commit()
 
@@ -188,7 +188,7 @@ def return_bookmark_info():
 	# get restaurant info for all the user's bookmarked restaurants
 	data = model.session.query(model.Bookmark.id, model.Restaurant.fsq_id, 
 		model.Restaurant.name, model.Restaurant.lat, model.Restaurant.lng, 
-		model.Restaurant.cuisine, model.Restaurant.address, model.Restaurant.url).join(model.Restaurant).filter(model.Bookmark.user_id==
+		model.Restaurant.cuisine, model.Restaurant.address, model.Restaurant.url, model.Restaurant.icon_url).join(model.Restaurant).filter(model.Bookmark.user_id==
 		logged_in_user_id).all()
 
 	# create a dictionary with all the info necessary to pass on to jinja in order to map markers 
@@ -202,6 +202,7 @@ def return_bookmark_info():
 		restaurant_info[item.id]["cuisine"] = item.cuisine
 		restaurant_info[item.id]["address"] = item.address
 		restaurant_info[item.id]["url"] = item.url
+		restaurant_info[item.id]["icon_url"] = item.icon_url
 
 	# print session
 	# print logged_in_user_id
@@ -231,28 +232,27 @@ def delete_bookmark():
 	# return "This string!"
 	return jsonify({"message": "You deleted %s from your bookmarks." % restaurant_to_delete}) 
 
-@app.route("/recommend")
+@app.route("/recommend", methods=['POST'])
 def recommend_restaurant():
 	"""Send information to server for one user to recommend a restaurant to another"""
 
-	#get the user id of the recommender(logged in user)
 	recommender_id = session['user_id']
-	# print "recommender id: ", recommender_id
 
 	#get the user id of the recipient (from request obj), as well as rest of info needed to save to db 
-	recipient_username = request.args['usernameRecipient']
-	name = request.args["name"]
-	fsq_id = request.args["fsqId"]
-	lat = request.args["lat"]
-	lng = request.args["lng"]
-	cuisine = request.args["cuisine"]
-	address = request.args["address"]
-	city = request.args["city"]
-	state = request.args["state"]
-	url = request.args["url"]
-	phone = request.args["phone"]
+	recipient_username = request.form['usernameRecipient']
+	name = request.form["name"]
+	fsq_id = request.form["fsqId"]
+	lat = request.form["lat"]
+	lng = request.form["lng"]
+	cuisine = request.form["cuisine"]
+	address = request.form["address"]
+	city = request.form["city"]
+	state = request.form["state"]
+	url = request.form["url"]
+	phone = request.form["phone"]
+	icon_url = request.form["icon_url"]
 
-	# print "Request object: ", request.args
+	# print "Request object: ", request.form
 
 	# query for the recipient 
 	recipient = model.session.query(model.User).filter(model.User.username==recipient_username).first()
@@ -273,7 +273,7 @@ def recommend_restaurant():
 		# save the restaurant to db
 		new_restaurant = model.Restaurant(fsq_id=fsq_id, name=name, 
 						lat=lat, lng=lng, cuisine=cuisine, address=address, city=city, 
-						state=state, url=url, phone=phone)
+						state=state, url=url, phone=phone, icon_url = icon_url)
 		model.session.add(new_restaurant)
 		model.session.commit()
 
@@ -313,10 +313,6 @@ def show_recommendations():
 	recommendations = model.session.query(model.Recommendation).filter(
 		model.Recommendation.recipient_id == logged_in_user_id, model.Recommendation.pending==True).all()
 
-	# rec = recommendations.all()[0]
-	# for rec in recommendations:
-	# 	print rec.restaurant.cuisine
-
 	# rec_data = {}
 	# for rec in recommendations:
 	# 	print rec.restaurant.id
@@ -346,7 +342,7 @@ def show_recommendations():
 		rec_data[rec.id]["rest_url"] = rec.restaurant.url
 		rec_data[rec.id]["rec_pending"] = rec.pending
 
-	print rec_data
+	# print rec_data
 
 	return render_template("index.html", recommendations = rec_data, username = logged_in_username)
 

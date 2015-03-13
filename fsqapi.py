@@ -19,6 +19,6 @@ def search_venues(CLIENT_ID, CLIENT_SECRET, user_query, location):
 		raise Exception('Foursquare query error')
 	return fs_dict 
 
-test = search_venues(fsq_client_id, fsq_client_secret, 'food truck', 'sf')
-obj = test['response']['venues'][0]
+# test = search_venues(fsq_client_id, fsq_client_secret, 'food truck', 'sf')
+# obj = test['response']['venues'][0]
 # obj2 = test['response']['venues'][1]
