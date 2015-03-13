@@ -45,8 +45,10 @@ class Restaurant(Base):
     address = Column(String(64), nullable = False)
     city = Column(String(64), nullable = False)
     state = Column(String(20), nullable = False)
-    phone = Column(Integer, nullable = False)
+    phone = Column(String(25))
     url = Column(String(120))
+    icon_url = Column(String(200))
+    reservation_url = Column(String(200)) 
 
     def __repr__(self):
         """Show info about the restaurant."""

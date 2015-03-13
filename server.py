@@ -88,25 +88,26 @@ def show_restaurant_info():
 		flash("Please enter a city name.") 
 		return redirect('/')
 
-@app.route("/save-db")	
-def save_to_db():		
+@app.route("/save-db", methods=['POST'])	
+def save_to_db():
 	"""Saves the restaurant and the bookmark as new records in the db"""
 	
 	logged_in_user_id = session['user_id']
 
 	# pulls the needed fields from the request object
-	name = request.args["name"]
-	fsq_id = request.args["fsqId"]
-	lat = request.args["lat"]
-	lng = request.args["lng"]
-	cuisine = request.args["cuisine"]
-	address = request.args["address"]
-	city = request.args["city"]
-	state = request.args["state"]
-	url = request.args["url"]
-	phone = request.args["phone"]
+	name = request.form["name"]
+	fsq_id = request.form["id"]
+	lat = request.form["lat"]
+	lng = request.form["lng"]
+	cuisine = request.form["cuisine"]
+	address = request.form["address"]
+	city = request.form["city"]
+	state = request.form["state"]
+	url = request.form["url"]
+	phone = request.form["phone"]
+	icon_url = request.form["iconurl"]
 
-	# print "request object: ", request.args
+	# print "request object: ", request.form
 	# print "Name: ", name
 	# print "FSQ ID: ", fsq_id
 	# print "Lat: ", lat 

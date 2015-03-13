@@ -19,7 +19,7 @@
 		    {% for item in fsq_venues %}
 		    	{% if item.location.address is defined and item.location.city is defined %}
 				    <tr class='selected-row' data-id= "{{item.id}}" data-name="{{item.name}}" data-lat="{{item.location.lat}}" data-lng="{{item.location.lng}}" data-cuisine="{{item.categories.0.shortName}}" data-address="{{item.location.address}}" data-city="{{item.location.city}}" data-state ="{{item.location.state}}" 
-				    data-phone="{{item.contact.phone if item.contact.phone is defined else ''}}" data-url="{{item.url if item.url is defined else ''}}">
+				    data-phone="{{item.contact.formattedPhone if item.contact.formattedPhone is defined else ''}}" data-url="{{item.url if item.url is defined else ''}}" data-iconurl="{{item['categories'][0]['icon']['prefix'] if item['categories'][0]['icon']['prefix'] is defined else ''}}">
 				    	<td><button type="button" class="btn btn-primary add-bookmark">
 				        	<span class="glyphicon glyphicon-star-empty "></button></td>
 				        <td><button type="button" class="btn btn-success recommend" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></button></td>
@@ -65,25 +65,17 @@
 	$('.add-bookmark').click(function(){
 		var $row = $(this).closest("tr");
 
-		var fsqData = {
-				"name": $row.data('name'), 
-				"fsqId": $row.data('id'), 
-				"lat": $row.data('lat'), 
-				"lng": $row.data('lng'),
-				"cuisine": $row.data('cuisine'),
-				"address": $row.data('address'),
-				"city": $row.data('city'),
-				"state": $row.data('state'), 
-				"phone": $row.data('phone'),
-				"url": $row.data('url')
-			}
-		//show a message telling user they have bookmarked the restaurant - callback function for get request
 		function showMessage(response) {
 			$(".alert").html(response.message).show().fadeToggle(3200);
 		}
 
 		//get request to URL on server that saves the bkm and restaurant to db as necessary
-		$.get("/save-db", fsqData, showMessage);
+		$.ajax({
+			method: 'POST',
+			url: '/save-db',
+			dataType: 'json',
+			data: $row.data()
+		}).done(showMessage);
 	});
 
 	$(document).ready(function() {
