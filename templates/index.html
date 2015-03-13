@@ -1,84 +1,63 @@
 {% extends 'base.html' %}
 
+{% block head %}
+	<style>
+	#welcome{
+		text-align:center;
+	}
+	.welcome-label {
+		color:black;
+	}
+	.hidden-form {
+		display:none;
+	}
+	.welcome-btn {
+		color:white;
+		background:rgb(31, 69, 125);
+	}
+	.welcome-btn:hover {
+		color:white;
+		background:rgb(49, 106, 190);
+	}
+	</style>
+{% endblock %}
+
 {% block content %}
 
-	{% if recommendations %}
-		<div>
-			<h3> Welcome {{username}}! </h3>
-			<p>You have pending recommendations. Please approve/deny them.</p>
+	<div class="row">
+		<h3 id="welcome"> Welcome {{username}}! </h3>
 
-			<div class="alert" role="alert" hidden="true"></div>
-			<table class="table table-striped table-hover">
-				<thead>
-					<th>Restaurant</th>
-					<th>Approve</th>
-					<th>Deny</th>
-				</thead>
-				<tbody>
-					{% for id, rec in recommendations.iteritems() %}
-						<tr data-restid="{{rec.rest_id}}">
-							<td><b>{{rec.recommender_username}}</b> recommended <b>{{rec.rest_name}}</b>, a {{rec.rest_cuisine |lower}} restaurant located at {{rec.rest_address}} in {{rec.rest_city}}.</b>
-								<p><a href="{{rec.rest_url}}">{{rec.rest_url}}</a></p>
-							</td>
-							<td><button type="button" class="btn btn-success add-recommendation">
-								<span class="glyphicon glyphicon-ok"></button>
-							</td>
-							<td><button type="button" class="btn btn-danger deny-recommendation">
-								<span class="glyphicon glyphicon-remove"></button>
-							</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
+		<div class="col-md-4">
+			{% if recommendations %} 
+				<a href="/recommendations"><button class="btn welcome-btn">View Recommendations</button></a>
+			{% else %}
+				<div></div>
+			{% endif %}
 		</div>
-	{% else %}
-	<p>Hi {{username}}! You have no pending recommendations. Recommend a restaurant to a friend!</p>
-	{% endif %}
 
+		<div class="col-md-4">
+			<button class="btn welcome-btn" id="pop-up-search">Search for a Restaurant</button>
+
+			 <form class="navbar-form navbar-left hidden-form" role="search" form action="/restaurant-results" method="GET" id="add-rest">
+				<div class="form-group">
+					<label class="welcome-label">Search:<input type="text" name="search-restaurant" class="form-control" placeholder="Ex. Limon Rotisserie">
+					<p><label class="welcome-label">Near:<input type="text" name="search-location" class="form-control" placeholder="Ex. San Francisco, CA"></p>
+					<button type="submit" class="btn btn-default" id="submit-query">Submit</button>
+				</div>
+			</form>
+		</div>
+		
+		<div class="col-md-4">
+			<a href="/map"><button class="btn welcome-btn">View Saved Restaurants</button></a>
+		</div>
+	</div>
 {% endblock %}
 
 {% block js_code %}
-<script>
-	$('.add-recommendation').click(function(){
-		var rowOfButton = $(this).closest("tr");
-
-		var restData = {
-			"restId": rowOfButton.data('restid')
-		}
-
-		function deleteRow(response) {
-			//$(".alert").addClass("alert-success");
-			//$(".alert").html(response.message).show().fadeToggle(3200);
-			//change class of button that was clicked on to show it has been accepted 
-			// $(rowOfButton).css("display","none");
-			$(rowOfButton).remove();
-		}
-
-		$.get("/accept-recommendation", restData, deleteRow);
-	});
-
-
-	$('.deny-recommendation').click(function(){
-		var rowOfButton = $(this).closest("tr");
-		
-		var restData = {
-			"restId": rowOfButton.data('restid')
-		}
-
-		function deleteRow(response) {;
-			$(rowOfButton).remove();
-			//call checkRemovedRows() here;
-		}
-
-		// function checkRemovedRows(){
-		// //check if all rows are removed
-		// //if so, replace the html of that div
-		// if $("tr").length == [0]:
-		// }
-
-		$.get("/deny-recommendation", restData, deleteRow);
-	});
-
-</script>
+	<script>
+		$("#pop-up-search").click(function(){
+			$('.hidden-form').toggle()
+			// console.log("this")
+		})
+	</script>
 {% endblock %}
-

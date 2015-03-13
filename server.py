@@ -14,6 +14,18 @@ app.jinja_env.undefined = jinja2.StrictUndefined
 fsq_client_id = config.FSQ_CLIENT_ID 			
 fsq_client_secret = config.FSQ_CLIENT_SECRET
 
+@app.route("/")
+def display_welcome():
+	"""User welcome page showing options"""
+	
+	logged_in_user_id = session['user_id']
+	logged_in_username = session['username']
+
+	pending_recs = model.session.query(model.Recommendation).filter(
+	model.Recommendation.recipient_id == logged_in_user_id, model.Recommendation.pending==True).all()
+
+	return render_template("index.html", username = logged_in_username, recommendations=pending_recs)
+
 @app.route("/login")
 def display_login():
 	"""Render the login page"""
@@ -65,14 +77,14 @@ def show_restaurant_info():
 	# pull out parameters from request
 	search_restaurant = request.args.get('search-restaurant')
 	search_location = request.args.get('search-location')
-	print (search_restaurant, search_location)
+	# print (search_restaurant, search_location)
 	
 	# create a python dict from the Foursquare API JSON response
 	try:
 		fsq_dict = fsqapi.search_venues(fsq_client_id, fsq_client_secret, search_restaurant, search_location) 	# Look in foursquareapi module and create fsq dict function with the parameters here
 		# parse that python dict to get just the part of the request w/needed venues info
 		fsq_venues_list = fsq_dict['response']['venues']
-		print "FSQ Venues List: ", fsq_venues_list
+		# print "FSQ Venues List: ", fsq_venues_list
 
 		# if FSQ query returned no search results
 		if fsq_venues_list == []:								
@@ -167,17 +179,8 @@ def get_user_info():
 
 @app.route("/map")
 def show_map():
-	"""Render map and return info about user's bookmarks to populate list"""
-	logged_in_user_id = session['user_id']
-
-	# query for the user's bookmarks and all related information 
-	detailed_data = model.session.query(model.Bookmark.id, model.Restaurant.id, 
-		model.Restaurant.fsq_id, model.Restaurant.name, model.Restaurant.cuisine, 
-		model.Restaurant.address, model.Restaurant.city, model.Restaurant.state, 
-		model.Restaurant.phone, model.Restaurant.url).join(model.Restaurant).filter(model.Bookmark.user_id==logged_in_user_id).all()
-	# print detailed_data 
-
-	return render_template("map.html", restaurant_data = detailed_data)	
+	"""Render map"""
+	return render_template("map.html")	
 
 @app.route("/bookmark-info")
 def return_bookmark_info():
@@ -185,28 +188,36 @@ def return_bookmark_info():
 
 	logged_in_user_id = session['user_id']
 
-	# get restaurant info for all the user's bookmarked restaurants
-	data = model.session.query(model.Bookmark.id, model.Restaurant.fsq_id, 
-		model.Restaurant.name, model.Restaurant.lat, model.Restaurant.lng, 
-		model.Restaurant.cuisine, model.Restaurant.address, model.Restaurant.url, model.Restaurant.icon_url).join(model.Restaurant).filter(model.Bookmark.user_id==
-		logged_in_user_id).all()
+	data = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id).all()
 
-	# create a dictionary with all the info necessary to pass on to jinja in order to map markers 
 	restaurant_info = {}
 	for item in data:
 		restaurant_info[item.id] = {}						# item.id == bookmark id 
-		restaurant_info[item.id]["fsq_id"] = item.fsq_id
-		restaurant_info[item.id]["name"] = item.name
-		restaurant_info[item.id]["lat"] = item.lat
-		restaurant_info[item.id]["lng"] = item.lng
-		restaurant_info[item.id]["cuisine"] = item.cuisine
-		restaurant_info[item.id]["address"] = item.address
-		restaurant_info[item.id]["url"] = item.url
-		restaurant_info[item.id]["icon_url"] = item.icon_url
+		restaurant_info[item.id]["fsq_id"] = item.restaurant.fsq_id
+		restaurant_info[item.id]["name"] = item.restaurant.name
+		restaurant_info[item.id]["lat"] = item.restaurant.lat
+		restaurant_info[item.id]["lng"] = item.restaurant.lng
+		restaurant_info[item.id]["cuisine"] = item.restaurant.cuisine
+		restaurant_info[item.id]["address"] = item.restaurant.address
+		restaurant_info[item.id]["phone"] = item.restaurant.phone
+		restaurant_info[item.id]["url"] = item.restaurant.url
+		restaurant_info[item.id]["icon_url"] = item.restaurant.icon_url
+		# if data.filter(Bookmark.bookmarkrec != None):
+		# 	print "********THISTHISTHIS "
 
-	# print session
-	# print logged_in_user_id
-	print "\n \n restaurant_info: ", restaurant_info
+	print restaurant_info
+	
+	# for bkm in data:
+	# 	print bkm.id
+	# 	print bkm.restaurant.fsq_id
+	# 	print bkm.restaurant.name
+	# 	print bkm.restaurant.lat
+	# 	print bkm.restaurant.lng
+	# 	print bkm.restaurant.cuisine
+	# 	print bkm.restaurant.address
+	# 	print bkm.restaurant.phone
+	# 	print bkm.restaurant.url
+	# 	print bkm.restaurant.icon_url
 
 	return jsonify(restaurant_info)
 
@@ -218,10 +229,10 @@ def delete_bookmark():
 	# get the bookmark id for the bookmark the user wants to delete 
 	bkm_id_to_delete = request.args['bookmarkId']
 	
-	# query for the bookmark with that id 
 	bkm_to_delete = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 
 		model.Bookmark.id==bkm_id_to_delete).first()
 	# print "Bookmark to delete ", bkm_to_delete
+	
 	restaurant_to_delete = bkm_to_delete.restaurant.name
 	# print "Restaurant name to delete ", restaurant_to_delete
 	
@@ -303,7 +314,7 @@ def recommend_restaurant():
 
 	return "got to recommend restaurant route!"
 
-@app.route("/")
+@app.route("/recommendations")
 def show_recommendations():
 	"""Send recmmmendation info as JSON to show notifications"""
 	
@@ -313,10 +324,9 @@ def show_recommendations():
 	recommendations = model.session.query(model.Recommendation).filter(
 		model.Recommendation.recipient_id == logged_in_user_id, model.Recommendation.pending==True).all()
 
-	# rec_data = {}
 	# for rec in recommendations:
 	# 	print rec.restaurant.id
-	# 	print rec.recommender.username
+	# 	print rec.recommender.username  
 	# 	print rec.recipient.username
 	# 	print rec.id
 	# 	print rec.restaurant.name
@@ -344,7 +354,7 @@ def show_recommendations():
 
 	# print rec_data
 
-	return render_template("index.html", recommendations = rec_data, username = logged_in_username)
+	return render_template("recommendations.html", recommendations = rec_data, username = logged_in_username)
 
 @app.route("/accept-recommendation")
 def accept_recommendation():

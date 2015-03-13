@@ -51,8 +51,10 @@ class Restaurant(Base):
 
     def __repr__(self):
         """Show info about the restaurant."""
-        return "<id=%r fsq_id=%r name=%r lat=%r lng=%r cuisine=%r address=%r city=%r state=%r phone=%r url=%r icon_url=%r>" % (self.id, 
-            self.fsq_id, self.name, self.lat, self.lng, self.cuisine, self.address, self.city, self.phone, self.url, self.icon_url)                       
+        return "<Restaurant id=%r fsq_id=%r name=%r lat=%r lng=%r cuisine=%r \
+        address=%r city=%r state=%r phone=%r url=%r icon_url=%r>" % (self.id, 
+            self.fsq_id, self.name, self.lat, self.lng, self.cuisine, 
+            self.address, self.city, self.state, self.phone, self.url, self.icon_url)                       
 
 #================== bookmarks table  ==================
 
@@ -66,6 +68,8 @@ class Bookmark(Base):
     user = relationship("User", backref = backref('bookmarks', order_by = id))
     restaurant = relationship("Restaurant", backref = backref('bookmarks', order_by = id))
 
+    bookmarkrec = relationship("BookmarkRecommendation", backref = backref('bookmarks', order_by = id))
+   
     def __repr__(self):
         """Show info about the bookmark."""
         return "<Bookmark id=%r user_id=%r restaurant_id=%r>" % (self.id, self.user_id, 
@@ -80,8 +84,8 @@ class BookmarkRecommendation(Base):
     bookmark_id = Column(Integer, ForeignKey('bookmarks.id'))
     recommendation_id = Column(Integer, ForeignKey('recommendations.id'))
 
-    bookmark = relationship("Bookmark", backref = backref('bookmarks', order_by = id))
-    recommendation = relationship("Recommendation", backref = backref('recommendation', order_by = id))
+    bookmark = relationship("Bookmark", backref = backref('bookmarkrecs', order_by = id))
+    recommendation = relationship("Recommendation", backref = backref('bookmarkrecs', order_by = id))
 
     def __repr__(self):
         """Show info about the bookmarkrecommendation."""
