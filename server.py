@@ -58,11 +58,10 @@ def login_user():
 		flash ("You are logged in")
 		# print session
 		# print user.email
-		# print user.id
-		return redirect("/") 
+		return redirect("/welcome") 
 	except:
 		flash("That email or password is incorrect. Please try again")
-		print session
+		# print session
 		return render_template("login.html")
 
 @app.route("/logout")
@@ -71,7 +70,7 @@ def logout():
 	session.clear()
 	# print session 
 	flash ("You have been logged out")
-	return redirect("/login") 
+	return redirect("/") 
 
 @app.route("/restaurant-results")
 def show_restaurant_info():

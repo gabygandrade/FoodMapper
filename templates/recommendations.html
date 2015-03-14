@@ -10,8 +10,9 @@
               <button type="submit" class="btn btn-default" id="submit-query">Submit</button>
             </form>
         </li>
+        <li><a href="/welcome">Home</a></li>
         <li><a href="/recommendations">Recommendations</a></li>
-        <li><a href="/map">My Map</a></li>
+        <li><a href="/map">Bookmarks</a></li>
         <li><a href="/logout">Log Out</a></li>
 {% endblock %}
 
@@ -20,8 +21,7 @@
 	{% if recommendations %}
 		<div>
 			<h3> Hi {{username}}! </h3>
-			<p>You have pending recommendations. Please approve/deny them.</p>
-
+			<p>You have pending recommendations. Please approve them to add them to your bookmarks and map, or pass to decline them.</p>
 			<div class="alert" role="alert" hidden="true"></div>
 			<table class="table table-striped table-hover">
 				<thead>

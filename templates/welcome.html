@@ -2,6 +2,13 @@
 
 {% block head %}
 	<style>
+	body {
+		 background: url("../static/img/mexican.jpg") no-repeat center center fixed; 
+		  -webkit-background-size: cover;
+		  -moz-background-size: cover;
+		  -o-background-size: cover;
+		  background-size: cover;
+	}
 	#welcome{
 		text-align:center;
 	}
@@ -11,16 +18,22 @@
 	.hidden-form {
 		display:none;
 	}
+	#welcome-div {
+		background:rgba(255, 255, 255, 0.5);
+		width:60%;
+		margin:10% auto;
+		border:2px solid black;
+	}
 	.welcome-btn {
-		color:white;
-		background:rgb(31, 69, 125);
-		padding:1%;
+		color:black;
+		background:rgba(181, 175, 115, 0.9);
+		padding:1.4%;
 		margin-left:1%;
 		margin-bottom:2%;
 	}
 	.welcome-btn:hover {
 		color:white;
-		background:rgb(49, 106, 190);
+		background:rgba(113, 108, 60, 0.9);
 	}
 	#welcome-buttons {
 		text-align:center;
@@ -34,8 +47,9 @@
 
   {% block navbar %}
         <li>
+        	<li><a href="/welcome">Home</a></li>
             <li><a href="/recommendations">Recommendations</a></li>
-            <li><a href="/map">My Map</a></li>
+            <li><a href="/map">Bookmarks</a></li>
             <li><a href="/logout">Log Out</a></li>
         </li>
   {% endblock %}
@@ -44,15 +58,17 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<h3 id="welcome"> Welcome {{username}}! </h3>
-			<div id="welcome-buttons">
-				{% if recommendations %} 
-					<a href="/recommendations"><button class="btn welcome-btn">View Recommendations</button></a>
-				{% else %}
-					<div></div>
-				{% endif %}
-				<button class="btn welcome-btn" id="pop-up-search">Search for a Restaurant</button>
-				<a href="/map"><button class="btn welcome-btn">View Map of Saved Restaurants</button></a>
+			<div id="welcome-div">
+				<h3 id="welcome"> Welcome {{username}}! </h3>
+				<div id="welcome-buttons">
+					{% if recommendations %} 
+						<a href="/recommendations"><button class="btn welcome-btn">View Recommendations</button></a>
+					{% else %}
+						<div></div>
+					{% endif %}
+					<button class="btn welcome-btn" id="pop-up-search">Search for a Restaurant</button>
+					<a href="/map"><button class="btn welcome-btn">View Map of Bookmarks</button></a>
+				</div>
 			</div>
 		</div>
 	</div>
