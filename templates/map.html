@@ -1,18 +1,5 @@
 {% extends 'base.html' %}
 
-  {% block navbar %}
-        <li>
-            <form class="navbar-form navbar-left" role="search" form action="/restaurant-results" method="GET" id="add-rest">
-              <div class="form-group">
-                <label>Search:<input type="text" name="search-restaurant" class="form-control" placeholder="Ex. Limon Rotisserie">
-                <label>Near:<input type="text" name="search-location" class="form-control" placeholder="Ex. San Francisco, CA">
-              </div>
-              <button type="submit" class="btn btn-default" id="submit-query">Submit</button>
-            </form>
-        </li>
-    {% endblock %}
-
-
 {% block head %}
 	<style>
 		html { height:100% }
@@ -42,7 +29,21 @@
     </style>
     <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+{% endblock %}
 
+{% block navbar %}
+	<li>
+	    <form class="navbar-form navbar-left" role="search" form action="/restaurant-results" method="GET" id="add-rest">
+	      <div class="form-group">
+	        <label>Search:<input type="text" name="search-restaurant" class="form-control" placeholder="Ex. Limon Rotisserie">
+	        <label>Near:<input type="text" name="search-location" class="form-control" placeholder="Ex. San Francisco, CA">
+	      </div>
+	      <button type="submit" class="btn btn-default" id="submit-query">Submit</button>
+	    </form>
+	    <li><a href="/recommendations">Recommendations</a></li>
+	    <li><a href="/map">My Map</a></li>
+	    <li><a href="/logout">Log Out</a></li>
+	</li>
 {% endblock %}
 
 {% block content %}
@@ -151,8 +152,7 @@
 		}
 
 		//GET request to get info for markers 
-			$.getJSON("/bookmark-info", function(response){
-			var json = response;
+			$.getJSON("/bookmark-info", function(json){
 			console.log(json)
 			//loop through each of the json elements, get their lat, lng, name & other info & create a marker for these
 			$.each(json, function(key, data){
@@ -169,34 +169,20 @@
 				var phone = data.phone
 				var url = data.url
 				var icon_url = data.icon_url
+				// if (data.recommender_username !== undefined): 
 				var recommender_username = data.recommender_username
-				// if (recommender_username !== undefined):
-				// 	var username
 
-				// if (recommender_username.length >0):
-				// 	var listContent = ['<div id="content">',
-				// 	'<h4>', name, '</h4>',
-				// 	'<p><i>', cuisine, '</i></p>',
-				// 	'<p>', address, '</p>',
-				// 	'<p>', phone, '</p>',
-				// 	'<p>Recommended by: ', recommender_username, '</p>',
-				// 	'<p>','<a href=', url, '>', url, '</a>','</p>',
-				// 	'<button class="btn btn-danger delete-bookmark"', 
-				// 	'data-bookmarkid="', bookmarkId, 
-				// 	'">','<span class="glyphicon glyphicon-trash"></span></button>',
-				// 	'</div>'].join('');
-				// else:
-					var listContent = ['<div id="content">',
-						'<h4>', name, '</h4>',
-						'<p><i>', cuisine, '</i></p>',
-						'<p>', address, '</p>',
-						'<p>', phone, '</p>',
-						'<p>Recommended by: ', recommender_username, '</p>',
-						'<p>','<a href=', url, '>', url, '</a>','</p>',
-						'<button class="btn btn-danger delete-bookmark"', 
-						'data-bookmarkid="', bookmarkId, 
-						'">','<span class="glyphicon glyphicon-trash"></span></button>',
-						'</div>'].join('');
+				var listContent = ['<div id="content">',
+					'<h4>', name, '</h4>',
+					'<p><i>', cuisine, '</i></p>',
+					'<p>', address, '</p>', 
+					'<p>', phone, '</p>',
+					'<p>Recommended by: ', recommender_username, '</p>',
+					'<p>','<a href=', url, '>', url, '</a>','</p>',
+					'<button class="btn btn-danger delete-bookmark"', 
+					'data-bookmarkid="', bookmarkId, 
+					'">','<span class="glyphicon glyphicon-trash"></span></button>',
+					'</div>'].join('');
 
 				var iconBase = icon_url
 

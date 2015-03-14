@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block head %}
+	<style>
+	#welcome{
+		text-align:center;
+	}
+	.welcome-label {
+		color:black;
+	}
+	.hidden-form {
+		display:none;
+	}
+	.welcome-btn {
+		color:white;
+		background:rgb(31, 69, 125);
+		padding:1%;
+		margin-left:1%;
+		margin-bottom:2%;
+	}
+	.welcome-btn:hover {
+		color:white;
+		background:rgb(49, 106, 190);
+	}
+	#welcome-buttons {
+		text-align:center;
+	}
+	#welcome-search {
+		margin-left:21%;
+	}
+	</style>
+{% endblock %}
+
+
+  {% block navbar %}
+        <li>
+            <li><a href="/recommendations">Recommendations</a></li>
+            <li><a href="/map">My Map</a></li>
+            <li><a href="/logout">Log Out</a></li>
+        </li>
+  {% endblock %}
+
+{% block content %}
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3 id="welcome"> Welcome {{username}}! </h3>
+			<div id="welcome-buttons">
+				{% if recommendations %} 
+					<a href="/recommendations"><button class="btn welcome-btn">View Recommendations</button></a>
+				{% else %}
+					<div></div>
+				{% endif %}
+				<button class="btn welcome-btn" id="pop-up-search">Search for a Restaurant</button>
+				<a href="/map"><button class="btn welcome-btn">View Map of Saved Restaurants</button></a>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<form class="navbar-form navbar-left hidden-form" role="search" form action="/restaurant-results" method="GET" id="welcome-search">
+				<div class="form-group">
+					<label class="welcome-label">Search:<input type="text" name="search-restaurant" class="form-control" placeholder="Ex. Limon Rotisserie">
+					<label class="welcome-label">Near:<input type="text" name="search-location" class="form-control" placeholder="Ex. San Francisco, CA">
+					<button type="submit" class="btn btn-default" id="submit-query">Submit</button>
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}
+
+{% block js_code %}
+	<script>
+		$("#pop-up-search").click(function(){
+			$('.hidden-form').toggle()
+			// console.log("this")
+		})
+	</script>
+{% endblock %}

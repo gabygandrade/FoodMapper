@@ -15,6 +15,12 @@ fsq_client_id = config.FSQ_CLIENT_ID
 fsq_client_secret = config.FSQ_CLIENT_SECRET
 
 @app.route("/")
+def display_home_page():
+	"""Home page"""
+	
+	return render_template("index.html")
+
+@app.route("/welcome")
 def display_welcome():
 	"""User welcome page showing options"""
 	
@@ -24,7 +30,7 @@ def display_welcome():
 	pending_recs = model.session.query(model.Recommendation).filter(
 	model.Recommendation.recipient_id == logged_in_user_id, model.Recommendation.pending==True).all()
 
-	return render_template("index.html", username = logged_in_username, recommendations=pending_recs)
+	return render_template("welcome.html", username = logged_in_username, recommendations=pending_recs)
 
 @app.route("/login")
 def display_login():

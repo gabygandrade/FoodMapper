@@ -19,13 +19,11 @@
                     <ul class="nav navbar-nav navbar-right">
                         {% block navbar %}
                         {% endblock %}
-                        <li><a href="/recommendations">Recommendations</a></li>
-                        <li><a href="/map">My Map</a></li>
-                        <li><a href="/logout">Log Out</a></li>
                     </ul>
                 </div>
             </div>
         </div>
+
         <div class="container-fluid">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
