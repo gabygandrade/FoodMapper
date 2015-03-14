@@ -191,43 +191,43 @@ def return_bookmark_info():
 	data = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id).all()
 
 	restaurant_info = {}
-	for item in data:
-		restaurant_info[item.id] = {}						# item.id == bookmark id 
-		restaurant_info[item.id]["fsq_id"] = item.restaurant.fsq_id
-		restaurant_info[item.id]["name"] = item.restaurant.name
-		restaurant_info[item.id]["lat"] = item.restaurant.lat
-		restaurant_info[item.id]["lng"] = item.restaurant.lng
-		restaurant_info[item.id]["cuisine"] = item.restaurant.cuisine
-		restaurant_info[item.id]["address"] = item.restaurant.address
-		restaurant_info[item.id]["phone"] = item.restaurant.phone
-		restaurant_info[item.id]["url"] = item.restaurant.url
-		restaurant_info[item.id]["icon_url"] = item.restaurant.icon_url
-		# if data.filter(Bookmark.bookmarkrec != None):
-		# 	print "********THISTHISTHIS "
-
+	for bkm in data:
+		restaurant_info[bkm.id] = {}						
+		restaurant_info[bkm.id]["fsq_id"] = bkm.restaurant.fsq_id
+		restaurant_info[bkm.id]["name"] = bkm.restaurant.name
+		restaurant_info[bkm.id]["lat"] = bkm.restaurant.lat
+		restaurant_info[bkm.id]["lng"] = bkm.restaurant.lng
+		restaurant_info[bkm.id]["cuisine"] = bkm.restaurant.cuisine
+		restaurant_info[bkm.id]["address"] = bkm.restaurant.address
+		restaurant_info[bkm.id]["phone"] = bkm.restaurant.phone
+		restaurant_info[bkm.id]["url"] = bkm.restaurant.url
+		restaurant_info[bkm.id]["icon_url"] = bkm.restaurant.icon_url
+		if len(bkm.bookmarkrecs) > 0:
+			bkmrec = bkm.bookmarkrecs
+			for item in bkmrec:
+				restaurant_info[bkm.id]["recommender_username"] = item.recommendation.recommender.username
 	print restaurant_info
 	
 	# for bkm in data:
-	# 	print bkm.id
-	# 	print bkm.restaurant.fsq_id
+	# 	# print bkm.id
 	# 	print bkm.restaurant.name
-	# 	print bkm.restaurant.lat
-	# 	print bkm.restaurant.lng
-	# 	print bkm.restaurant.cuisine
-	# 	print bkm.restaurant.address
-	# 	print bkm.restaurant.phone
-	# 	print bkm.restaurant.url
-	# 	print bkm.restaurant.icon_url
+	# 	print "Bkm id", bkm.id
+	# 	print "Bkm rest id ", bkm.restaurant.id
+	# 	if len(bkm.bookmarkrecs) > 0:
+	# 		bkmrec = bkm.bookmarkrecs
+	# 		# print "bkmrec"
+	# 		for item in bkmrec:
+	# 			print "NAME OF BOOKMARK RECOMMENDER'S USERNAME", item.bookmark.user.username
 
 	return jsonify(restaurant_info)
 
-@app.route("/delete-bookmark")
+@app.route("/delete-bookmark", methods=["POST"])
 def delete_bookmark(): 
 	"""Delete the user's selected bookmark """
 	logged_in_user_id = session['user_id']
 
 	# get the bookmark id for the bookmark the user wants to delete 
-	bkm_id_to_delete = request.args['bookmarkId']
+	bkm_id_to_delete = request.form['bookmarkId']
 	
 	bkm_to_delete = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 
 		model.Bookmark.id==bkm_id_to_delete).first()

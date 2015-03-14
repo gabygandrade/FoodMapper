@@ -66,7 +66,7 @@
 
 	$('body').delegate('.delete-bookmark', 'click', function (event) {
 		var bookmarkId = $(this).data('bookmarkid')
-		console.log(bookmarkId);
+		// console.log(bookmarkId);
 
 		// data to be sent along with GET request
 		var bookmarkData = {
@@ -76,12 +76,15 @@
 		//callback function to be run after get response back from GET request
 		function reloadPage(response) {
 			location.reload();
-			// google.maps.event.trigger(map, 'resize');
-			// $(".flash-notice").html(response.message).show().fadeToggle(6000);
 		}
 
-		$.get("/delete-bookmark", bookmarkData, reloadPage);
-	});
+		$.ajax({
+			method: 'POST',
+			url: '/delete-bookmark',
+			dataType: 'json',
+			data: bookmarkData,
+			}).done(reloadPage);
+		});
 
 	function initialize() {
 
@@ -166,17 +169,34 @@
 				var phone = data.phone
 				var url = data.url
 				var icon_url = data.icon_url
+				var recommender_username = data.recommender_username
+				// if (recommender_username !== undefined):
+				// 	var username
 
-				var listContent = ['<div id="content">',
-				'<h4>', name, '</h4>',
-				'<p><i>', cuisine, '</i></p>',
-				'<p>', address, '</p>',
-				'<p>', phone, '</p>',
-				'<p>','<a href=', url, '>', url, '</a>','</p>',
-				'<button class="btn btn-danger delete-bookmark"', 
-				'data-bookmarkid="', bookmarkId, 
-				'">','<span class="glyphicon glyphicon-trash"></span></button>',
-				'</div>'].join('');
+				// if (recommender_username.length >0):
+				// 	var listContent = ['<div id="content">',
+				// 	'<h4>', name, '</h4>',
+				// 	'<p><i>', cuisine, '</i></p>',
+				// 	'<p>', address, '</p>',
+				// 	'<p>', phone, '</p>',
+				// 	'<p>Recommended by: ', recommender_username, '</p>',
+				// 	'<p>','<a href=', url, '>', url, '</a>','</p>',
+				// 	'<button class="btn btn-danger delete-bookmark"', 
+				// 	'data-bookmarkid="', bookmarkId, 
+				// 	'">','<span class="glyphicon glyphicon-trash"></span></button>',
+				// 	'</div>'].join('');
+				// else:
+					var listContent = ['<div id="content">',
+						'<h4>', name, '</h4>',
+						'<p><i>', cuisine, '</i></p>',
+						'<p>', address, '</p>',
+						'<p>', phone, '</p>',
+						'<p>Recommended by: ', recommender_username, '</p>',
+						'<p>','<a href=', url, '>', url, '</a>','</p>',
+						'<button class="btn btn-danger delete-bookmark"', 
+						'data-bookmarkid="', bookmarkId, 
+						'">','<span class="glyphicon glyphicon-trash"></span></button>',
+						'</div>'].join('');
 
 				var iconBase = icon_url
 
@@ -208,10 +228,8 @@
 				google.maps.event.addListener(marker, 'click', function() {
 					infoWindow.open(map,marker);
 				});
-
-
-			}); //end of $.each method
-		}); //end of GET request ---------------------------- 
+			}); 
+		});
 
 	} // End of initialize function -----------------------
 

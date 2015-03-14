@@ -89,7 +89,7 @@ class BookmarkRecommendation(Base):
 
     def __repr__(self):
         """Show info about the bookmarkrecommendation."""
-        return "<Bookmark id=%r bookmark_id=%r recommendation_id=%r>" % (self.id, self.bookmark_id, 
+        return "<BookmarkRec id=%r bookmark_id=%r recommendation_id=%r>" % (self.id, self.bookmark_id, 
             self.recommendation_id) 
 
 #================== recommendations table  ==================

@@ -16,15 +16,15 @@
 
 	{% if recommendations %}
 		<div>
-			<h3> Welcome {{username}}! </h3>
+			<h3> Hi {{username}}! </h3>
 			<p>You have pending recommendations. Please approve/deny them.</p>
 
 			<div class="alert" role="alert" hidden="true"></div>
 			<table class="table table-striped table-hover">
 				<thead>
 					<th>Restaurant</th>
-					<th>Approve</th>
-					<th>Deny</th>
+					<th>Accept</th>
+					<th>Pass</th>
 				</thead>
 				<tbody>
 					{% for id, rec in recommendations.iteritems() %}
@@ -59,10 +59,6 @@
 		}
 
 		function deleteRow(response) {
-			//$(".alert").addClass("alert-success");
-			//$(".alert").html(response.message).show().fadeToggle(3200);
-			//change class of button that was clicked on to show it has been accepted 
-			// $(rowOfButton).css("display","none");
 			$(rowOfButton).remove();
 		}
 
