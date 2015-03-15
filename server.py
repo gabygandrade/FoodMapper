@@ -57,11 +57,9 @@ def login_user():
 		session['logged_in'] = True
 		flash ("You are logged in")
 		# print session
-		# print user.email
 		return redirect("/welcome") 
 	except:
 		flash("That email or password is incorrect. Please try again")
-		# print session
 		return render_template("login.html")
 
 @app.route("/logout")
@@ -125,11 +123,6 @@ def save_to_db():
 	icon_url = request.form["iconurl"]
 
 	# print "request object: ", request.form
-	# print "Name: ", name
-	# print "FSQ ID: ", fsq_id
-	# print "Lat: ", lat 
-	# print "Lng: ", lng 
-	# print "Cuisine: ", cuisine
 
 	saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
 	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
@@ -189,7 +182,7 @@ def show_map():
 
 @app.route("/bookmark-info")
 def return_bookmark_info():
-	"""Return information about the user's bookmarks to populate map"""
+	"""Return information about the user's bookmarks to populate map and list"""
 
 	logged_in_user_id = session['user_id']
 
@@ -208,21 +201,10 @@ def return_bookmark_info():
 		restaurant_info[bkm.id]["url"] = bkm.restaurant.url
 		restaurant_info[bkm.id]["icon_url"] = bkm.restaurant.icon_url
 		if len(bkm.bookmarkrecs) > 0:
-			bkmrec = bkm.bookmarkrecs
-			for item in bkmrec:
+			bkmrecs = bkm.bookmarkrecs
+			for item in bkmrecs:
 				restaurant_info[bkm.id]["recommender_username"] = item.recommendation.recommender.username
 	print restaurant_info
-	
-	# for bkm in data:
-	# 	# print bkm.id
-	# 	print bkm.restaurant.name
-	# 	print "Bkm id", bkm.id
-	# 	print "Bkm rest id ", bkm.restaurant.id
-	# 	if len(bkm.bookmarkrecs) > 0:
-	# 		bkmrec = bkm.bookmarkrecs
-	# 		# print "bkmrec"
-	# 		for item in bkmrec:
-	# 			print "NAME OF BOOKMARK RECOMMENDER'S USERNAME", item.bookmark.user.username
 
 	return jsonify(restaurant_info)
 
@@ -321,7 +303,8 @@ def recommend_restaurant():
 
 @app.route("/recommendations")
 def show_recommendations():
-	"""Send recmmmendation info as JSON to show notifications"""
+	"""Create a dict with all the information about a user's recommendations, and 
+	send it as JSON to show notifications"""
 	
 	logged_in_user_id = session['user_id']
 	logged_in_username = session['username']
@@ -330,16 +313,10 @@ def show_recommendations():
 		model.Recommendation.recipient_id == logged_in_user_id, model.Recommendation.pending==True).all()
 
 	# for rec in recommendations:
-	# 	print rec.restaurant.id
-	# 	print rec.recommender.username  
-	# 	print rec.recipient.username
 	# 	print rec.id
 	# 	print rec.restaurant.name
-	# 	print rec.restaurant.cuisine
-	# 	print rec.restaurant.address
-	# 	print rec.restaurant.city
-	# 	print rec.restaurant.state
-	# 	print rec.restaurant.url
+	# 	print rec.recommender.username  
+	# 	print rec.recipient.username
 
 	# creat a dict with all needed info to render restaurant info & edit recommendation
 	rec_data = {}
