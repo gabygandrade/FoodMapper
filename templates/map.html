@@ -175,27 +175,41 @@
 				var myLatLng = new google.maps.LatLng(lat, lng);
 				// console.log(myLatLng)
 
-				var name = data.name
-				var cuisine = data.cuisine
-				var fsqId = data.fsq_id
-				var address = data.address
-				var phone = data.phone
-				var url = data.url
-				var icon_url = data.icon_url
-				// if (data.recommender_username !== undefined): 
-				var recommender_username = data.recommender_username
+				var name = data.name;
+				var cuisine = data.cuisine;
+				var fsqId = data.fsq_id;
+				var address = data.address;
+				var phone = data.phone;
+				var url = data.url;
+				var icon_url = data.icon_url;
+				var recommender_username = data.recommender_username;
 
-				var listContent = ['<div id="content">',
-					'<h4>', name, '</h4>',
-					'<p><i>', cuisine, '</i></p>',
-					'<p>', address, '</p>', 
-					'<p>', phone, '</p>',
-					'<p>Recommended by: ', recommender_username, '</p>',
-					'<p>','<a href=', url, '>', url, '</a>','</p>',
-					'<button class="btn btn-danger delete-bookmark"', 
-					'data-bookmarkid="', bookmarkId, 
-					'">','<span class="glyphicon glyphicon-trash"></span></button>',
-					'</div>'].join('');
+				if (data.recommender_username) {
+					var listContent = ['<div id="content">',
+						'<h4>', name, '</h4>',
+						'<p><i>', cuisine, '</i></p>',
+						'<p>', address, '</p>', 
+						'<p>', phone, '</p>',
+						'<p>Recommended by: ', recommender_username, '</p>',
+						'<p>','<a href=', url, '>', url, '</a>','</p>',
+						'<button class="btn btn-danger delete-bookmark"', 
+						'data-bookmarkid="', bookmarkId, 
+						'">','<span class="glyphicon glyphicon-trash"></span></button>',
+						'</div>'].join('');
+				}
+				else {
+					var listContent = ['<div id="content">',
+						'<h4>', name, '</h4>',
+						'<p><i>', cuisine, '</i></p>',
+						'<p>', address, '</p>', 
+						'<p>', phone, '</p>',
+						// '<p>Recommended by: ', recommender_username, '</p>',
+						'<p>','<a href=', url, '>', url, '</a>','</p>',
+						'<button class="btn btn-danger delete-bookmark"', 
+						'data-bookmarkid="', bookmarkId, 
+						'">','<span class="glyphicon glyphicon-trash"></span></button>',
+						'</div>'].join('');
+				}
 
 				var iconBase = icon_url
 
