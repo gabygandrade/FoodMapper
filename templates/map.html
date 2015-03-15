@@ -4,9 +4,21 @@
 	<style>
 		html { height:100% }
 		body { height: 100%; margin:0; }
+		body {
+			background: url("../static/img/sushi.jpg") no-repeat center center fixed; 
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
+			background-position-y: 26%;
+		}
 		.container { height:100% }
+		.content-container {
+			background-color:rgba(255, 255, 255,.9);
+			padding:0% 1%;
+		}
 		#map-canvas {
-	        height: 500px;
+	        height: 550px;
 	        margin: 0px;
 	        padding: 0px
       	}
@@ -27,16 +39,35 @@
 		} 
 
 		#list li { 
-			padding:10px;
+			padding:1% 3%;
 			border-bottom:1px dotted black;
 		} 
 
-		#list li:hover { background:#555; color:#fff; cursor:pointer; cursor:hand; }
-		#list-div {
-			padding-left:0px;
-			margin-right:-8px;
-			padding-right:0px;
+		#list li:hover { 
+			background:#D3DDBB; 
+			color:black; 
+			cursor:pointer; 
+			cursor:hand; 
 		}
+		#list-div {
+			background-color:rgba(255, 255, 255,.9)
+		}
+		h4.rest-title {
+			border:6px double black;
+			padding:2%;
+			color: black;
+		}
+
+		h4 {
+			font-family:'Poiret One';
+			text-align:center;
+			color:rgb(150, 54, 54);
+		}
+		.recommender {
+			font-size:13px;
+			font-weight:bold;
+		}
+
     </style>
     <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
@@ -64,11 +95,10 @@
 			<div id="map-canvas"></div>
 		</div>
 		<div class="col-md-3" id="list-div">
-			<h4>My Bookmarked Restaurants </h4>
+			<h4 class="rest-title">Bookmarked Restaurants </h4>
 			<ul id="list"></ul>
 		</div>
 	</div>
-
 {% endblock %}
 
 {% block js_code %}
@@ -104,10 +134,6 @@
 		//create array to hold style for map styles
 
 		// var styles=[{"featureType":"administrative","elementType":"geometry","stylers":[{"saturation":"1"}]},{"featureType":"administrative.country","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"administrative.country","elementType":"labels","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.province","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"administrative.province","elementType":"labels","stylers":[{"lightness":"1"},{"saturation":"-100"}]},{"featureType":"administrative.locality","elementType":"geometry","stylers":[{"saturation":"-100"},{"visibility":"off"},{"hue":"#ff0000"}]},{"featureType":"administrative.locality","elementType":"geometry.fill","stylers":[{"saturation":"4"}]},{"featureType":"administrative.locality","elementType":"labels","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.neighborhood","elementType":"geometry","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.neighborhood","elementType":"labels","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.land_parcel","elementType":"geometry","stylers":[{"saturation":"-100"}]},{"featureType":"administrative.land_parcel","elementType":"labels","stylers":[{"saturation":"-100"}]},{"featureType":"landscape","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"visibility":"off"},{"saturation":"-100"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#ffffff"}]},{"featureType":"landscape","elementType":"geometry.stroke","stylers":[{"visibility":"on"}]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"saturation":"4"}]},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"saturation":"-100"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.attraction","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"lightness":"16"},{"saturation":"-7"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"saturation":"0"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"saturation":"-100"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#002855"}]},{"featureType":"water","elementType":"geometry","stylers":[{"weight":"1.12"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"lightness":"-14"},{"saturation":"-14"},{"color":"#18355f"},{"gamma":"1.23"}]},{"featureType":"water","elementType":"geometry.stroke","stylers":[{"weight":"0.50"},{"lightness":"0"}]},{"featureType":"water","elementType":"labels","stylers":[{"weight":"0.50"},{"color":"#ffffff"}]}]
-
-		// var styles=[{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"landscape","elementType":"all","stylers":[{"hue":"#ff0300"},{"saturation":-100},{"lightness":129.33333333333334},{"gamma":1},{"visibility":"on"}]},{"featureType":"poi","elementType":"all","stylers":[{"hue":"#abff00"},{"saturation":61.80000000000001},{"lightness":13.800000000000011},{"gamma":1},{"visibility":"on"}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"on"},{"color":"#1fa661"},{"weight":"0.55"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.highway.controlled_access","elementType":"all","stylers":[{"visibility":"on"},{"saturation":"-64"},{"hue":"#ff0000"},{"lightness":"29"}]},{"featureType":"road.highway.controlled_access","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"all","stylers":[{"hue":"#00b7ff"},{"saturation":-31.19999999999996},{"lightness":2.1803921568627374},{"gamma":1},{"visibility":"on"}]},{"featureType":"road.local","elementType":"all","stylers":[{"hue":"#00B5FF"},{"saturation":-33.33333333333343},{"lightness":27.294117647058826},{"gamma":1},{"visibility":"on"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"transit.line","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"transit.station.airport","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"transit.station.bus","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"hue":"#00ecff"},{"saturation":"-81"},{"lightness":"-34"},{"gamma":1}]}]
-
-		// var styles=[{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"color":"#99c5a1"},{"visibility":"on"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#173a54"},{"visibility":"on"}]}]
 
 		var styles=[{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"color":"#c2d692"},{"visibility":"on"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#173a54"},{"visibility":"on"}]}]
 		
@@ -190,20 +216,18 @@
 						'<p><i>', cuisine, '</i></p>',
 						'<p>', address, '</p>', 
 						'<p>', phone, '</p>',
-						'<p>Recommended by: ', recommender_username, '</p>',
+						'<p class="recommender">Recommended by: ', recommender_username, '</p>',
 						'<p>','<a href=', url, '>', url, '</a>','</p>',
 						'<button class="btn btn-danger delete-bookmark"', 
 						'data-bookmarkid="', bookmarkId, 
 						'">','<span class="glyphicon glyphicon-trash"></span></button>',
 						'</div>'].join('');
-				}
-				else {
+				} else {
 					var listContent = ['<div id="content">',
 						'<h4>', name, '</h4>',
 						'<p><i>', cuisine, '</i></p>',
 						'<p>', address, '</p>', 
 						'<p>', phone, '</p>',
-						// '<p>Recommended by: ', recommender_username, '</p>',
 						'<p>','<a href=', url, '>', url, '</a>','</p>',
 						'<button class="btn btn-danger delete-bookmark"', 
 						'data-bookmarkid="', bookmarkId, 

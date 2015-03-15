@@ -12,22 +12,70 @@
 	div#heading-content {
 		color:white;
 		width:48%;
-		margin:30% auto;
+		margin:14% auto;
 		background:rgba(82, 77, 77, 0.7);
 		padding:1% 4%;
+		border:4px double white;
+		font-family:'Poiret One';
+	}
+	div#heading-content h1{
+		color:rgb(213, 213, 146);
+		font-size:5em;
+	}
+	#heading-content p {
+		font-size:2em;
+	}
+	li#login {
+		color:white;
+		margin-top:10px;
+	}
+	li#login:hover {
+		color:rgb(203, 213, 146);
+		margin-top:10px;
 	}
 </style>
 {% endblock %}
 
  {% block navbar %}
-    <li><a href="/login">Login</a></li>
+    <li id="login" data-toggle="modal" data-target="#loginModal" color="white">Login</li>
  {% endblock %}
 
 {% block content %}
 	<div id="heading-content">
-		<h1>Bite</h1>
+		<h1>bite</h1>
 		<p>Save, Map and Recommend Restaurants</p>
 	</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Please Login</h4>
+      </div>
+      <div class="modal-body">
+		<form class="form-signin" method="POST" autocomplete="on" action="/login">
+			<input type="text" name="username" class="form-control" placeholder="Username" required autofocus />
+			<!--  <input type="email" name="email" class="form-control" placeholder="Email Address" required autofocus /> -->
+			<input type="password" name="password" class="form-control" placeholder="Password" required />
+			<button type="btn btn-lg btn-primary btn-block" type="submit">Sign In</button>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
-{% block js_code %}{% endblock %}
+{% block js_code %}
+<script>
+	$('#login').click(function(){
+		console.log("this!");
+	});
+</script>
+{% endblock %}

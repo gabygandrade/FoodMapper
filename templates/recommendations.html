@@ -1,5 +1,22 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<style>
+	body {
+		 background: url("../static/img/sushi.jpg") no-repeat center center fixed; 
+		  -webkit-background-size: cover;
+		  -moz-background-size: cover;
+		  -o-background-size: cover;
+		  background-size: cover;
+		  background-position-y: 15%;
+	}
+	.content-container {
+		background-color:rgba(255, 255, 255,.9);
+		padding:1.5%;
+	}
+</style>
+{% endblock %}
+
 {% block navbar %}
      <li>
             <form class="navbar-form navbar-left" role="search" form action="/restaurant-results" method="GET" id="add-rest">
@@ -18,10 +35,11 @@
 
 {% block content %}
 
+<div class="content-container">
 	{% if recommendations %}
 		<div>
 			<h3> Hi {{username}}! </h3>
-			<p>You have pending recommendations. Please approve them to add them to your bookmarks and map, or pass to decline them.</p>
+			<p>You have pending recommendations. Please approve each to add it to your bookmarks map, or pass to decline it.</p>
 			<div class="alert" role="alert" hidden="true"></div>
 			<table class="table table-striped table-hover">
 				<thead>
@@ -49,7 +67,7 @@
 	{% else %}
 	<p>Hi {{username}}! You have no pending recommendations. Recommend a restaurant to a friend!</p>
 	{% endif %}
-
+</div>
 {% endblock %}
 
 {% block js_code %}

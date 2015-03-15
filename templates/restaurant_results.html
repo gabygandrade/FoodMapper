@@ -1,5 +1,22 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<style>
+	body {
+		 background: url("../static/img/sushi.jpg") no-repeat center center fixed; 
+		  -webkit-background-size: cover;
+		  -moz-background-size: cover;
+		  -o-background-size: cover;
+		  background-size: cover;
+		  background-position-y: 15%;
+	}
+	.content-container {
+		background-color:rgba(255, 255, 255,.9);
+		padding:1.5%;
+	}
+</style>
+{% endblock %}
+
  {% block navbar %}
         <li>
             <form class="navbar-form navbar-left" role="search" form action="/restaurant-results" method="GET" id="add-rest">
@@ -17,6 +34,7 @@
     {% endblock %}
 
 {% block content %}
+<div class="content-container">
 	<h3>Restaurant search results</h3>
 	<p>Select the <span class="glyphicon glyphicon-star-empty"></span> to save a restaurant to your bookmarks, or <span class="glyphicon glyphicon-user"></span> to recommend it to a friend!</p>
 	<div class="alert alert-success" role="alert" hidden="true"></div>
@@ -48,6 +66,7 @@
 			{% endfor %}
 		</tbody>
     </table>
+</div>
 
     <!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="false">
