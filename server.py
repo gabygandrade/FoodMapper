@@ -372,7 +372,7 @@ def accept_recommendation():
 	# query for the specific user's recommendation(s)
 	recommendations = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==logged_in_user_id, 
 		model.Recommendation.restaurant_id==rest_id).all()
-	print "\n \n \n RECOMMENDATION(s) to change ", recommendations
+	# print "\n \n \n RECOMMENDATION(s) to change ", recommendations
 
 	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
 		model.Bookmark.restaurant_id==rest_id).first()
@@ -418,7 +418,7 @@ def deny_recommendation():
 	# query for the recommendation(s) to change
 	recommendations = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==logged_in_user_id, 
 		model.Recommendation.restaurant_id==rest_id).all()
-	print "\n \n \n RECOMMENDATION(s) to change ", recommendations
+	# print "\n \n \n RECOMMENDATION(s) to change ", recommendations
 	
 	for rec in recommendations:
 		rec.pending = False
