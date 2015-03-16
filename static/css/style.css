@@ -1,0 +1,61 @@
+body {
+	padding-top:60px;
+	font-family: 'Open Sans', sans-serif;
+}
+
+tr.clickable-row {
+	  cursor: pointer;
+	}
+
+.grayed-out {
+	background:gray;
+	border:gray;
+}
+
+.navbar.navbar-default.navbar-fixed-top {
+	background:rgba(68, 63, 63, 0.95);
+	border: rgb(90, 85, 85);
+}
+
+.navbar-default .navbar-brand {
+	color:rgb(213, 213, 146);
+	font-size: 34px;
+}
+
+ul.nav.navbar-nav.navbar-right li {
+	font-family: 'Poiret One';
+	font-size:16px;
+}
+
+.navbar-default .navbar-nav>li>a {
+	color:white;
+}
+
+.navbar-default .navbar-nav>li>a:hover {
+	color:rgb(213, 213, 146);
+}
+
+label {
+	color:white;
+	display:inline;
+	margin-bottom:0px;
+	font-weight:200;
+	font-family:'Open Sans', sans-serif;
+	font-size:0.9em;
+}
+
+a.navbar-brand {
+	font-family:'Poiret One';
+}
+.navbar-default .navbar-brand:hover {
+	/*color:rgb(211, 128, 72);*/
+	color:rgb(200, 74, 74);
+}
+
+.flashes {
+	background:rgb(187, 187, 148);
+	padding:1%;
+	margin:0 auto;
+	font-size:1.2em;
+	border:2px solid black;
+}
