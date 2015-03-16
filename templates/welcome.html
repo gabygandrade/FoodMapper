@@ -52,7 +52,7 @@
   {% block navbar %}
         <li>
             <li><a href="/recommendations">Recommendations</a></li>
-            <li><a href="/map">Bookmarks</a></li>
+            <li><a href="/map">Map</a></li>
             <li><a href="/logout">Log Out</a></li>
         </li>
   {% endblock %}
@@ -64,12 +64,12 @@
 			<div class="welcome-div">
 				<h3 class="welcome"> Welcome {{username}}! </h3>
 				<div class="welcome-buttons">
+					<button class="btn welcome-btn" id="pop-up-search">Search for a Restaurant</button>
 					{% if recommendations %} 
 						<a href="/recommendations"><button class="btn welcome-btn">View Recommendations</button></a>
 					{% else %}
 						<div></div>
 					{% endif %}
-					<button class="btn welcome-btn" id="pop-up-search">Search for a Restaurant</button>
 					<a href="/map"><button class="btn welcome-btn">View Map of Bookmarks</button></a>
 					<form class="form-inline hidden-form" role="search" form action="/restaurant-results" method="GET">
 						<div class="form-group">

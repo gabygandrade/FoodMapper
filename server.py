@@ -247,7 +247,9 @@ def recommend_restaurant():
 
 	# query for the recipient 
 	recipient = model.session.query(model.User).filter(model.User.username==recipient_username).first()
-	print "recipient id: ", recipient.id
+	
+	print "***recipient: ", recipient
+	print "***recipient id: ", recipient.id
 
 	# query to check if that restaurant is already in restaurants table
 	saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
@@ -342,12 +344,12 @@ def accept_recommendation():
 	# query for the specific user's recommendation(s)
 	recommendations = model.session.query(model.Recommendation).filter(model.Recommendation.recipient_id==logged_in_user_id, 
 		model.Recommendation.restaurant_id==rest_id).all()
-	# print "\n \n \n RECOMMENDATION(s) to change ", recommendations
+	# print "\n \n RECOMMENDATION(S) to change ", recommendations
 
 	saved_bookmark = model.session.query(model.Bookmark).filter(model.Bookmark.user_id==logged_in_user_id, 			
 		model.Bookmark.restaurant_id==rest_id).first()
 
-	# print "***** SAVED BOOKMARK ?? ", saved_bookmark
+	# print "***** SAVED BOOKMARK?? ", saved_bookmark
 	
 	# go through each recommendation and change the pending status from True to False 
 	for rec in recommendations:
@@ -375,7 +377,6 @@ def accept_recommendation():
 	else:
 		return jsonify({"message": "You already bookmarked this restaurant!"}) 
 
-	return "got to accept rec route"
 
 @app.route("/deny-recommendation")
 def deny_recommendation():

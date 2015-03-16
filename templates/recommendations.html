@@ -18,8 +18,8 @@
 {% endblock %}
 
 {% block navbar %}
-     <li>
-            <form class="navbar-form navbar-left" role="search" form action="/restaurant-results" method="GET" id="add-rest">
+     <li style="display:none">
+            <form class="navbar-form navbar-left search-bar" role="search" form action="/restaurant-results" method="GET" id="add-rest">
               <div class="form-group">
                 <label>Search:<input type="text" name="search-restaurant" class="form-control" placeholder="Ex. Limon Rotisserie">
                 <label>Near:<input type="text" name="search-location" class="form-control" placeholder="Ex. San Francisco, CA">
@@ -27,8 +27,10 @@
               <button type="submit" class="btn btn-default" id="submit-query">Submit</button>
             </form>
         </li>
+
+        <li><a class="search-link">Search</a></li>
         <li><a href="/recommendations">Recommendations</a></li>
-        <li><a href="/map">Bookmarks</a></li>
+        <li><a href="/map">Map</a></li>
         <li><a href="/logout">Log Out</a></li>
 {% endblock %}
 
@@ -71,6 +73,12 @@
 
 {% block js_code %}
 <script>
+	$('.search-link').click(function(){
+		// $('.search-bar').show();
+		searchBar = $('.search-bar').css('display','block')
+		$(this).replaceWith(searchBar);
+	});
+
 	$('.add-recommendation').click(function(){
 		var rowOfButton = $(this).closest("tr");
 
@@ -95,14 +103,7 @@
 
 		function deleteRow(response) {;
 			$(rowOfButton).remove();
-			//call checkRemovedRows() here;
 		}
-
-		// function checkRemovedRows(){
-		// //check if all rows are removed
-		// //if so, replace the html of that div
-		// if $("tr").length == [0]:
-		// }
 
 		$.get("/deny-recommendation", restData, deleteRow);
 	});
