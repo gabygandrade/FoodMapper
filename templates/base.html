@@ -8,6 +8,7 @@
         <!-- Optional theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
         <link href='http://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="../static/css/style.css">
         {% block head %}{% endblock %}
     </head>
@@ -33,9 +34,9 @@
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
-                        <ul class="flashes">
-                            <li>{{message}}</li>
-                        </ul>
+                        <div class="flashes">
+                            {{message}}
+                        </div>
                     {% endfor %}
                 {% endif %}
             {% endwith %}

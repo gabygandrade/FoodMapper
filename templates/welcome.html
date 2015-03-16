@@ -9,7 +9,7 @@
 		  -o-background-size: cover;
 		  background-size: cover;
 	}
-	#welcome{
+	.welcome{
 		text-align:center;
 	}
 	.welcome-label {
@@ -18,12 +18,13 @@
 	.hidden-form {
 		display:none;
 	}
-	#welcome-div {
-		background:rgba(255, 255, 255, 0.5);
+	.welcome-div {
+		background:rgba(224, 221, 216, .9);
 		width:60%;
 		margin:10% auto;
 		border:1px solid black;
 		padding: 0px 0px 2% 0px;
+		border-radius: 21px;
 	}
 	.welcome-btn {
 		color:black;
@@ -36,11 +37,8 @@
 		color:white;
 		background:rgba(113, 108, 60, 0.9);
 	}
-	#welcome-buttons {
+	.welcome-buttons {
 		text-align:center;
-	}
-	#welcome-search {
-		margin-left:21%;
 	}
 	.welcome-label {
 		color:black;
@@ -63,9 +61,9 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<div id="welcome-div">
-				<h3 id="welcome"> Welcome {{username}}! </h3>
-				<div id="welcome-buttons">
+			<div class="welcome-div">
+				<h3 class="welcome"> Welcome {{username}}! </h3>
+				<div class="welcome-buttons">
 					{% if recommendations %} 
 						<a href="/recommendations"><button class="btn welcome-btn">View Recommendations</button></a>
 					{% else %}

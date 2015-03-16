@@ -16,8 +16,7 @@ fsq_client_secret = config.FSQ_CLIENT_SECRET
 
 @app.route("/")
 def display_home_page():
-	"""Home page"""
-	
+	"""Renders the home page"""
 	return render_template("index.html")
 
 @app.route("/welcome")
@@ -32,14 +31,9 @@ def display_welcome():
 
 	return render_template("welcome.html", username = logged_in_username, recommendations=pending_recs)
 
-@app.route("/login")
-def display_login():
-	"""Render the login page"""
-	return render_template("login.html")
-
 @app.route("/login", methods=['POST'])
 def login_user():
-	"""Makes POST request to get user input, and user is added to the Flask session """
+	"""Makes POST request to get user input and add user info to the session"""
 	
 	# Pull needed info out of request object
 	username = request.form['username']
@@ -55,11 +49,11 @@ def login_user():
 		# session['user_email'] = user.email
 		session['user_id'] = user.id
 		session['logged_in'] = True
-		flash ("You are logged in")
+		# flash ("You are logged in")
 		# print session
 		return redirect("/welcome") 
 	except:
-		flash("That email or password is incorrect. Please try again")
+		# flash("That email or password is incorrect. Please try again")
 		return render_template("login.html")
 
 @app.route("/logout")
@@ -67,7 +61,7 @@ def logout():
 	"""Logs user out and clears session"""
 	session.clear()
 	# print session 
-	flash ("You have been logged out")
+	# flash ("You have been logged out")
 	return redirect("/") 
 
 @app.route("/restaurant-results")
@@ -76,32 +70,34 @@ def show_restaurant_info():
 	to create the query request to the Foursquare (FSQ) API. 
 	Return the response as a python dictionary and pass it to the 
 	template"""
-	
-	# pull out parameters from request
+
 	search_restaurant = request.args.get('search-restaurant')
 	search_location = request.args.get('search-location')
-	# print (search_restaurant, search_location)
+
+	if search_restaurant and search_location:
+		try:
+			fsq_dict = fsqapi.search_venues(fsq_client_id, fsq_client_secret, search_restaurant, search_location) 	# Look in foursquareapi module and create fsq dict function with the parameters here
+			# parse that python dict to get just the part of the request w/needed venues info
+			fsq_venues_list = fsq_dict['response']['venues']
+			# print "FSQ Venues List: ", fsq_venues_list
+
+			# if FSQ query returned no search results
+			if fsq_venues_list == []:								
+				flash("We're sorry, your search came up empty. Please try another search.") 
+			
+			return render_template("restaurant_results.html", fsq_venues=fsq_venues_list)
+		except Exception as e:
+			flash("There was an error with your search. Please check your spelling.")
+			print "FSQ QUERY ERROR IS: ", e.message
+			return redirect(request.referrer)	 
 	
-	# create a python dict from the Foursquare API JSON response
-	try:
-		fsq_dict = fsqapi.search_venues(fsq_client_id, fsq_client_secret, search_restaurant, search_location) 	# Look in foursquareapi module and create fsq dict function with the parameters here
-		# parse that python dict to get just the part of the request w/needed venues info
-		fsq_venues_list = fsq_dict['response']['venues']
-		# print "FSQ Venues List: ", fsq_venues_list
-
-		# if FSQ query returned no search results
-		if fsq_venues_list == []:								
-			flash("Your search came up empty. Please try another search.") 
-		
-		return render_template("restaurant_results.html", fsq_venues=fsq_venues_list)
-
-	except Exception as e:
-		print "FSQ QUERY ERROR IS: ", e.message
-		# if the user entered a location FSQ cannot geocode				
-		fsq_venues_list = []
-
-		flash("Please enter a city name.") 
-		return redirect('/')
+	elif not search_restaurant:
+		flash("Please enter a cuisine or restaurant name.")
+	
+	elif not search_location:
+		flash("Please enter a location.")
+	
+	return redirect(request.referrer)	
 
 @app.route("/save-db", methods=['POST'])	
 def save_to_db():
@@ -163,14 +159,11 @@ def get_user_info():
 	when they click recommend"""
 	# query for all the usernames in the database
 	all_usernames = model.session.query(model.User.username)
-	# print "all usernames: ", all_usernames
 
 	logged_in_username = session['username']
-	# print "Logged in username: ", logged_in_username
 
 	# create a list with all usernames except for the user who is currently logged in
 	usernames = [user.username for user in all_usernames if user.username!=logged_in_username]
-	# print "usernames list", usernames
 
 	# send this list as JSON
 	return jsonify({"username": usernames})
@@ -204,7 +197,7 @@ def return_bookmark_info():
 			bkmrecs = bkm.bookmarkrecs
 			for item in bkmrecs:
 				restaurant_info[bkm.id]["recommender_username"] = item.recommendation.recommender.username
-	print restaurant_info
+	# print restaurant_info
 
 	return jsonify(restaurant_info)
 
