@@ -1,7 +1,7 @@
 Bite
 ============
 
-Bite is an app for food lovers and compulsive organizers. It offers a convenient way to save, view, and recommend restaurants to friends. 
+Bite is an app for food lovers and organization junkies. It offers a convenient way to save, view, and recommend restaurants to friends. 
 
 ![Home Page](https://github.com/gabygandrade/FoodMapper/blob/master/static/img/home-srcshot.png)
 
