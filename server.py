@@ -294,8 +294,6 @@ def recommend_restaurant():
 		model.session.commit()
 		return jsonify({"message": "You recommended %s to %s!" % (saved_restaurant.name, recipient_username)}) 
 
-	return "got to recommend restaurant route!"
-
 @app.route("/recommendations")
 def show_recommendations():
 	"""Create a dict with all the information about a user's recommendations, and 

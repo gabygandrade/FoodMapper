@@ -75,23 +75,6 @@ class Bookmark(Base):
         return "<Bookmark id=%r user_id=%r restaurant_id=%r>" % (self.id, self.user_id, 
             self.restaurant_id) 
 
-#================== bookmark recommendations table  ==================
-
-class BookmarkRecommendation(Base):
-    """Represents the recommendations associated with a bookmark."""
-    __tablename__ = "bookmarkrecs"
-    id = Column(Integer, primary_key = True)   
-    bookmark_id = Column(Integer, ForeignKey('bookmarks.id'))
-    recommendation_id = Column(Integer, ForeignKey('recommendations.id'))
-
-    bookmark = relationship("Bookmark", backref = backref('bookmarkrecs', order_by = id))
-    recommendation = relationship("Recommendation", backref = backref('bookmarkrecs', order_by = id))
-
-    def __repr__(self):
-        """Show info about the bookmarkrecommendation."""
-        return "<BookmarkRec id=%r bookmark_id=%r recommendation_id=%r>" % (self.id, self.bookmark_id, 
-            self.recommendation_id) 
-
 #================== recommendations table  ==================
 class Recommendation(Base):
     """Represents each user's recommendations."""
@@ -111,6 +94,23 @@ class Recommendation(Base):
         """Show info about the recommendation."""
         return "<Recommendation id=%r restaurant_id=%r recommender_id=%r recipient_id=%r pending=%r>" % (self.id,
             self.restaurant_id, self.recommender_id, self.recipient_id, self.pending)
+
+#================== bookmark recommendations table  ==================
+
+class BookmarkRecommendation(Base):
+    """Represents the recommendations associated with a bookmark."""
+    __tablename__ = "bookmarkrecs"
+    id = Column(Integer, primary_key = True)   
+    bookmark_id = Column(Integer, ForeignKey('bookmarks.id'))
+    recommendation_id = Column(Integer, ForeignKey('recommendations.id'))
+
+    bookmark = relationship("Bookmark", backref = backref('bookmarkrecs', order_by = id))
+    recommendation = relationship("Recommendation", backref = backref('bookmarkrecs', order_by = id))
+
+    def __repr__(self):
+        """Show info about the bookmarkrecommendation."""
+        return "<BookmarkRec id=%r bookmark_id=%r recommendation_id=%r>" % (self.id, self.bookmark_id, 
+            self.recommendation_id) 
 
 """Schema:
 

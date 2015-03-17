@@ -59,3 +59,16 @@ a.navbar-brand {
 	font-size:1.2em;
 	border:2px solid black;
 }
+
+button.submit-query {
+		background:rgb(150, 55, 55);
+		border:none;
+		text-shadow:none;
+		color:white;
+		font-style:normal;
+		font-family:'Open Sans', sans-serif;
+	}
+button.submit-query:hover {
+		background:rgb(187, 66, 66);
+		color:white;
+	}
