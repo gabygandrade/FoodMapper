@@ -55,13 +55,13 @@
 			<div class="welcome-div">
 				<h3 class="welcome"> Welcome {{username}}! </h3>
 				<div class="welcome-buttons">
-					<button class="btn welcome-btn" id="pop-up-search">Search for a Restaurant</button>
+					<button class="btn welcome-btn" id="pop-up-search">Search Restaurants</button>
 					{% if recommendations %} 
 						<a href="/recommendations"><button class="btn welcome-btn">View Recommendations</button></a>
 					{% else %}
 						<div></div>
 					{% endif %}
-					<a href="/map"><button class="btn welcome-btn">View Map of Bookmarks</button></a>
+					<a href="/map"><button class="btn welcome-btn">View Bookmarks Map</button></a>
 					<form class="form-inline hidden-form" role="search" form action="/restaurant-results" method="GET">
 						<div class="form-group">
 						<label class="welcome-label">Search:<input type="text" name="search-restaurant" class="form-control" placeholder="Ex. Limon Rotisserie">

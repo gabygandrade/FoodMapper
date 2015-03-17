@@ -12,7 +12,7 @@ def search_venues(CLIENT_ID, CLIENT_SECRET, user_query, location):
 	
 	url = 'https://api.foursquare.com/v2/venues/search?client_id='+ CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=20150201'
 	myparams = {'query': user_query, 'near': location, 'limit': '10', 'categoryId': '4d4b7105d754a06374d81259'}		# categoryId limits responses to only 'food' category
-	response = requests.get(url, params = myparams)		# create API request  
+	response = requests.get(url, params = myparams)		# create API request the given parameters
 	response_obj = response.text						# returns the text of the server's response 
 	fs_dict = json.loads(response_obj)					# takes a JSON string & turns it into a Python dict
 	

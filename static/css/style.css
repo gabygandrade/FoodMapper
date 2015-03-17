@@ -72,3 +72,6 @@ button.submit-query:hover {
 		background:rgb(187, 66, 66);
 		color:white;
 	}
+input.form-control {
+	margin-left:6px;
+}

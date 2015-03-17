@@ -4,15 +4,15 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, Boolean
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship, backref
                                                      
-engine = create_engine("sqlite:///db/main.db", echo=True)       # specify file path for db
+engine = create_engine("sqlite:///db/main.db", echo=True)       
 session = scoped_session(sessionmaker(bind=engine,
                                       autocommit = False,
                                       autoflush = False))
 
-Base = declarative_base()                       # 'Base' is how we declare a class to be managed by SQLA
+Base = declarative_base()                      
 Base.query = session.query_property()
     
-def create_db():                                                 # actually create the db in the location relative to where I am
+def create_db():                                                 
     """Create tables as needed."""
     Base.metadata.create_all(engine)
 
@@ -66,9 +66,11 @@ class Bookmark(Base):
     restaurant_id = Column(Integer, ForeignKey('restaurants.id'))
 
     user = relationship("User", backref = backref('bookmarks', order_by = id))
-    restaurant = relationship("Restaurant", backref = backref('bookmarks', order_by = id))
+    restaurant = relationship("Restaurant", backref = backref('bookmarks', 
+        order_by = id))
 
-    bookmarkrec = relationship("BookmarkRecommendation", backref = backref('bookmarks', order_by = id))
+    bookmarkrec = relationship("BookmarkRecommendation", backref = backref('bookmarks', 
+        order_by = id))
    
     def __repr__(self):
         """Show info about the bookmark."""
@@ -85,10 +87,13 @@ class Recommendation(Base):
     recipient_id = Column(Integer, ForeignKey('users.id'))
     pending = Column(Boolean, nullable = False)
 
-    recommender = relationship("User", foreign_keys=[recommender_id], backref=backref("recommendations_made"))
-    recipient = relationship("User", foreign_keys=[recipient_id], backref=backref("recommendations_received"))
+    recommender = relationship("User", foreign_keys=[recommender_id], 
+        backref=backref("recommendations_made"))
+    recipient = relationship("User", foreign_keys=[recipient_id], 
+        backref=backref("recommendations_received"))
 
-    restaurant = relationship("Restaurant", backref = backref('recommendations', order_by = id))
+    restaurant = relationship("Restaurant", backref = backref('recommendations', 
+        order_by = id))
 
     def __repr__(self):
         """Show info about the recommendation."""
@@ -98,24 +103,29 @@ class Recommendation(Base):
 #================== bookmark recommendations table  ==================
 
 class BookmarkRecommendation(Base):
-    """Represents the recommendations associated with a bookmark."""
+    """Represents the recommendation(s) associated with a bookmark."""
     __tablename__ = "bookmarkrecs"
     id = Column(Integer, primary_key = True)   
     bookmark_id = Column(Integer, ForeignKey('bookmarks.id'))
     recommendation_id = Column(Integer, ForeignKey('recommendations.id'))
 
-    bookmark = relationship("Bookmark", backref = backref('bookmarkrecs', order_by = id))
-    recommendation = relationship("Recommendation", backref = backref('bookmarkrecs', order_by = id))
+    bookmark = relationship("Bookmark", backref = backref('bookmarkrecs', 
+        order_by = id))
+    recommendation = relationship("Recommendation", 
+        backref = backref('bookmarkrecs', order_by = id))
 
     def __repr__(self):
         """Show info about the bookmarkrecommendation."""
         return "<BookmarkRec id=%r bookmark_id=%r recommendation_id=%r>" % (self.id, self.bookmark_id, 
             self.recommendation_id) 
 
+
+
 """Schema:
 
 A user has many bookmarks
 A user has many recommendations
+A user has many bookmarkrecommendations
 
 A restaurant can be bookmarked by a user
 A restaurant can be recommended by a user

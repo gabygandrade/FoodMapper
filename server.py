@@ -195,6 +195,7 @@ def return_bookmark_info():
 		restaurant_info[bkm.id]["icon_url"] = bkm.restaurant.icon_url
 		if len(bkm.bookmarkrecs) > 0:
 			bkmrecs = bkm.bookmarkrecs
+			# recommender_list = []
 			for item in bkmrecs:
 				restaurant_info[bkm.id]["recommender_username"] = item.recommendation.recommender.username
 	# print restaurant_info
