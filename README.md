@@ -40,10 +40,10 @@ Bite integrates the HTML5 Geolocation API with the Google Maps API, the browser 
 This functionality allows users visiting neighborhoods where they have bookmarked restaurants the flexibility of opening the app and seeing bookmarked restaurants in their proximity. 
 
 ###SQLAlchemy ORM
-####Bookmarks 
+*####Bookmarks*
 After getting back a list of search results from the Foursquare API, users select the restaurant they would like to save as a “bookmark.” When a user saves a bookmark, there is a server side check with SQLAlchemy for whether it has already been bookmarked for that user and whether the restaurant is already in the database of restaurants. If the restaurant and bookmark are not already in database yet, their API information is cached in order to optimize load time. 
 
-####Recommendations
+*####Recommendations*
 From the search results page that users see when they submit a restaurant search, users also have the options to recommend restaurants to other users registered with Bite. Once a user selects the user to send the recommendation to, SQLAlchemy queries check whether the recipient already has that restaurant bookmarked and whether the recommender has already recommended that restaurant to the recipient. If both of those conditions are not true, a new recommendation is created in the database.
 
 Upon login, users who have pending recommendations are prompted to view and respond to recommendations by accepting or passing on specific recommendations. When a user responds to a recommendation, the pending attribute of the recommendation is changed from True to False. If they accept a recommendation, new bookmark and bookmarkrecommendation records are created with the restaurant and user information from that recommendation. 
