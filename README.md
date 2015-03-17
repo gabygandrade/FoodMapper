@@ -1,5 +1,5 @@
 Bite
-===========
+============
 
 Bite is an app for food lovers and compulsive organizers. It offers a convenient way to save, view, and recommend restaurants to friends. 
 
@@ -9,7 +9,7 @@ Bite is an app for food lovers and compulsive organizers. It offers a convenient
 
 Python, Flask, SQLAlchemy, SQLite, Javascript, jQuery, AJAX, Google Maps API, Foursquare API, HTML5 Geolocation API, HTML5, Jinja, CSS3
 
-#Features
+##Features
 - Login
 - Restaurant search by location and restaurant name or cuisine
 - Bookmarks
