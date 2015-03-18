@@ -50,5 +50,9 @@ Upon login, users who have pending recommendations are prompted to view and resp
 
 ![Recommendations Page](https://github.com/gabygandrade/FoodMapper/blob/master/static/img/recommendations-scrshot.png)
 
+##Data Model
+
+![Data Model](https://github.com/gabygandrade/FoodMapper/blob/master/static/img/data_model.png)
+
 
 
