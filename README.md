@@ -30,7 +30,6 @@ To get up-to-date and crowd sourced restaurant information, Bite uses the Foursq
 
 ###Google Maps API
 On load of the map page, a SQLAlchemy query runs which queries the database for the user’s bookmarks and the associated restaurant information, including latitude and longitude. This information is sent over as JSON to the route, which loops through all the bookmarks, and places pins on the map using the Google Maps API. 
-Many different features and combinations of features (ngrams, stopwords, stemming, different tokenization functions, etc.) were used to find the result with the most accuracy in predicting positive and negative tweets, and the highest precision and recalls scores across both labels. After training, the classifier was then serialized via the python module Pickle. The pickle file was then opened and the saved classifier used to determine the sentiment of incoming live tweets.
 
 ![Maps Page](https://github.com/gabygandrade/FoodMapper/blob/master/static/img/map-srcshot.png)
 
