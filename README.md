@@ -51,6 +51,8 @@ Upon login, users who have pending recommendations are prompted to view and resp
 
 ##Data Model
 
+Below is a visual representation of the Bite data model:
+
 ![Data Model](https://github.com/gabygandrade/FoodMapper/blob/master/static/img/data_model.png)
 
 #####User
@@ -76,16 +78,22 @@ For example, if two users recommend the same restaurant to a third user and that
 - Set up a virtual environment
 - Pip install -r requirements.txt
 - At the command line:
+```xml
 python -i db/model.py
+```
 Then:
+```xml
 model.create_db()
+```
 - In a new shell use ls command in project folder and verify main.db exists in the “db” repository
 - To see the structure of the database go to the command line:
+```xml
 sqlite3 db/main.db 
 sqlite> .mode columns
 sqlite> .tables on
 sqlite> .tables 
 sqlite> .schema
+```
 
 
 
