@@ -55,11 +55,13 @@ Below is a visual representation of the Bite data model:
 
 ![Data Model](https://github.com/gabygandrade/FoodMapper/blob/master/static/img/data_model.png)
 
+#####Table descriptions:
+
 #####User
 The users table is used to represent each user of the Bite app and holds login information.
 
 #####Restaurant
-The restaurants table holds information about the restaurant that users have bookmarked or recommended. 
+The restaurants table holds information about the restaurants that users have bookmarked or recommended. 
 
 #####Bookmark
 A bookmark record is created in the bookmarks table when a user selects a restaurant to save as a bookmark. It links the user to a specific restaurant. A user may have many bookmarks.
@@ -71,6 +73,8 @@ A recommendation record in the recommendations table is created when a user sele
 If and when user accepts a recommendation, a new bookmarkrecommendation record is created in this table. The bookmarkrecommendation table is used to represent the recommendation(s) associated with each bookmark. Each time a user accepts a recommendation from another user, a new bookmarkrecommendation is created. 
 
 For example, if two users recommend the same restaurant to a third user and that third user accepts the recommendation, a) one new bookmark is created with the restaurant id of the recommendation, and b) two new records are created in the bookmarkrecommendation table with the same bookmark id but two different recommendation id’s.
+
+A user may have many bookmarkrecommendations.
 
 ##Installation
 
