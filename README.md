@@ -90,9 +90,12 @@ Then:
 model.create_db()
 ```
 - In a new shell use ls command in project folder and verify main.db exists in the “db” repository
-- To see the structure of the database go to the command line:
+- To see the structure of the database, at the command line:
 ```xml
 sqlite3 db/main.db 
+```
+Then:
+```xml
 sqlite> .mode columns
 sqlite> .tables on
 sqlite> .tables 
