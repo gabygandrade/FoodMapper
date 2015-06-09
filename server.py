@@ -56,6 +56,32 @@ def login_user():
 		# flash("That email or password is incorrect. Please try again")
 		return render_template("login.html")
 
+# @app.route("/signup", methods=['POST'])
+# def sign_up():
+# 	"""Makes POST request to create a new user in the db and initiative a new session"""
+# 	username = request.form['username']
+# 	email = request.form['email']
+# 	password = request.form['password']
+
+# 	# check if this info matches a username already in the db
+# 	existing_username = session.query(User).filter(User.username==username).one()
+
+# 	if existing_username:
+# 		flash("A user already exists with this username. Please choose another username.")
+# 	else:
+# 	# if it does't, add the new user to the db and session & log the user in
+# 	new_user = model.User(username=username, email=email, password=password)
+# 	model.session.add(new_user)
+# 	model.session.commit()
+
+# 	logged_in_user = model.session.query(User).filter(model.User.username==username, model.User.password==password).one()
+
+# 	session['username'] = logged_in_user.username
+# 	session['user_id'] = logged_in_user.id
+# 	session['logged_in'] = True
+
+# 	return redirect("/welcome") 
+
 @app.route("/logout")
 def logout():
 	"""Logs user out and clears session"""
