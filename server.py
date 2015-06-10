@@ -37,7 +37,6 @@ def login_user():
 	
 	# Pull needed info out of request object
 	username = request.form['username']
-	# email = request.form['email']
 	password = request.form['password']
 
 	all_users = model.session.query(model.User)
@@ -46,7 +45,6 @@ def login_user():
 	try:
 		user = all_users.filter(model.User.username==username, model.User.password==password).one()
 		session['username'] = user.username
-		# session['user_email'] = user.email
 		session['user_id'] = user.id
 		session['logged_in'] = True
 		# flash ("You are logged in")
@@ -56,31 +54,39 @@ def login_user():
 		# flash("That email or password is incorrect. Please try again")
 		return render_template("login.html")
 
-# @app.route("/signup", methods=['POST'])
-# def sign_up():
-# 	"""Makes POST request to create a new user in the db and initiative a new session"""
-# 	username = request.form['username']
-# 	email = request.form['email']
-# 	password = request.form['password']
+@app.route("/signup", methods=['POST'])
+def sign_up():
+	"""Makes POST request to create a new user in the db and initiative a new session"""
+	new_email = request.form['email']
+	new_username = request.form['username']
+	new_password = request.form['password']
 
-# 	# check if this info matches a username already in the db
-# 	existing_username = session.query(User).filter(User.username==username).one()
+	print new_email
+	print new_username
+	print new_password
 
-# 	if existing_username:
-# 		flash("A user already exists with this username. Please choose another username.")
-# 	else:
-# 	# if it does't, add the new user to the db and session & log the user in
-# 	new_user = model.User(username=username, email=email, password=password)
-# 	model.session.add(new_user)
-# 	model.session.commit()
+	# return "hi"
+	# return render_template("welcome.html", username = new_username)
 
-# 	logged_in_user = model.session.query(User).filter(model.User.username==username, model.User.password==password).one()
+	# # check if this info matches a username already in the db
+	# existing_username = session.query(User).filter(User.username==username).one()
 
-# 	session['username'] = logged_in_user.username
-# 	session['user_id'] = logged_in_user.id
-# 	session['logged_in'] = True
+	# if existing_username:
+	# 	flash("A user already exists with this username. Please choose another username.")
+	# else:
+	# if the user is new to the db, 
+		# 1) add the new user to the db 
+	new_user = model.User(username=new_username, email=new_email, password=new_password)
+	model.session.add(new_user)
+	model.session.commit()
 
-# 	return redirect("/welcome") 
+	logged_in_user = model.session.query(model.User).filter(model.User.username==new_username, model.User.password==new_password).one()
+		# 2) add the user's info to the session
+	session['username'] = logged_in_user.username
+	session['user_id'] = logged_in_user.id
+	session['logged_in'] = True
+
+	return redirect("/welcome") 
 
 @app.route("/logout")
 def logout():
