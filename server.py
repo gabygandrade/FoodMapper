@@ -51,7 +51,7 @@ def login_user():
 		# print session
 		return redirect("/welcome") 
 	except:
-		# flash("That email or password is incorrect. Please try again")
+		flash("That email or password is incorrect. Please try again")
 		return render_template("login.html")
 
 @app.route("/signup", methods=['POST'])
@@ -61,32 +61,30 @@ def sign_up():
 	new_username = request.form['username']
 	new_password = request.form['password']
 
-	print new_email
-	print new_username
-	print new_password
+	# check if this info matches a username already in the db
+	existing_email = model.session.query(model.User).filter(model.User.email==new_email).first()
+	existing_username = model.session.query(model.User).filter(model.User.username==new_username).first()
 
-	# return "hi"
-	# return render_template("welcome.html", username = new_username)
-
-	# # check if this info matches a username already in the db
-	# existing_username = session.query(User).filter(User.username==username).one()
-
-	# if existing_username:
-	# 	flash("A user already exists with this username. Please choose another username.")
-	# else:
+	if existing_email:
+		flash("A user already exists with this email. Please log in with your credentials or create an account with a different email.")
+		return redirect("/")
+	elif existing_username:
+		flash("A user already exists with this username. Please choose another username.")
+		return redirect("/")
+	else:
 	# if the user is new to the db, 
 		# 1) add the new user to the db 
-	new_user = model.User(username=new_username, email=new_email, password=new_password)
-	model.session.add(new_user)
-	model.session.commit()
+		new_user = model.User(username=new_username, email=new_email, password=new_password)
+		model.session.add(new_user)
+		model.session.commit()
 
-	logged_in_user = model.session.query(model.User).filter(model.User.username==new_username, model.User.password==new_password).one()
+		logged_in_user = model.session.query(model.User).filter(model.User.username==new_username, model.User.password==new_password).one()
 		# 2) add the user's info to the session
-	session['username'] = logged_in_user.username
-	session['user_id'] = logged_in_user.id
-	session['logged_in'] = True
-
-	return redirect("/welcome") 
+		session['username'] = logged_in_user.username
+		session['user_id'] = logged_in_user.id
+		session['logged_in'] = True
+		
+		return redirect("/welcome") 
 
 @app.route("/logout")
 def logout():
@@ -281,8 +279,8 @@ def recommend_restaurant():
 	# query for the recipient 
 	recipient = model.session.query(model.User).filter(model.User.username==recipient_username).first()
 	
-	print "***recipient: ", recipient
-	print "***recipient id: ", recipient.id
+	# print "***recipient: ", recipient
+	# print "***recipient id: ", recipient.id
 
 	# query to check if that restaurant is already in restaurants table
 	saved_restaurant = model.session.query(model.Restaurant).filter(model.Restaurant.fsq_id==fsq_id).first()
