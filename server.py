@@ -66,11 +66,14 @@ def sign_up():
 	existing_username = model.session.query(model.User).filter(model.User.username==new_username).first()
 
 	if existing_email:
-		flash("A user already exists with this email. Please log in with your credentials or create an account with a different email.")
-		return redirect("/")
+		# flash("A user already exists with this email. Please log in with your credentials or create an account with a different email.")
+		return jsonify({"errorMessage": "A user already exists with this email. Please log in with your credentials or create an account with a different email."}) 
+		# return redirect ("/")
+
 	elif existing_username:
 		flash("A user already exists with this username. Please choose another username.")
 		return redirect("/")
+
 	else:
 	# if the user is new to the db, 
 		# 1) add the new user to the db 
@@ -342,7 +345,7 @@ def show_recommendations():
 	# 	print rec.recommender.username  
 	# 	print rec.recipient.username
 
-	# creat a dict with all needed info to render restaurant info & edit recommendation
+	# create a dict with all needed info to render restaurant info & edit recommendation
 	rec_data = {}
 	for rec in recommendations:
 		rec_data[rec.id] = {}						# item.id == bookmark id 
