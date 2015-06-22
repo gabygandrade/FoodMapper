@@ -50,7 +50,7 @@
 		        <h4 class="modal-title" id="myModalLabel">Please Create a New Account</h4>
 		      </div>
 		      <div class="modal-body">
-				<form class="signup-form" method='POST' autocomplete="on" action="/signup">
+				<form class="signup-form" autocomplete="on">
 					<input type="email" name="email" class="form-control" placeholder="Email" required autofocus />
 					 <input type="text" name="username" class="form-control" placeholder="Username" required autofocus />
 					<input type="password" name="password" class="form-control" placeholder="Password" required />
@@ -66,15 +66,21 @@
 		</div>
 
  		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <!-- Latest compiled and minified JavaScript -->
+        <!-- Latest compiled and minified JavaScript for Bootstrap-->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="../static/js/jquery.validate.min.js"></script>
         {% block js_code %}
-	        <script>
-	        	
-	    	</script>
+        <script>
+			$(".signup-form").submit(function(evt){
+				var formData = $(this).serialize();
+				var request = $.ajax({
+					method: 'POST',
+					url: '/signup',
+					data: formData,
+				});
+			});
+		</script>
     	{% endblock %}
 
-    	
-    	
     </body>
 </html>

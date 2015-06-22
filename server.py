@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, request, g, url_for, flash, make_response, jsonify
+from flask import (Flask, render_template, redirect, request, 
+	g, url_for, flash, make_response, jsonify)
 from flask import session
 from db import model
 import jinja2
@@ -71,8 +72,7 @@ def sign_up():
 		# return redirect ("/")
 
 	elif existing_username:
-		flash("A user already exists with this username. Please choose another username.")
-		return redirect("/")
+		return jsonify({"errorMessage":"A user already exists with this username. Please choose another username."})
 
 	else:
 	# if the user is new to the db, 
@@ -86,7 +86,7 @@ def sign_up():
 		session['username'] = logged_in_user.username
 		session['user_id'] = logged_in_user.id
 		session['logged_in'] = True
-		
+		print "***********GOT TO HERE!!************"
 		return redirect("/welcome") 
 
 @app.route("/logout")

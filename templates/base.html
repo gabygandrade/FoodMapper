@@ -12,6 +12,7 @@
         <link rel="stylesheet" href="../static/css/style.css">
         {% block head %}{% endblock %}
     </head>
+    
     <body>
         <nav class="navbar navbar-default navbar-fixed-top " role="navigation">
             <div class="container">
@@ -32,7 +33,7 @@
                             <button type="submit" class="btn submit-query">Submit</button>
                             </form>
                         </li>
-                        <li><a class="search-link">Search </a></li>
+                        <li><a class="search-link">Search</a></li>
                         <li><a href="/recommendations">Recommendations</a></li>
                         <li><a href="/map">Map</a></li>
                         <li><a href="/logout">Log Out</a></li>                       
@@ -58,12 +59,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-        <script>
-        $('.search-link').click(function(){
-            searchBar = $('.search-bar').css('display','block');
-            $(this).replaceWith(searchBar);
-        });
-        </script>
+        <script src="../static/js/search-bar.js"></script>
 
         {% block js_code %}{% endblock %}
     </body>
