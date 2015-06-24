@@ -53,8 +53,8 @@ def login_user():
 		return redirect("/welcome") 
 	except:
 		# flash ("That email or password is incorrect. Please try again")
-		error = True
-		return render_template("index.html", error = error)
+		login_error = True
+		return render_template("index.html", login_error = login_error)
 
 @app.route("/signup", methods=['POST'])
 def sign_up():
@@ -64,18 +64,10 @@ def sign_up():
 	new_password = request.form['password']
 
 	# check if this info matches a username already in the db
-	existing_email = model.session.query(model.User).filter(model.User.email==new_email).first()
-	existing_username = model.session.query(model.User).filter(model.User.username==new_username).first()
+	existing_email = model.session.query(model.User).filter(model.User.email==new_email).count()
+	existing_username = model.session.query(model.User).filter(model.User.username==new_username).count()
 
-	if existing_email:
-		# flash("A user already exists with this email. Please log in with your credentials or create an account with a different email.")
-		return jsonify({"error": "A user already exists with this email"}) 
-		# return redirect ("/")
-
-	elif existing_username:
-		return jsonify({"error":"A user already exists with this username"})
-
-	else:
+	if (existing_email==0) and (existing_username==0):
 	# if the user is new to the db, 
 		# 1) add the new user to the db 
 		new_user = model.User(username=new_username, email=new_email, password=new_password)
@@ -89,8 +81,18 @@ def sign_up():
 		session['username'] = logged_in_user.username
 		session['user_id'] = logged_in_user.id
 		session['logged_in'] = True
-		print "***********GOT TO HERE!!************"
 		return redirect("/welcome") 
+	elif existing_email and existing_username:
+		credentials_error = True
+		return render_template("index.html", credentials_error=credentials_error)
+	elif existing_email:
+		# flash("A user already exists with this email. Please log in with your credentials or create an account with a different email.")
+		# return jsonify({"error": "A user already exists with this email."}) 
+		email_error = True
+		return render_template("index.html", email_error=email_error)
+	else:
+		username_error = True
+		return render_template("index.html", username_error=username_error)
 
 @app.route("/logout")
 def logout():
