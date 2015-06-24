@@ -68,7 +68,6 @@
  		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript for Bootstrap-->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-        <script src="../static/js/jquery.validate.min.js"></script>
         {% block js_code %}
         <script>
 			$(".signup-form").submit(function(evt){
@@ -76,9 +75,22 @@
 				var request = $.ajax({
 					method: 'POST',
 					url: '/signup',
-					data: formData
+					data: formData,
 				});
 			});
+
+			var formError = 
+			{% if error is defined %}
+				true
+				{% else %}
+				false
+			{% endif %};
+
+			if (formError){
+				$('#loginModal').modal('show');
+				
+			}
+
 		</script>
     	{% endblock %}
 

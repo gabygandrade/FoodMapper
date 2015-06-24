@@ -10,6 +10,15 @@
 
 
 /*Home page */
+.form-error {
+	position:absolute;
+	top:9%
+	left:14%;
+	padding:1%;
+	background:white;
+	font-size:1.5em;
+}
+
 body.index {
 	background: url("../img/korean.jpg") no-repeat center center fixed; 
 	-webkit-background-size: cover;
@@ -95,7 +104,7 @@ a.navbar-brand {
 .flashes {
 	background:rgb(187, 187, 148);
 	padding:1%;
-	margin:0 auto;
+	margin:80px auto;
 	font-size:1.2em;
 	border:2px solid black;
 }

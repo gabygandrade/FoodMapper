@@ -41,7 +41,7 @@ def login_user():
 	password = request.form['password']
 
 	all_users = model.session.query(model.User)
-	
+
 	# Add the info from the request object as keys to the session dict
 	try:
 		user = all_users.filter(model.User.username==username, model.User.password==password).one()
@@ -52,8 +52,11 @@ def login_user():
 		# print session
 		return redirect("/welcome") 
 	except:
-		flash("That email or password is incorrect. Please try again")
-		return render_template("login.html")
+		# flash ("That email or password is incorrect. Please try again")
+		# return render_template("login.html")
+		# message = json.dumps({"error":"That email or password is incorrect. Please try again"})
+		error = True
+		return render_template("index.html", error = error)
 
 @app.route("/signup", methods=['POST'])
 def sign_up():
@@ -68,11 +71,11 @@ def sign_up():
 
 	if existing_email:
 		# flash("A user already exists with this email. Please log in with your credentials or create an account with a different email.")
-		return jsonify({"errorMessage": "A user already exists with this email. Please log in with your credentials or create an account with a different email."}) 
+		return jsonify({"error": "A user already exists with this email"}) 
 		# return redirect ("/")
 
 	elif existing_username:
-		return jsonify({"errorMessage":"A user already exists with this username. Please choose another username."})
+		return jsonify({"error":"A user already exists with this username"})
 
 	else:
 	# if the user is new to the db, 
@@ -80,6 +83,8 @@ def sign_up():
 		new_user = model.User(username=new_username, email=new_email, password=new_password)
 		model.session.add(new_user)
 		model.session.commit()
+
+		model.session.refresh(new_user) 
 
 		logged_in_user = model.session.query(model.User).filter(model.User.username==new_username, model.User.password==new_password).one()
 		# 2) add the user's info to the session
