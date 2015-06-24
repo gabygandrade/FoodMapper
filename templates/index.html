@@ -79,18 +79,17 @@
 				});
 			});
 
-			var formError = 
+			var loginError = 
 			{% if error is defined %}
 				true
 				{% else %}
 				false
 			{% endif %};
 
-			if (formError){
+			if (loginError){
 				$('#loginModal').modal('show');
-				
+				$('.modal-footer').prepend("<p style='color:red'>That email or password is incorrect. Please try again.</p>");
 			}
-
 		</script>
     	{% endblock %}
 

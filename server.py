@@ -53,8 +53,6 @@ def login_user():
 		return redirect("/welcome") 
 	except:
 		# flash ("That email or password is incorrect. Please try again")
-		# return render_template("login.html")
-		# message = json.dumps({"error":"That email or password is incorrect. Please try again"})
 		error = True
 		return render_template("index.html", error = error)
 
