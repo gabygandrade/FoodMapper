@@ -13,9 +13,10 @@
 			background-position-y: 26%;
 		}
 		.container { height:100% }
-		.content-container {
+		.map-container {
 			background-color:rgba(255, 255, 255,.9);
 			padding:0% 1%;
+			margin-top:49px;
 		}
 		#map-canvas {
 	        height: 550px;
@@ -49,14 +50,12 @@
 			cursor:pointer; 
 			cursor:hand; 
 		}
-		#list-div {
-			background-color:rgba(255, 255, 255,.9)
-		}
 		h4.rest-title {
-			color:white;
-			padding:3%;
-			background:rgb(150, 55, 55);
+			background-color:rgba(255, 255, 255,.9);
+			padding:4%;
+			color:rgb(67, 63, 64);
 			font-size:1.4em;
+			margin-left:-22px;
 		}
 
 		h4 {
@@ -79,11 +78,11 @@
 {% endblock %}
 
 {% block content %}
-	<div class="row">
+	<div class="map-container">
 		<div class="col-md-9" id="map-div">
 			<div id="map-canvas"></div>
 		</div>
-		<div class="col-md-3" id="list-div">
+		<div class="col-md-3">
 			<h4 class="rest-title">Bookmarked Restaurants </h4>
 			<ul id="list"></ul>
 		</div>

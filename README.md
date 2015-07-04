@@ -87,7 +87,7 @@ python -i db/model.py
 ```
 Then:
 ```xml
-model.create_db()
+create_db()
 ```
 - In a new shell use ls command in project folder and verify main.db exists in the “db” repository
 - To see the structure of the database, at the command line:

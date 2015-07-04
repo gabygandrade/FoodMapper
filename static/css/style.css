@@ -20,7 +20,7 @@
 }
 
 body.index {
-	background: url("../img/korean.jpg") no-repeat center center fixed; 
+	background: url("../img/mexican.jpg") no-repeat center center fixed; 
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
@@ -28,9 +28,9 @@ body.index {
 }
 .index .main-content {
 	color:white;
-	width:48%;
+	width:80%;
 	margin:14% auto 0%;
-	background:rgba(68, 63, 63, 0.9);
+	background:rgba(68, 63, 63, 0.97);
 	padding:1% 4%;
 	border:4px double white;
 	font-family:'Poiret One';
@@ -49,6 +49,13 @@ body.index {
 
 /* Welcome page */
 
+
+/* Recommendations page */
+.content-container {
+		background-color:rgba(239, 239, 239, 0.98);
+		padding:1.7%;
+		margin-top:49px;
+	}
 
 /* Restaurant results page */
 
