@@ -131,3 +131,73 @@ button.submit-query:hover {
 input.form-control {
 	margin-left:6px;
 }
+
+/* Maps page */
+
+.container { 
+	height:100% 
+}
+
+.map-container {
+	background-color:rgba(255, 255, 255,.9);
+	padding:0% 1%;
+	margin-top:49px;
+}
+
+#map-canvas {
+    height: 550px;
+    margin: 0px;
+    padding: 0px
+}
+
+#map-container {
+	width:100%;
+	height:100%;
+}
+
+#map-div {
+	padding-left:0px;
+	padding-right:8px;
+}
+
+#list { 
+	width:100%; 
+	list-style:none; 
+	padding:0; 
+	max-height:480px; 
+	overflow-y:auto;
+} 
+
+#list li { 
+	padding:1% 3%;
+	border-bottom:1px dotted black;
+} 
+
+#list li:hover { 
+	background:#D3DDBB; 
+	color:black; 
+	cursor:pointer; 
+	cursor:hand; 
+}
+
+h4.rest-title {
+	background-color:rgba(255, 255, 255,.9);
+	padding:4%;
+	color:rgb(67, 63, 64);
+	font-size:1.4em;
+	margin-left:-22px;
+}
+
+h4 {
+	font-family:'Poiret One';
+	text-align:center;
+	color:rgb(150, 54, 54);
+}
+.recommender {
+	font-size:13px;
+	font-weight:bold;
+}
+button.btn.btn-sm.delete-bookmark {
+	background:rgb(150, 55, 55);
+	color:white;
+}

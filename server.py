@@ -86,8 +86,6 @@ def sign_up():
 		credentials_error = True
 		return render_template("index.html", credentials_error=credentials_error)
 	elif existing_email:
-		# flash("A user already exists with this email. Please log in with your credentials or create an account with a different email.")
-		# return jsonify({"error": "A user already exists with this email."}) 
 		email_error = True
 		return render_template("index.html", email_error=email_error)
 	else:
@@ -236,8 +234,8 @@ def return_bookmark_info():
 			# recommender_list = []
 			for item in bkmrecs:
 				restaurant_info[bkm.id]["recommender_username"] = item.recommendation.recommender.username
-	# print restaurant_info
-
+	
+	print "******RESTAURANT INFO DICT: ", restaurant_info
 	return jsonify(restaurant_info)
 
 @app.route("/delete-bookmark", methods=["POST"])

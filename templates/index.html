@@ -94,7 +94,7 @@
 
 			if (emailError){
 				$('#signUpModal').modal('show');
-				$('#signUpModal .modal-footer').prepend("<p style='color:red'>A user already exists with that email.</p>");
+				$('#signUpModal .modal-footer').prepend("<p style='color:red'>A user already exists with that email. Please select another email or log into your account</p>");
 			}
 
 			var usernameError =
@@ -106,7 +106,7 @@
 
 			if (usernameError){
 				$('#signUpModal').modal('show');
-				$('#signUpModal .modal-footer').prepend("<p style='color:red'>A user already exists with that username. Please select another username.</p>");
+				$('#signUpModal .modal-footer').prepend("<p style='color:red'>A user already exists with that username. Please select another username or log into your account.</p>");
 			}
 
 			var credentialsError =
