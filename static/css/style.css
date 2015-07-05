@@ -160,6 +160,10 @@ input.form-control {
 	padding-right:8px;
 }
 
+.bookmark-container{
+	background-color:rgb(234, 235, 236)
+}
+
 #list { 
 	width:100%; 
 	list-style:none; 
@@ -181,11 +185,13 @@ input.form-control {
 }
 
 h4.rest-title {
-	background-color:rgba(255, 255, 255,.9);
+	background-color: rgba(234, 235, 236, 1);
 	padding:4%;
 	color:rgb(67, 63, 64);
-	font-size:1.4em;
-	margin-left:-22px;
+	font-size: 1.4em;
+	margin-left: -11px;
+	border-bottom: 1px solid black;
+	font-family: sans-serif;
 }
 
 h4 {

@@ -23,7 +23,7 @@
 		<div class="col-md-9" id="map-div">
 			<div id="map-canvas"></div>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-3 bookmark-container">
 			<h4 class="rest-title">Bookmarked Restaurants </h4>
 			<ul id="list"></ul>
 		</div>
@@ -116,87 +116,87 @@
 		}
 
 		//GET request to get info for markers 
-			$.getJSON("/bookmark-info", function(json){
-				console.log(json);
-				
-				// if (json.length == 0 ){
-				// 	console.log("NO BOOKMARK DATA!")
-				// }
+		$.getJSON("/bookmark-info", function(json){
+			console.log(json);
+			
+			if (jQuery.isEmptyObject(json)){
+				$('#list').append("<p>You have no bookmarks. Search for a restaurant to add it to your bookmarks!</p><p>Once you add a bookmark, a pin will be added to the map and the restaurant information will be displayed here</p>");
+			}
 
-				//loop through each of the json elements, get their lat, lng, name & other info & create a marker for these
-				$.each(json, function(key, data){
-					var bookmarkId = key;
-					var lat = data.lat;
-					var lng = data.lng; 
-					var myLatLng = new google.maps.LatLng(lat, lng);
-					// console.log(myLatLng)
+			//loop through each of the json objects, get their lat, lng, name & other info & create a marker for these
+			$.each(json, function(bkmId, restInfo){
+				var bookmarkId = bkmId;
+				var lat = restInfo.lat;
+				var lng = restInfo.lng; 
+				var myLatLng = new google.maps.LatLng(lat, lng);
+				// console.log(myLatLng)
 
-					var name = data.name;
-					var cuisine = data.cuisine;
-					var fsqId = data.fsq_id;
-					var address = data.address;
-					var phone = data.phone;
-					var url = data.url;
-					var icon_url = data.icon_url;
-					var recommender_username = data.recommender_username;
+				var name = restInfo.name;
+				var cuisine = restInfo.cuisine;
+				var fsqId = restInfo.fsq_id;
+				var address = restInfo.address;
+				var phone = restInfo.phone;
+				var url = restInfo.url;
+				var icon_url = restInfo.icon_url;
+				var recommender_username = restInfo.recommender_username;
 
-					if (data.recommender_username) {
-						var listContent = ['<div id="content">',
-							'<h4>', name, '</h4>',
-							'<p><i>', cuisine, '</i></p>',
-							'<p>', address, '</p>', 
-							'<p>', phone, '</p>',
-							'<p class="recommender">Recommended by ', recommender_username, '</p>',
-							'<p>','<a href=', url, '>', url, '</a>','</p>',
-							'<button class="btn btn-sm delete-bookmark"', 
-							'data-bookmarkid="', bookmarkId, 
-							'">','<span class="glyphicon glyphicon-trash"></span></button>',
-							'</div>'].join('');
-					} else {
-						var listContent = ['<div id="content">',
-							'<h4>', name, '</h4>',
-							'<p><i>', cuisine, '</i></p>',
-							'<p>', address, '</p>', 
-							'<p>', phone, '</p>',
-							'<p>','<a href=', url, '>', url, '</a>','</p>',
-							'<button class="btn btn-sm delete-bookmark"', 
-							'data-bookmarkid="', bookmarkId, 
-							'">','<span class="glyphicon glyphicon-trash"></span></button>',
-							'</div>'].join('');
-					}
+				if (restInfo.recommender_username) {
+					var listContent = ['<div id="content">',
+						'<h4>', name, '</h4>',
+						'<p><i>', cuisine, '</i></p>',
+						'<p>', address, '</p>', 
+						'<p>', phone, '</p>',
+						'<p class="recommender">Recommended by ', recommender_username, '</p>',
+						'<p>','<a href=', url, '>', url, '</a>','</p>',
+						'<button class="btn btn-sm delete-bookmark"', 
+						'data-bookmarkid="', bookmarkId, 
+						'">','<span class="glyphicon glyphicon-trash"></span></button>',
+						'</div>'].join('');
+				} else {
+					var listContent = ['<div id="content">',
+						'<h4>', name, '</h4>',
+						'<p><i>', cuisine, '</i></p>',
+						'<p>', address, '</p>', 
+						'<p>', phone, '</p>',
+						'<p>','<a href=', url, '>', url, '</a>','</p>',
+						'<button class="btn btn-sm delete-bookmark"', 
+						'data-bookmarkid="', bookmarkId, 
+						'">','<span class="glyphicon glyphicon-trash"></span></button>',
+						'</div>'].join('');
+				}
 
-					var iconBase = icon_url
+				var iconBase = icon_url
 
-					var customIconUrl = iconBase + 'bg_32.png'
+				var customIconUrl = iconBase + 'bg_32.png'
 
-					//Create markers with the info from the getJSON request
-					var marker = new google.maps.Marker({
-						position: myLatLng,
-						map: map,
-						icon: customIconUrl
-					}); 
+				//Create markers with the info from the getJSON request
+				var marker = new google.maps.Marker({
+					position: myLatLng,
+					map: map,
+					icon: customIconUrl
+				}); 
 
-					//add the markers to the map 
-					marker.setMap(map);
+				//add the markers to the map 
+				marker.setMap(map);
 
-					$("<li/>").attr('data-bookmarkid',bookmarkId).html(listContent).click(function(){ 
-							map.panTo(myLatLng); 
-							infoWindow.open(map,marker);
-						}) 
-					.appendTo("#list");
-
-					//Add an info window with the information about the restaurant
-					var infoWindow = new google.maps.InfoWindow({
-	  					content: listContent
-				 		});
-				 		
-			 		//add event listener to marker to show infowindow on mouseover of marker
-					google.maps.event.addListener(marker, 'click', function() {
+				$("<li/>").attr('data-bookmarkid',bookmarkId).html(listContent).click(function(){ 
+						map.panTo(myLatLng); 
 						infoWindow.open(map,marker);
-					});
+					}) 
+				.appendTo("#list");
 
-				}); // end of loop through each of the items in the bookmarks dict
-			}); // end of the ajax GET request to the /bookmarks-info route
+				//Add an info window with the information about the restaurant
+				var infoWindow = new google.maps.InfoWindow({
+  					content: listContent
+			 		});
+			 		
+		 		//add event listener to marker to show infowindow on mouseover of marker
+				google.maps.event.addListener(marker, 'click', function() {
+					infoWindow.open(map,marker);
+				});
+
+			}); // end of loop through each of the items in the bookmarks dict
+		}); // end of  ajax GET request to the /bookmarks-info route
 
 	} // end of initialize function to create the map 
 
